@@ -3,184 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Pokémon Lab</title>
+    <title>PokeBreed Pro | Apex v50M</title>
     <style>
         :root { 
-            --bg: #f0f9ff; --card: #ffffff; --primary: #0ea5e9; --text: #0f172a;
-            --sub: #64748b; --lime: #22c55e; --warn: #ef4444; --border: #e2e8f0;
+            --void: #020408; --ring: #00f2ff; --ring-glow: rgba(0, 242, 255, 0.3);
+            --sub: #475569; --warn: #ff0055; --surface: rgba(15, 23, 42, 0.9);
         }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        
-        .container { max-width: 900px; width: 100%; }
-        
-        /* THE TEACHER'S DESK (LAB BENCH) */
-        .bench { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .slot { background: #fff; border: 2px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .slot.active { border-color: var(--primary); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2); }
-        .slot-title { font-size: 0.7rem; color: var(--sub); font-weight: bold; text-transform: uppercase; }
-        .slot-name { font-weight: bold; font-size: 0.9rem; display: block; }
+        * { box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; cursor: crosshair; }
+        body { 
+            background: var(--void); background-image: radial-gradient(circle at 50% -20%, #0f172a 0%, var(--void) 85%);
+            color: #f1f5f9; margin: 0; padding: 40px 20px; min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        /* SIMPLE SEARCH */
-        .search-box { background: #fff; padding: 15px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; gap: 10px; margin-bottom: 30px; border: 2px solid #fff; }
-        .search-box:focus-within { border-color: var(--primary); }
-        input { flex: 1; border: none; outline: none; font-size: 1.1rem; padding-left: 10px; }
-        button { background: var(--primary); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        /* SIX CHAMBERS - PROFESSIONAL UTILITY */
+        .rack { display: flex; gap: 12px; margin-bottom: 50px; justify-content: center; }
+        .ball { 
+            flex: 1; max-width: 160px; background: var(--surface); border: 1px solid rgba(0, 242, 255, 0.1);
+            border-radius: 4px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s;
+        }
+        .ball.active { border-color: var(--ring); box-shadow: 0 0 25px var(--ring-glow); background: rgba(0, 242, 255, 0.03); }
+        .ball-name { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
 
-        /* THE ROWAN SLAM */
-        @keyframes slam { 0% { transform: scale(1); } 20% { transform: translateY(10px); } 40% { transform: rotate(1deg); } 100% { transform: translate(0); } }
-        .rage-alert { animation: slam 0.3s ease; border: 3px solid var(--warn) !important; background: #fef2f2 !important; color: var(--warn); padding: 20px; border-radius: 15px; font-weight: bold; margin-bottom: 20px; }
+        /* NEURAL SEARCH CONSOLE */
+        .console-wrap { max-width: 800px; margin: 0 auto 50px; position: relative; }
+        input { 
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(0,242,255,0.2);
+            padding: 20px; color: var(--ring); font-size: 18px; font-family: 'Fira Code', monospace; outline: none; text-align: center;
+        }
+        input:focus { border-bottom-color: var(--ring); text-shadow: 0 0 10px var(--ring-glow); }
 
-        /* CARDS */
-        .layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) { .layout { grid-template-columns: 1.5fr 1fr; } }
-        .card { background: #fff; padding: 25px; border-radius: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border: 1px solid var(--border); position: relative; }
-        .card-tag { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; display: block; }
+        /* ROWAN'S DIRECTIVE (THE RAGE) */
+        .breach { 
+            background: rgba(255, 0, 85, 0.05); border: 1px solid var(--warn); 
+            padding: 25px; margin-bottom: 40px; display: none; border-radius: 2px;
+        }
+        .breach-label { color: var(--warn); font-size: 10px; font-weight: 900; letter-spacing: 4px; display: block; margin-bottom: 10px; }
 
-        /* STAT BARS FOR KIDS */
-        .stat-line { margin-bottom: 12px; }
-        .bar-bg { height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; margin-top: 5px; }
-        .bar-fill { height: 100%; border-radius: 5px; }
+        /* CORE DISPLAY */
+        .display { display: grid; grid-template-columns: 1fr; gap: 30px; display: none; }
+        @media (min-width: 1000px) { .display { grid-template-columns: 1.4fr 0.6fr; } }
 
-        /* HELP BUTTON */
-        .help-tip { font-size: 0.75rem; color: var(--sub); background: #f8fafc; padding: 10px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--primary); }
+        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 40px; border-radius: 2px; position: relative; }
+        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 25px; display: block; }
+
+        /* PROFESSIONAL STAT ARCHITECTURE */
+        .stat-line { margin-bottom: 20px; }
+        .stat-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--sub); }
+        .stat-bar-bg { height: 2px; background: rgba(255,255,255,0.05); margin-top: 10px; position: relative; }
+        .stat-bar-fill { height: 100%; background: var(--ring); box-shadow: 0 0 12px var(--ring); transition: width 1.2s cubic-bezier(0.1, 0, 0, 1); }
+        .delta-pos { color: #22c55e; margin-left: 5px; }
+        .delta-neg { color: var(--warn); margin-left: 5px; }
+
+        /* MOVESET DATA */
+        .move-row { 
+            display: flex; justify-content: space-between; padding: 18px; 
+            border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px;
+        }
+        .move-cat { font-size: 9px; font-weight: 900; color: var(--sub); text-transform: uppercase; border: 1px solid var(--sub); padding: 2px 6px; border-radius: 3px; }
     </style>
 </head>
 <body onload="init()">
 
 <div class="container">
-    <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="margin:0; color: var(--primary);">Pokémon Helper</h1>
-        <p style="color: var(--sub); font-weight: 500;">Type a Pokémon name below to start your project!</p>
+    <header style="text-align: center; margin-bottom: 60px;">
+        <span style="font-size: 10px; letter-spacing: 8px; color: var(--sub); font-weight: 800;">BIOLOGICAL SYSTEMS INTERFACE</span>
+        <h1 style="margin: 10px 0; font-size: 30px; font-weight: 200; letter-spacing: 14px;">OBSIDIAN <span style="color:var(--ring); font-weight: 900;">APEX</span></h1>
+    </header>
+
+    <div class="rack" id="rack">
+        <script>
+            for(let i=0; i<6; i++) document.write(`<div class="ball" id="b${i}" onclick="sel(${i})"><span class="ball-name" id="n${i}">unassigned</span><br><span style="font-size:7px; color:var(--sub); letter-spacing:1px;">CHAMBER_0${i+1}</span></div>`);
+        </script>
     </div>
 
-    <div class="bench" id="bench">
-        <div class="slot" id="s0" onclick="swap(0)"><span class="slot-title">Folder 1</span><span class="slot-name" id="n0">Empty</span></div>
-        <div class="slot" id="s1" onclick="swap(1)"><span class="slot-title">Folder 2</span><span class="slot-name" id="n1">Empty</span></div>
-        <div class="slot" id="s2" onclick="swap(2)"><span class="slot-title">Folder 3</span><span class="slot-name" id="n2">Empty</span></div>
-        <div class="slot" id="s3" onclick="swap(3)"><span class="slot-title">Folder 4</span><span class="slot-name" id="n3">Empty</span></div>
+    <div class="console-wrap">
+        <input type="text" id="neural" placeholder="ENTER SPECIMEN DIRECTIVE (e.g. 'Modest Gardevoir')..." onkeypress="if(event.key==='Enter') process()">
     </div>
 
-    <div class="search-box">
-        <input type="text" id="inp" placeholder="Try 'Pikachu' or 'Charizard'...">
-        <button onclick="go()">Find Pokémon</button>
+    <div id="breach" class="breach">
+        <span class="breach-label">DIRECTIVE ERROR</span>
+        <div id="reprimand" style="font-size: 15px; line-height: 1.6; color: #fff;"></div>
     </div>
 
-    <div id="output" style="display:none;">
-        <div id="rage"></div>
-        <div class="layout">
-            <div class="main">
-                <div class="card">
-                    <span class="card-tag">Meet Your Pokémon</span>
-                    <h2 id="nameDisplay" style="margin:0 0 10px 0;"></h2>
-                    <p id="bio" style="line-height:1.6; color: #475569;"></p>
-                    <div class="help-tip"><strong>💡 Pro Tip:</strong> This Pokémon belongs to a family! Their path is: <span id="family" style="color:var(--primary); font-weight:bold;"></span></div>
+    <div id="display" class="display">
+        <div class="panel">
+            <span class="tag">Specimen Overview</span>
+            <h2 id="nameDisplay" style="font-size: 48px; font-weight: 200; margin: 0; letter-spacing: -1px;"></h2>
+            <p id="flavor" style="color: var(--sub); line-height: 1.8; margin: 30px 0; font-size: 15px; border-left: 1px solid var(--ring); padding-left: 25px;"></p>
+            
+            <span class="tag">Optimal Move Calibration</span>
+            <div id="moveGrid"></div>
+        </div>
+
+        <div class="side">
+            <div class="panel">
+                <span class="tag">Base Performance Metrics</span>
+                <div id="statGrid"></div>
+                
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <span class="tag">System Status</span>
+                    <div id="summary" style="font-size: 12px; color: var(--sub); line-height: 2; font-family: 'Fira Code', monospace;"></div>
+                    <button onclick="save()" style="width:100%; margin-top: 30px; background: var(--ring); color: var(--void); border: none; padding: 18px; font-weight: 900; font-size: 11px; text-transform: uppercase; cursor: pointer; letter-spacing: 2px;">Commit DNA to Ball</button>
                 </div>
-                <div class="card" style="margin-top:20px;">
-                    <span class="card-tag">Best Moves</span>
-                    <div id="moves"></div>
-                </div>
-            </div>
-            <div class="side">
-                <div class="card">
-                    <span class="card-tag">Natural Talents</span>
-                    <div id="stats"></div>
-                    <div class="help-tip" style="margin-top:20px;">The longer the bar, the better they are at that skill!</div>
-                </div>
-                <button onclick="save()" style="width:100%; margin-top:20px; background:var(--lime); color:#fff; padding:15px; border-radius:15px; border:none; font-weight:bold; cursor:pointer;">Save to My Folders</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    let activeFolder = 0; let currentData = null;
+    let activeBall = 0; let currentData = null;
     const clean = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     function init() {
-        for(let i=0; i<4; i++) {
-            const saved = localStorage.getItem('pokedex_v10_'+i);
-            if(saved) document.getElementById('n'+i).innerText = JSON.parse(saved).name;
+        for(let i=0; i<6; i++) {
+            const d = localStorage.getItem('apex50m_'+i);
+            if(d) document.getElementById('n'+i).innerText = JSON.parse(d).name;
         }
-        swap(0);
+        sel(0);
     }
 
-    function swap(i) {
-        activeFolder = i;
-        document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
-        document.getElementById('s'+i).classList.add('active');
-        const saved = localStorage.getItem('pokedex_v10_'+i);
-        if(saved) render(JSON.parse(saved));
-        else document.getElementById('output').style.display = 'none';
+    function sel(i) {
+        activeBall = i;
+        document.querySelectorAll('.ball').forEach(b => b.classList.remove('active'));
+        document.getElementById('b'+i).classList.add('active');
+        const d = localStorage.getItem('apex50m_'+i);
+        if(d) render(JSON.parse(d));
+        else document.getElementById('display').style.display = 'none';
     }
 
     function save() {
         if(!currentData) return;
-        localStorage.setItem('pokedex_v10_'+activeFolder, JSON.stringify(currentData));
-        document.getElementById('n'+activeFolder).innerText = currentData.name;
+        localStorage.setItem('apex50m_'+activeBall, JSON.stringify(currentData));
+        document.getElementById('n'+activeBall).innerText = currentData.name;
     }
 
-    async function go() {
-        const query = document.getElementById('inp').value.toLowerCase();
-        const list = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000').then(r=>r.json());
-        const target = list.results.find(p => query.includes(p.name))?.name;
-        
-        if(!target) return alert("Hmm, I couldn't find that Pokémon. Check the spelling!");
+    async function process() {
+        const q = document.getElementById('neural').value.toLowerCase();
+        const list = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
+        const target = list.results.find(p => q.includes(p.name))?.name;
+        if(!target) return;
 
         const [p, sp] = await Promise.all([
             fetch(`https://pokeapi.co/api/v2/pokemon/${target}`).then(r=>r.json()),
             fetch(`https://pokeapi.co/api/v2/pokemon-species/${target}`).then(r=>r.json())
         ]);
 
-        const eR = await fetch(sp.evolution_chain.url).then(r=>r.json());
-        let family = []; let c = eR.chain; while(c){ family.push(c.species.name); c = c.evolves_to[0]; }
-
-        const story = sp.flavor_text_entries.find(e => e.language.name === 'en').flavor_text.replace(/\f/g, ' ');
-        const moves = await Promise.all(p.moves.slice(0, 4).map(m => fetch(m.move.url).then(r=>r.json())));
-
-        // THE SECRET ROWAN RAGE (v10,000)
-        let rowanText = "";
-        const natureWords = ["jolly", "adamant", "modest", "timid"];
-        const natureInQuery = natureWords.find(w => query.includes(w));
+        const flavor = sp.flavor_text_entries.find(e => e.language.name === 'en').flavor_text.replace(/\f/g, ' ');
+        const moves = await Promise.all(p.moves.slice(0, 40).map(m => fetch(m.move.url).then(r=>r.json())));
         
-        // This is where he crashes out if a beginner tries to do something "silly"
-        if(natureInQuery === "jolly" && p.stats[3].base_stat > p.stats[1].base_stat) {
-            rowanText = "WAIT! I CAN'T WATCH THIS! You're giving a JOLLY personality to a Pokémon that uses Special magic? That's like giving a swimsuit to someone going to the North Pole! DO IT RIGHT!";
+        let best = moves.filter(m => m.power).sort((a,b) => b.power - a.power).slice(0, 4);
+        let reprimand = "";
+        
+        const isSpecial = p.stats[3].base_stat > p.stats[1].base_stat;
+        const nature = q.match(/(modest|timid|adamant|jolly)/);
+
+        if (nature && (nature[0] === 'adamant' || nature[0] === 'jolly') && isSpecial) {
+            reprimand = `CRITICAL ANALYSIS FAILURE: Specimen ${target.toUpperCase()} is a Special Attack specialist. By assigning a Physical-biased nature, you are actively degrading the biological output of its primary stats. Correct the directive.`;
         }
 
-        currentData = { name: clean(target), family, stats: p.stats, moves, story, rowan: rowanText };
+        currentData = { name: clean(target), stats: p.stats, moves: best, flavor, reprimand, q };
         render(currentData);
     }
 
     function render(d) {
-        document.getElementById('output').style.display = 'block';
-        const rBox = document.getElementById('rage');
-        rBox.innerHTML = d.rowan ? `<div class="rage-alert">${d.rowan}</div>` : "";
-        
+        document.getElementById('display').style.display = 'grid';
+        const bBox = document.getElementById('breach');
+        if (d.reprimand) {
+            bBox.style.display = 'block';
+            document.getElementById('reprimand').innerText = d.reprimand;
+        } else { bBox.style.display = 'none'; }
+
         document.getElementById('nameDisplay').innerText = d.name;
-        document.getElementById('bio').innerText = d.story;
-        document.getElementById('family').innerText = d.family.map(n => clean(n)).join(' → ');
+        document.getElementById('flavor').innerText = d.flavor;
 
-        document.getElementById('moves').innerHTML = d.moves.map(m => `
-            <div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
-                <strong>${clean(m.name)}</strong> <span>Power: ${m.power || '??'}</span>
-            </div>`).join('');
-
-        const statMap = {
-            'hp': 'Health', 'attack': 'Physical Strength', 'defense': 'Physical Armor',
-            'special-attack': 'Magic Strength', 'special-defense': 'Magic Armor', 'speed': 'Quickness'
-        };
-
-        document.getElementById('stats').innerHTML = d.stats.map(st => {
-            const color = st.base_stat > 100 ? '#22c55e' : (st.base_stat > 60 ? '#38bdf8' : '#f59e0b');
+        const sMap = {'hp':'HP', 'attack':'Attack', 'defense':'Defense', 'special-attack':'Special Attack', 'special-defense':'Special Defense', 'speed':'Speed'};
+        document.getElementById('statGrid').innerHTML = d.stats.map((st, i) => {
+            let delta = "";
+            if(d.q.includes('modest')) {
+                if(i === 3) delta = '<span class="delta-pos">(+)</span>';
+                if(i === 1) delta = '<span class="delta-neg">(-)</span>';
+            }
+            if(d.q.includes('adamant')) {
+                if(i === 1) delta = '<span class="delta-pos">(+)</span>';
+                if(i === 3) delta = '<span class="delta-neg">(-)</span>';
+            }
             return `
             <div class="stat-line">
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
-                    <strong>${statMap[st.stat.name]}</strong> <span>${st.base_stat}</span>
+                <div class="stat-header">
+                    <span>${sMap[st.stat.name]} ${delta}</span><span>${st.base_stat}</span>
                 </div>
-                <div class="bar-bg"><div class="bar-fill" style="width:${(st.base_stat/200)*100}%; background:${color};"></div></div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(st.base_stat/255)*100}%"></div></div>
             </div>`;
         }).join('');
+
+        document.getElementById('moveGrid').innerHTML = d.moves.map(m => `
+            <div class="move-row">
+                <span style="font-weight:700;">${clean(m.name)}</span>
+                <div>
+                    <span class="move-cat">${m.damage_class.name}</span>
+                    <span style="margin-left:15px; color:var(--ring); font-weight:800; font-size:12px;">PWR ${m.power}</span>
+                </div>
+            </div>`).join('');
+
+        document.getElementById('summary').innerHTML = `
+            > SPECIMEN_ID: ${d.name.toUpperCase()}<br>
+            > PRIMARY_CORE: ${d.stats[3].base_stat > d.stats[1].base_stat ? 'SPECIAL' : 'PHYSICAL'}<br>
+            > ANALYSIS: ${d.reprimand ? 'REJECTED' : 'CALIBRATED'}
+        `;
     }
 </script>
 </body>
