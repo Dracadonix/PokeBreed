@@ -3,72 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Zenith Hall</title>
+    <title>PokeBreed Pro | ULTIMA ∞</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
             --surface: rgba(10, 15, 25, 0.98); --gold: #ffd700; --research: #55ff77;
             --hp: #ff0055; --atk: #f5ac78; --def: #fae078; --spa: #9db7f5; --spd: #a7db8d; --spe: #fa92b2;
         }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.2s cubic-bezier(0.1, 0.9, 0.2, 1); }
         body { background: var(--void); color: #f1f5f9; margin: 0; padding: clamp(10px, 3vw, 30px); min-height: 100vh; overflow-x: hidden; }
 
-        /* --- CHAMPION'S HALL MODAL --- */
-        #championHall { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(20px); }
-        .hall-content { background: var(--surface); width: 90%; max-width: 1000px; border: 2px solid var(--gold); border-radius: 12px; padding: 40px; position: relative; max-height: 90vh; overflow-y: auto; }
+        /* --- THE BIBLE & CHAMPION HALL --- */
+        #bible, #hall { position: fixed; top: 0; right: -100%; width: 100%; max-width: 600px; height: 100%; background: var(--surface); border-left: 3px solid var(--ring); z-index: 90000; padding: 40px; overflow-y: auto; box-shadow: -30px 0 80px #000; }
+        #hall { left: -100%; right: auto; border-left: none; border-right: 3px solid var(--gold); max-width: 1000px; width: 95%; }
+        .open { right: 0 !important; left: 0 !important; }
+        .bible-sect { margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .bible-sect h3 { color: var(--ring); text-transform: uppercase; font-size: 14px; margin-bottom: 8px; }
 
-        /* --- BIBLE & SYSTEM UI --- */
-        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 550px; height: 100%; background: var(--surface); border-left: 3px solid var(--ring); z-index: 90000; padding: 40px; overflow-y: auto; box-shadow: -30px 0 80px #000; }
-        #bible.open { right: 0; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 20px; background: var(--surface); border-left: 5px solid var(--ring); border-radius: 0 8px 8px 0; }
-        .prof-avatar { width: 55px; height: 55px; background: #111; border: 2px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--ring); font-size: 22px; }
-        @keyframes ultra-shake { 0% { transform: translate(2px, 2px) rotate(0deg); } 10% { transform: translate(-2px, -3px) rotate(-2deg); } 100% { transform: translate(2px, 2px) rotate(0deg); } }
-        .unhinged { border-color: var(--warn) !important; color: var(--warn) !important; animation: ultra-shake 0.1s infinite !important; }
+        /* --- PROFESSOR CRASHOUT --- */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 20px; background: var(--surface); border-left: 5px solid var(--ring); }
+        .prof-avatar { width: 60px; height: 60px; background: #111; border: 2px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; }
+        @keyframes rattle { 0% { transform: translate(2px, 2px); } 20% { transform: translate(-2px, -3px); } 100% { transform: translate(1px, 1px); } }
+        .crashout { border-color: var(--warn) !important; color: var(--warn) !important; animation: rattle 0.05s infinite; }
 
-        /* --- THE BIG BOX & GRID --- */
-        #target { width: 100%; background: #0b111e; border: 3px solid var(--ring); padding: clamp(25px, 6vw, 45px); color: var(--ring); text-align: center; font-size: clamp(24px, 5vw, 40px); font-weight: 200; outline: none; margin-bottom: 20px; border-radius: 12px; }
-        .party-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
-        @media (min-width: 768px) { .party-bar { grid-template-columns: repeat(6, 1fr); } }
-        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; position: relative; }
+        /* --- GRID LOGIC --- */
+        #target { width: 100%; background: #0b111e; border: 3px solid var(--ring); padding: 30px; color: var(--ring); text-align: center; font-size: 32px; font-weight: 200; outline: none; margin-bottom: 20px; border-radius: 12px; }
+        .party-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px; }
+        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 10px; }
         .ball-slot.active { border: 2px solid var(--ring); background: rgba(0, 242, 255, 0.05); }
-        
-        .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 1024px) { .main-grid { grid-template-columns: 1fr 0.8fr 1fr 1.2fr 1.2fr; } }
-        .panel { background: var(--surface); padding: 25px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); }
-        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(0, 242, 255, 0.1); }
-        
-        .move-card { background: #070a0f; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 11px; cursor: pointer; }
-        .move-card.selected { border: 1px solid var(--gold); background: rgba(255, 215, 0, 0.05); }
-        .move-cat { padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 900; }
-        .cat-physical { background: var(--hp); } .cat-special { background: var(--spa); } .cat-status { background: var(--sub); }
 
-        .btn-gold { width: 100%; padding: 15px; background: linear-gradient(45deg, var(--gold), #b8860b); color: #000; border: none; font-weight: 900; cursor: pointer; margin-top: 10px; letter-spacing: 2px; border-radius: 4px; }
+        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .panel { background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); }
+        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; border-bottom: 1px solid rgba(0,242,255,0.1); }
+        
+        /* --- LEGACY MOVES --- */
+        .move-chip { background: #070a0f; border: 1px solid #1a1a1a; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 10px; cursor: pointer; }
+        .move-chip.selected { border: 1px solid var(--gold); box-shadow: 0 0 10px var(--gold); }
+        .type-tag { padding: 2px 5px; border-radius: 3px; font-size: 8px; font-weight: 900; color: #000; }
+
+        /* --- BUTTONS --- */
+        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-core { flex: 1; padding: 15px; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; border-radius: 4px; }
+        .btn-hall { background: var(--gold); color: #000; }
+        .btn-export { background: #111; color: var(--research); border: 1px solid var(--research); }
     </style>
 </head>
 <body onload="init()">
 
-<div id="championHall">
-    <div class="hall-content">
-        <h2 style="color:var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 10px;">CHAMPION'S HALL | CALC</h2>
-        <div id="hallStats" style="display:grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
-            <div>
-                <h4 style="color:var(--research)">OFFENSIVE COVERAGE</h4>
-                <div id="offenseCalc" style="font-size:12px; line-height:2;">-- No Moves Selected --</div>
-            </div>
-            <div>
-                <h4 style="color:var(--warn)">DEFENSIVE VULNERABILITY</h4>
-                <div id="defenseCalc" style="font-size:12px; line-height:2;">-- No Data --</div>
-            </div>
+<div id="hall">
+    <button onclick="toggleHall()" class="btn-core" style="background:var(--warn); color:#fff; width:100%;">EXIT CHAMPION HALL</button>
+    <div style="padding:40px;">
+        <h1 style="color:var(--gold)">BATTLE MATRIX ∞</h1>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:40px;">
+            <div id="offense-out"><h3>OFFENSIVE COVERAGE</h3><p>Select moves to analyze.</p></div>
+            <div id="defense-out"><h3>DEFENSIVE DELTA</h3><p>Scan a Pokemon to analyze.</p></div>
         </div>
-        <button onclick="closeHall()" class="btn-gold" style="margin-top:40px;">RETURN TO LAB</button>
     </div>
 </div>
 
 <div id="bible">
-    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:15px; width:100%; cursor:pointer; font-weight:900;">CLOSE CANON</button>
+    <button onclick="toggleBible()" class="btn-core" style="background:var(--warn); color:#fff; width:100%;">CLOSE CANON</button>
     <div class="bible-sect" style="margin-top:40px;">
-        <h3>Incense Protocol</h3>
-        <p>🧬 Sea (Azurill) 🧬 Full (Munchlax) 🧬 Wave (Mantyke) 🧬 Rose (Budew) 🧬 Lax (Wynaut) 🧬 Rock (Bonsly) 🧬 Odd (Mime Jr.)</p>
+        <h3>I. The Everstone & Knot</h3>
+        <p><b>Everstone:</b> 100% Nature. <b>Destiny Knot:</b> 5/6 IV pool.</p>
+    </div>
+    <div class="bible-sect">
+        <h3>II. Genesis & Incense</h3>
+        <p>Hatchlings revert to base evolution. <b>Sea Incense</b> (Azurill), <b>Full Incense</b> (Munchlax), <b>Lax Incense</b> (Wynaut).</p>
+    </div>
+    <div class="bible-sect">
+        <h3>III. HA Logic</h3>
+        <p>Female passes Hidden Ability at <b>60%</b>. Males only pass with Ditto.</p>
     </div>
 </div>
 
@@ -77,79 +82,69 @@
         <div class="prof-avatar" id="profI">O</div>
         <div>
             <div id="profN" style="font-size:10px; font-weight:900; color:var(--ring);">PROF. OAK</div>
-            <div id="profQ" style="font-style:italic; font-size:13px; color:#fff;">"The Hall is open for those who master the moveset."</div>
+            <div id="profQ" style="font-style:italic; font-size:13px; color:#fff;">"The Ultima Singularity is online, Lime. Proceed."</div>
         </div>
     </div>
     <div style="display:flex; gap:10px;">
-        <button onclick="openHall()" style="background:var(--gold); color:#000; border:none; padding:10px 20px; font-weight:900; border-radius:4px; cursor:pointer;">CHAMPION HALL</button>
-        <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:10px 20px; cursor:pointer; font-weight:900;">BIBLE</button>
+        <button onclick="toggleHall()" class="btn-core" style="background:var(--gold); color:#000; padding:10px 15px;">HALL</button>
+        <button onclick="toggleBible()" class="btn-core" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:10px 15px;">BIBLE</button>
     </div>
 </div>
 
-<div class="party-bar">
-    <div class="ball-slot active" onclick="setSlot(0)" id="s0">⚪<b>SLOT 1</b></div>
-    <div class="ball-slot" onclick="setSlot(1)" id="s1">⚪<b>SLOT 2</b></div>
-    <div class="ball-slot" onclick="setSlot(2)" id="s2">⚪<b>SLOT 3</b></div>
-    <div class="ball-slot" onclick="setSlot(3)" id="s3">⚪<b>SLOT 4</b></div>
-    <div class="ball-slot" onclick="setSlot(4)" id="s4">⚪<b>SLOT 5</b></div>
-    <div class="ball-slot" onclick="setSlot(5)" id="s5">⚪<b>SLOT 6</b></div>
+<div class="party-bar" id="party">
+    <div class="ball-slot active" onclick="setSlot(0)" id="s0">⚪ SLOT 1</div>
+    <div class="ball-slot" onclick="setSlot(1)" id="s1">⚪ SLOT 2</div>
+    <div class="ball-slot" onclick="setSlot(2)" id="s2">⚪ SLOT 3</div>
+    <div class="ball-slot" onclick="setSlot(3)" id="s3">⚪ SLOT 4</div>
+    <div class="ball-slot" onclick="setSlot(4)" id="s4">⚪ SLOT 5</div>
+    <div class="ball-slot" onclick="setSlot(5)" id="s5">⚪ SLOT 6</div>
 </div>
 
-<input type="text" id="target" placeholder="DIRECTIVE (e.g. 0 Atk Gengar)" onkeypress="if(event.key==='Enter') scan()">
+<input type="text" id="target" placeholder="SCAN DIRECTIVE" onkeypress="if(event.key==='Enter') scan()">
+
+<div class="btn-group">
+    <button class="btn-core btn-export" onclick="exportTeam()">EXPORT SHOWDOWN</button>
+    <button class="btn-core" style="background:var(--hp); color:#fff;" onclick="resetLab()">RESET LAB</button>
+</div>
 
 <div class="main-grid">
-    <div class="panel"><span class="tag">Nexus Tree</span><div id="nexus"></div></div>
-    <div class="panel"><span class="tag">Genesis Law</span><div id="gen" style="text-align:center; font-size:24px; color:var(--ring); font-weight:900;">---</div></div>
-    <div class="panel"><span class="tag">Tactical Movepool</span><p style="font-size:9px; color:var(--sub)">Click to Add to Moveset</p><div id="moves" style="height:350px; overflow-y:auto;"></div></div>
+    <div class="panel"><span class="tag">Nexus (Breedable ★)</span><div id="nexus"></div></div>
+    <div class="panel"><span class="tag">Genesis Origin</span><div id="gen" style="font-size:24px; font-weight:900; color:var(--ring); text-align:center;">---</div></div>
+    <div class="panel"><span class="tag">Egg Cycles</span><div id="egg">--</div></div>
+    <div class="panel" style="grid-column: span 2;">
+        <span class="tag">Legacy Movepool (Select 4)</span>
+        <div id="moves" style="height:300px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:5px;"></div>
+    </div>
 </div>
 
-<div style="text-align:center; padding:20px; color:var(--sub); font-size:11px; letter-spacing:10px;">ARCHITECT: LIME</div>
+<footer style="text-align:center; padding:40px; color:var(--sub); font-size:11px; letter-spacing:10px;">
+    ARCHITECT: LIME | VERSION: ULTIMA ∞
+</footer>
 
 <script>
     let activeSlot = 0; let team = Array(6).fill(null);
     let selectedMoves = [];
 
-    function nextBoot(n) { document.getElementById(`boot${n}`).style.display = 'none'; }
+    function nextBoot(n) { document.querySelectorAll('.overlay').forEach(o => o.style.display='none'); }
     function toggleBible() { document.getElementById('bible').classList.toggle('open'); }
+    function toggleHall() { document.getElementById('hall').classList.toggle('open'); calculateHall(); }
     function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
 
-    function openHall() {
-        document.getElementById('championHall').style.display = 'flex';
-        calculateZenith();
-    }
-    function closeHall() { document.getElementById('championHall').style.display = 'none'; }
-
-    function calculateZenith() {
-        if(selectedMoves.length === 0) return;
-        document.getElementById('offenseCalc').innerHTML = selectedMoves.map(m => `<b>${m.name.toUpperCase()}</b>: Super effective against 4 tiers.`).join('<br>');
-        document.getElementById('defenseCalc').innerHTML = "Weakness Detected: <b>GROUND, DARK</b>.<br>Resistances: <b>FAIRY, PSYCHIC</b>.";
-    }
-
-    function toggleMove(name, el) {
-        if(selectedMoves.find(m => m.name === name)) {
-            selectedMoves = selectedMoves.filter(m => m.name !== name);
-            el.classList.remove('selected');
-        } else if(selectedMoves.length < 4) {
-            selectedMoves.push({name});
-            el.classList.add('selected');
-        }
-    }
-
-    function crashout() {
+    function crashout(reason) {
         const icon = document.getElementById('profI'); const name = document.getElementById('profN'); const quote = document.getElementById('profQ');
-        icon.classList.add('unhinged');
-        name.innerText = "PROF. OAK (CRASHED)"; name.style.color = "var(--warn)";
-        quote.innerHTML = "<span style='color:var(--warn)'>YOU CAN'T BREED LEGENDARIES!</span> READ THE BIBLE! <br><br><b>[ROWAN HAS HIM IN A HEADLOCK]</b>";
+        icon.classList.add('crashout');
+        name.innerText = "PROF. OAK (TRASHED)"; name.style.color = "var(--warn)";
+        quote.innerHTML = `<span style="color:var(--warn)">${reason}</span><br><b>[ROWAN HAS OAK IN A REAR-NAKED CHOKE]</b>`;
         setTimeout(() => {
-            icon.classList.remove('unhinged');
+            icon.classList.remove('crashout');
             name.innerText = "PROF. ELM"; name.style.color = "var(--ring)";
-            quote.innerText = "\"Oak is receiving medical attention. Please use the Hall for your calculations.\"";
+            quote.innerText = "\"Deepest apologies... Oak's been tranquilized. Elm here. Focus on the moveset.\"";
         }, 5000);
     }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
-        if(q.includes("ditto ditto") || q.includes("mewtwo breed")) { crashout(); return; }
+        if(q.includes("ditto ditto") || q.includes("mew breed")) { crashout("LEGENDARIES CAN'T BREED! READ THE BIBLE!"); return; }
 
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = res.results.find(p => q.includes(p.name))?.name;
@@ -159,22 +154,51 @@
             fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
             fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
         ]);
-        
-        team[activeSlot] = { name: t, groups: sp.egg_groups.map(g => g.name) };
-        document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
-        document.getElementById('gen').innerText = t.toUpperCase();
+        const evoChain = await fetch(sp.evolution_chain.url).then(r=>r.json());
 
-        document.getElementById('moves').innerHTML = p.moves.slice(0, 20).map(m => `
-            <div class="move-card" onclick="toggleMove('${m.move.name}', this)">
-                <span>${m.move.name.toUpperCase()}</span>
-                <span class="move-cat cat-special">PHASE</span>
+        team[activeSlot] = { name: t, types: p.types, groups: sp.egg_groups.map(g=>g.name) };
+        document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
+        
+        // Genesis & Egg Data
+        document.getElementById('gen').innerText = evoChain.chain.species.name.toUpperCase();
+        document.getElementById('egg').innerHTML = `Cycles: ${sp.hatch_counter}<br>Steps: ${sp.hatch_counter * 257}`;
+
+        // Legacy Movepool
+        const moveDetails = await Promise.all(p.moves.slice(0, 30).map(m => fetch(m.move.url).then(r=>r.json())));
+        document.getElementById('moves').innerHTML = moveDetails.map(m => `
+            <div class="move-chip" onclick="toggleMove('${m.name}', this)">
+                <span>${m.name.replace('-',' ').toUpperCase()}</span>
+                <span class="type-tag" style="background:#fff">${m.type.name.toUpperCase()}</span>
             </div>
         `).join('');
 
+        // Nexus
         document.getElementById('nexus').innerHTML = sp.egg_groups.map(g => {
             const match = team.some((m, idx) => idx !== activeSlot && m && m.groups.includes(g.name));
-            return `<div style="padding:10px; background:#111; margin-bottom:5px; border-left:3px solid ${match?'var(--gold)':'#333'}; font-size:11px;">${g.name.toUpperCase()} ${match?'★':''}</div>`;
+            return `<div style="padding:8px; background:#111; margin-bottom:4px; border-left:3px solid ${match?'var(--gold)':'#333'}; font-size:10px;">${g.name.toUpperCase()} ${match?'★':''}</div>`;
         }).join('');
+    }
+
+    function toggleMove(name, el) {
+        if(selectedMoves.includes(name)) {
+            selectedMoves = selectedMoves.filter(m => m !== name);
+            el.classList.remove('selected');
+        } else if(selectedMoves.length < 4) {
+            selectedMoves.push(name);
+            el.classList.add('selected');
+        }
+    }
+
+    function calculateHall() {
+        if(selectedMoves.length === 0) return;
+        document.getElementById('offense-out').innerHTML = `<h3>COVERAGE</h3>` + selectedMoves.map(m => `<p style="color:var(--research)"><b>${m.toUpperCase()}</b>: Neutral vs Most.</p>`).join('');
+        document.getElementById('defense-out').innerHTML = `<h3>VULNERABILITY</h3><p style="color:var(--warn)">Weak to common meta threats. Recommendation: Adjust for 0-Speed/0-Atk.</p>`;
+    }
+
+    function exportTeam() {
+        const text = team.filter(p => p).map(p => `${p.name.toUpperCase()}\nAbility: HA\n- Move 1\n- Move 2`).join('\n\n');
+        alert("Showdown Text Copied to Buffer (Simulated)");
+        console.log(text);
     }
 
     function init() { setSlot(0); }
