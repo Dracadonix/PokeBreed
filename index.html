@@ -3,80 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | v5.5B Cycle</title>
+    <title>PokeBreed Pro | v6.1 Omni-Bible</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
             --surface: rgba(10, 15, 25, 0.98); --gold: #ffd700; --research: #55ff77;
         }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 10px; min-height: 100vh; }
-        
-        /* CHAMPION MODAL */
-        #champUplink { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .champ-card { border: 2px solid var(--gold); padding: 30px; background: #000; max-width: 500px; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.2s ease-in-out; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh; }
 
-        /* HEADER & BIBLE */
-        .prof-hub { background: var(--surface); border-left: 4px solid var(--ring); padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; }
-        .prof-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--ring); display: flex; align-items: center; justify-content: center; font-weight: 900; background: #000; color: var(--ring); flex-shrink: 0; }
-        
-        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: var(--surface); border-left: 1px solid var(--ring); z-index: 5000; padding: 30px; overflow-y: auto; box-shadow: -20px 0 50px #000; }
+        /* THE BIBLE DRAWER - RESTORED */
+        #bible { 
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 450px; 
+            height: 100%; background: var(--surface); border-left: 2px solid var(--ring); 
+            z-index: 20000; padding: 40px; overflow-y: auto; box-shadow: -20px 0 60px #000;
+        }
         #bible.open { right: 0; }
+        .bible-btn { background: none; border: 1px solid var(--ring); color: var(--ring); padding: 10px 20px; cursor: pointer; font-weight: 900; font-size: 11px; letter-spacing: 2px; }
 
-        /* PARTY BAR */
-        .party-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        /* THE BIG BOX - MAXIMIZED */
+        #target { 
+            width: 100%; background: #0b111e; border: 3px solid var(--ring); 
+            padding: 40px; color: var(--ring); text-align: center; font-size: 36px; 
+            font-weight: 200; outline: none; margin-bottom: 25px; border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+        }
+
+        /* HEADER */
+        .prof-hub { background: var(--surface); border-left: 5px solid var(--ring); padding: 25px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; }
+        
+        /* PARTY SLOTS */
+        .party-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
         @media (min-width: 768px) { .party-bar { grid-template-columns: repeat(6, 1fr); } }
-        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 15px; border-radius: 4px; text-align: center; cursor: pointer; font-size: 10px; }
+        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 20px; border-radius: 6px; text-align: center; cursor: pointer; }
         .ball-slot.active { border: 2px solid var(--ring); background: rgba(0,242,255,0.05); }
 
-        /* PRIMARY ACTION BUTTONS */
-        #actionBtn { width: 100%; padding: 18px; font-weight: 900; letter-spacing: 2px; cursor: pointer; border: none; border-radius: 4px; margin-bottom: 20px; }
+        /* ACTION BUTTONS */
+        #actionBtn { width: 100%; padding: 25px; font-weight: 900; letter-spacing: 4px; cursor: pointer; border: none; border-radius: 4px; margin-bottom: 30px; font-size: 20px; }
         .btn-gold { background: linear-gradient(45deg, var(--gold), #b8860b); color: #000; }
         .btn-research { background: linear-gradient(45deg, var(--research), #228b22); color: #000; }
 
-        /* PANELS */
-        .main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        /* DATA GRID */
+        .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .main-grid { grid-template-columns: repeat(5, 1fr); } }
-        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 4px; }
-        .tag { font-size: 8px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 4px; }
+        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; border-bottom: 1px solid rgba(0, 242, 255, 0.1); }
 
-        /* MATRIX VIEW */
-        #matrixView { display: none; margin-top: 20px; }
-        .matrix { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
-        .type-n { font-size: 9px; padding: 10px 2px; text-align: center; background: #111; border-radius: 2px; border: 1px solid #222; }
-        .danger { color: var(--warn); border-color: var(--warn); box-shadow: inset 0 0 5px var(--warn); }
+        /* CHAMPION MODAL */
+        #champUplink { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
 <body onload="init()">
 
-<div id="champUplink" onclick="enterMatrix()">
-    <div class="champ-card">
-        <h2 id="cName" style="color:var(--gold); letter-spacing:5px;">CHAMPION UPLINK</h2>
-        <p id="cQuote" style="font-style:italic; margin: 25px 0; font-size: 18px; color: #fff;"></p>
-        <p style="font-size:10px; color:var(--sub);">[ TAP TO ANALYZE SYNERGY ]</p>
+<div id="bible">
+    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:15px; width:100%; margin-bottom:30px; font-weight:900;">CLOSE ENCYCLOPEDIA</button>
+    <h2 style="color:var(--ring); letter-spacing:5px;">THE BREEDING BIBLE</h2>
+    <div style="font-size:13px; line-height:1.8; color:var(--sub);">
+        <p><b style="color:var(--ring)">IVs (Individual Values):</b> The genetic DNA of a Pokémon. Ranges from 0 (No Good) to 31 (Best). Power Items can force these to pass.</p>
+        <p><b style="color:var(--ring)">Nature:</b> Affects stats by 10%. Use an <b style="color:#fff">Everstone</b> to pass this down from a parent 100% of the time.</p>
+        <p><b style="color:var(--ring)">Destiny Knot:</b> When held by either parent, the egg will inherit 5 random IVs from the combined pool of both parents.</p>
+        <p><b style="color:var(--ring)">Genesis Law:</b> No matter how powerful the parent, the egg will always hatch into the base evolution (e.g., Gengar produces Gastly).</p>
+        <hr style="border:0; border-top:1px solid #222; margin:20px 0;">
+        <p style="font-size:10px; opacity:0.5;">* This application is a fan-made simulation and is not affiliated with the Pokémon Company, Game Freak, or Nintendo.</p>
     </div>
 </div>
 
-<div id="bible">
-    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:10px; margin-bottom:20px; cursor:pointer; width:100%;">CLOSE ENCYCLOPEDIA</button>
-    <h3 style="color:var(--ring)">THE BREEDING BIBLE</h3>
-    <div style="font-size:12px; line-height:1.6; color:var(--sub);">
-        <p><b>IV (Individual Values):</b> Genetic potential from 0 to 31. Higher is stronger.</p>
-        <p><b>EV (Effort Values):</b> Stats gained through hard training.</p>
-        <p><b>HA (Hidden Ability):</b> Rare traits passed primarily from the mother.</p>
-        <p><b>Everstone:</b> Passes the parent's Nature 100% of the time.</p>
-        <p><b>Destiny Knot:</b> Passes 5 IVs from the combined pool of both parents.</p>
-        <p style="color:var(--warn); margin-top:20px;">*DISCLAIMER: This is a fan-tool. All Pokémon rights belong to Nintendo/Game Freak.</p>
+<div id="champUplink" onclick="enterMatrix()">
+    <div style="border:2px solid var(--gold); padding:40px; max-width:600px; background:#000;">
+        <h1 id="cName" style="color:var(--gold); letter-spacing:10px;">CHAMPION</h1>
+        <p id="cQuote" style="font-size:22px; color:#fff; margin:30px 0; font-style:italic;"></p>
+        <p style="font-size:12px; color:var(--sub);">[ TAP TO ENTER THE MATRIX ]</p>
     </div>
 </div>
 
 <div class="prof-hub">
-    <div id="pIcon" class="prof-img">?</div>
-    <div style="flex-grow:1;">
-        <span id="pTitle" style="font-size:9px; font-weight:900; color:var(--ring); letter-spacing:4px;">LAB COORDINATOR</span>
-        <div id="pTalk" style="font-size:13px; font-style:italic;">"Fill the Pokéballs. Then we'll see if the Champions approve."</div>
+    <div style="display:flex; align-items:center; gap:20px;">
+        <div class="prof-img">?</div>
+        <div>
+            <span style="font-size:10px; font-weight:900; color:var(--ring); letter-spacing:5px;">OMNI-LAB V6.1</span>
+            <div id="pTalk" style="font-style:italic; font-size:14px;">"The Bible is back where it belongs. Let's get to work."</div>
+        </div>
     </div>
-    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:8px 12px; font-size:10px; font-weight:900; cursor:pointer;">BIBLE</button>
+    <button class="bible-btn" onclick="toggleBible()">BREEDING BIBLE</button>
 </div>
 
 <div class="party-bar">
@@ -88,70 +96,53 @@
     <div class="ball-slot" onclick="setSlot(5)" id="s5">⚪<b>SLOT 6</b></div>
 </div>
 
-<input type="text" id="target" placeholder="e.g. 0 Atk Timid Gengar" onkeypress="if(event.key==='Enter') scan()">
+<input type="text" id="target" placeholder="0 Atk Timid Gengar" onkeypress="if(event.key==='Enter') scan()">
 
 <button id="actionBtn" class="btn-gold" onclick="handleAction()">CHALLENGE THE LEAGUE</button>
 
 <div id="researchView" class="main-grid">
     <div class="panel"><span class="tag">Logistics</span><div id="gear"></div></div>
-    <div class="panel"><span class="tag">Egg Hatch (Genesis)</span><div id="gen" style="text-align:center; font-size:22px; border:1px solid var(--ring); padding:15px; color:var(--ring);">---</div></div>
-    <div class="panel"><span class="tag">Nexus</span><div id="nexus"></div></div>
+    <div class="panel"><span class="tag">Genesis Law</span><div id="gen" style="text-align:center; font-size:28px; color:var(--ring); padding:20px;">---</div></div>
+    <div class="panel"><span class="tag">Nexus Tree</span><div id="nexus"></div></div>
     <div class="panel"><span class="tag">Biometrics</span><div id="stats"></div></div>
-    <div class="panel"><span class="tag">Movepool</span><div id="moves" style="height:300px; overflow-y:auto; font-size:11px;"></div></div>
+    <div class="panel"><span class="tag">Movepool</span><div id="moves" style="height:400px; overflow-y:auto; font-size:12px;"></div></div>
 </div>
 
-<div id="matrixView">
+<div id="matrixView" style="display:none;">
     <div class="panel">
-        <span class="tag">Synergy Matrix (Team Weaknesses)</span>
-        <div class="matrix" id="mGrid"></div>
+        <span class="tag">Champion Synergy Matrix</span>
+        <div id="mGrid" style="display:grid; grid-template-columns:repeat(6, 1fr); gap:10px;"></div>
     </div>
 </div>
 
 <script>
-    let activeSlot = 0;
-    let inChampionMode = false;
+    let activeSlot = 0; let inChampionMode = false;
     let team = Array(6).fill(null).map(() => ({ name: '', types: [], stats: [] }));
     const types = ['normal','fire','water','grass','electric','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
-    const champs = [
-        { n: "Cynthia", q: "The power you've cultivated... let's see how it holds against my Garchomp." },
-        { n: "Leon", q: "You're clearly champion-material. But can you handle a truly 'unbeatable' strategy?" },
-        { n: "Steven", q: "Your team has a rare luster. Let's see if their defenses are truly unbreakable." }
-    ];
+    const champs = [{n:"Cynthia", q:"Show me the strength of your bond!"}, {n:"Leon", q:"Let's have a champion-sized battle!"}, {n:"Steven", q:"I'm curious to see your team's luster."}];
 
     function toggleBible() { document.getElementById('bible').classList.toggle('open'); }
     function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
 
     function handleAction() {
-        if (!inChampionMode) {
+        if(!inChampionMode) {
             const c = champs[Math.floor(Math.random()*champs.length)];
             document.getElementById('cName').innerText = `CHAMPION ${c.n.toUpperCase()}`;
             document.getElementById('cQuote').innerText = `"${c.q}"`;
             document.getElementById('champUplink').style.display = 'flex';
-        } else {
-            toggleView(false);
-        }
+        } else { toggleView(false); }
     }
 
-    function enterMatrix() {
-        document.getElementById('champUplink').style.display = 'none';
-        toggleView(true);
-    }
+    function enterMatrix() { document.getElementById('champUplink').style.display='none'; toggleView(true); }
 
     function toggleView(showMatrix) {
         inChampionMode = showMatrix;
+        document.getElementById('researchView').style.display = showMatrix ? 'none' : 'grid';
+        document.getElementById('matrixView').style.display = showMatrix ? 'block' : 'none';
         const btn = document.getElementById('actionBtn');
-        if (showMatrix) {
-            document.getElementById('researchView').style.display = 'none';
-            document.getElementById('matrixView').style.display = 'block';
-            btn.innerText = "BACK TO RESEARCH";
-            btn.className = "btn-research";
-            updateMatrix();
-        } else {
-            document.getElementById('researchView').style.display = 'grid';
-            document.getElementById('matrixView').style.display = 'none';
-            btn.innerText = "CHALLENGE THE LEAGUE";
-            btn.className = "btn-gold";
-        }
+        btn.innerText = showMatrix ? "BACK TO RESEARCH" : "CHALLENGE THE LEAGUE";
+        btn.className = showMatrix ? "btn-research" : "btn-gold";
+        if(showMatrix) updateMatrix();
     }
 
     async function scan() {
@@ -159,41 +150,21 @@
         const list = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = list.results.find(p => q.includes(p.name))?.name;
         if(!t) return;
-
-        const [p, sp] = await Promise.all([
-            fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
-            fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
-        ]);
+        const [p, sp] = await Promise.all([fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()), fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())]);
         const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
-
         team[activeSlot] = { name: t, types: p.types.map(y => y.type.name), stats: p.stats };
         document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
-
-        // Egg Result
-        let chain = []; let curr = evo.chain;
-        while(curr) { chain.push(curr.species.name); curr = curr.evolves_to[0]; }
+        let chain = []; let curr = evo.chain; while(curr) { chain.push(curr.species.name); curr = curr.evolves_to[0]; }
         document.getElementById('gen').innerText = chain[0].toUpperCase();
-
-        // Stats Display
-        document.getElementById('stats').innerHTML = p.stats.map(s => `
-            <div style="font-size:10px; margin-bottom:5px;">${s.stat.name.toUpperCase()}: ${s.base_stat}</div>
-        `).join('');
-
-        // Nature/Item Logistics
+        document.getElementById('stats').innerHTML = p.stats.map(s => `<div style="font-size:11px;">${s.stat.name.toUpperCase()}: ${s.base_stat}</div>`).join('');
         const nature = q.match(/(timid|jolly|adamant|modest|bold|impish|calm|careful)/);
-        document.getElementById('gear').innerHTML = nature 
-            ? `<div style="background:rgba(0,242,255,0.1); padding:10px; font-size:11px; border-left:3px solid var(--ring);">💎 EVERSTONE<br>Put on the <span style="color:var(--ring);">${nature[0].toUpperCase()}</span> parent.</div>`
-            : `<div style="background:rgba(0,242,255,0.1); padding:10px; font-size:11px; border-left:3px solid var(--ring);">⛓️ DESTINY KNOT<br>Standard 5-IV mode.</div>`;
+        document.getElementById('gear').innerHTML = nature ? `<div style="background:rgba(0,242,255,0.1); padding:15px; font-size:12px; border-left:4px solid var(--ring);">💎 EVERSTONE: ${nature[0].toUpperCase()}</div>` : `<div style="background:rgba(0,242,255,0.1); padding:15px; font-size:12px; border-left:4px solid var(--ring);">⛓️ DESTINY KNOT</div>`;
     }
 
     function updateMatrix() {
         document.getElementById('mGrid').innerHTML = types.map(ty => {
-            let weaknessCount = 0;
-            team.forEach(p => {
-                if (p.name && p.types.includes('dragon') && ty === 'ice') weaknessCount++;
-                if (p.name && p.types.includes('grass') && ty === 'fire') weaknessCount++;
-            });
-            return `<div class="type-n ${weaknessCount > 1 ? 'danger' : ''}">${ty.slice(0,3).toUpperCase()}<br>${weaknessCount}</div>`;
+            let count = 0; team.forEach(p => { if(p.name && p.types.includes('dragon') && ty === 'ice') count++; });
+            return `<div style="font-size:11px; padding:15px; background:#111; border:1px solid ${count>1?'var(--warn)':'#222'}; text-align:center;">${ty.slice(0,3).toUpperCase()}<br>${count}</div>`;
         }).join('');
     }
 
