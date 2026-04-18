@@ -2,95 +2,104 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PokeBreed Pro | v1B.10 Ultimate</title>
+    <title>PokeBreed Pro | v1.25B Singularity</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --ring-glow: rgba(0, 242, 255, 0.4);
             --sub: #64748b; --warn: #ff0055; --surface: rgba(10, 15, 25, 0.98);
         }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; cursor: crosshair; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh; overflow-x: hidden; }
         
         /* ENCYCLOPEDIA SYSTEM */
-        #encyclopedia { position: fixed; top: 0; right: -100%; width: 450px; height: 100%; background: var(--surface); border-left: 1px solid var(--ring); z-index: 2000; transition: 0.5s; padding: 40px; overflow-y: auto; box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+        #encyclopedia { position: fixed; top: 0; right: -100%; width: 550px; height: 100%; background: var(--surface); border-left: 2px solid var(--ring); z-index: 3000; transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); padding: 50px; overflow-y: auto; box-shadow: -20px 0 50px rgba(0,0,0,0.8); }
         #encyclopedia.open { right: 0; }
-        .guide-section { margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
-        .guide-section h3 { color: var(--ring); font-size: 14px; letter-spacing: 2px; }
-        .guide-section p, .guide-section li { font-size: 12px; color: var(--sub); line-height: 1.6; }
+        .guide-section { margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 25px; }
+        .guide-section h3 { color: var(--ring); font-size: 16px; letter-spacing: 3px; text-transform: uppercase; }
+        .guide-section p, .guide-section li { font-size: 13px; color: var(--sub); line-height: 1.8; margin-bottom: 10px; }
+        .abbr-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 4px; }
+        .abbr-term { color: var(--ring); font-weight: 900; }
 
-        /* POP-UP SYSTEM */
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 3000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px); }
-        .modal { background: var(--surface); border: 1px solid var(--ring); padding: 40px; max-width: 600px; }
-        
-        /* MAIN INTERFACE */
-        .prof-bar { display: flex; align-items: center; gap: 20px; background: var(--surface); padding: 20px; border-left: 4px solid var(--ring); margin-bottom: 20px; }
+        /* INTERFACE ELEMENTS */
+        .prof-bar { display: flex; align-items: center; gap: 20px; background: var(--surface); padding: 25px; border-left: 5px solid var(--ring); margin-bottom: 30px; }
         .main-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; display: none; }
-        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 4px; }
-        .tag { font-size: 8px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; }
+        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 4px; }
+        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; display: block; }
         
-        input { width: 100%; background: #0b111e; border: 1px solid var(--ring); padding: 20px; color: var(--ring); text-align: center; font-size: 22px; outline: none; margin-bottom: 20px; }
-        .item-chip { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.1); padding: 10px; font-size: 11px; margin-bottom: 8px; }
-        .close-btn { position: absolute; top: 20px; left: 20px; background: none; border: 1px solid var(--warn); color: var(--warn); cursor: pointer; padding: 5px 10px; font-size: 10px; }
+        input { width: 100%; background: #0b111e; border: 1px solid var(--ring); padding: 25px; color: var(--ring); text-align: center; font-size: 26px; outline: none; margin-bottom: 30px; box-shadow: 0 0 20px rgba(0,242,255,0.05); }
+        .item-chip { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.1); padding: 12px; font-size: 11px; margin-bottom: 10px; }
+        
+        #overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:4000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(20px); }
     </style>
 </head>
 <body onload="startSequence()">
 
 <div id="encyclopedia">
-    <button class="close-btn" onclick="toggleGuide()">CLOSE [X]</button>
-    <h2 style="color:var(--ring); font-weight: 200; margin-top: 40px;">BREEDING <span style="font-weight:900;">ENCYCLOPEDIA</span></h2>
+    <button onclick="toggleGuide()" style="background:none; border:1px solid var(--warn); color:var(--warn); padding:8px 15px; cursor:pointer; font-size:10px; letter-spacing:2px;">CLOSE SYSTEM</button>
+    
+    <h1 style="color:var(--ring); font-weight: 200; margin-top: 40px; letter-spacing: 10px;">ENCYCLOPEDIA</h1>
     
     <div class="guide-section">
-        <h3>01. THE GENESIS LAW</h3>
-        <p>All Pokémon eggs hatch into the "Starting Stage" of their line. Even if you breed two Tyranitars, you will receive a <b>Larvitar</b>. Special cases (Babies) often require an Incense held by the parent.</p>
+        <h3>01. The Lexicon (Common Abbreviations)</h3>
+        <div class="abbr-grid">
+            <div class="abbr-term">IV</div><div class="abbr-desc">Individual Values. Genetic potential (0-31).</div>
+            <div class="abbr-term">EV</div><div class="abbr-desc">Effort Values. Stats gained through training.</div>
+            <div class="abbr-term">HA</div><div class="abbr-desc">Hidden Ability. Rare traits passed by the Mother.</div>
+            <div class="abbr-term">EM</div><div class="abbr-desc">Egg Move. Moves learned only via breeding.</div>
+            <div class="abbr-term">OHKO</div><div class="abbr-desc">One-Hit Knock Out.</div>
+        </div>
     </div>
 
     <div class="guide-section">
-        <h3>02. ESSENTIAL ITEMS</h3>
-        <ul>
-            <li><b>Everstone:</b> Guarantees the holder passes their Nature (e.g., Jolly, Modest) to the offspring.</li>
-            <li><b>Destiny Knot:</b> Randomly selects 5 IVs from <i>both</i> parents to pass down, instead of the usual 3.</li>
-            <li><b>Power Items:</b> (Bracer, Belt, etc.) Guarantees that specific stat is passed. Vital for forcing "0 Speed" or "0 Attack."</li>
-        </ul>
+        <h3>02. The Items of Power</h3>
+        <p><b>Everstone:</b> This is non-negotiable for Natures. If you have a Timid Ditto and want a Timid Charmander, the Ditto <i>must</i> hold this.</p>
+        <p><b>Destiny Knot:</b> In nature, only 3 IVs pass down. This item forces the parents to pass 5 IVs. This is how "6-IV" Pokémon are created.</p>
+        <p><b>Power Items:</b> (Bracer, Belt, Lens, Band, Anklet, Weight). Used in breeding to guarantee a specific IV passes. 100% success rate.</p>
     </div>
 
     <div class="guide-section">
-        <h3>03. EGG GROUPS & MOVES</h3>
-        <p>Pokémon can breed with any other species in their <b>Egg Group</b>. Female determines the species; Male determines the <b>Egg Moves</b>. This is how you get Dragon Dance on Tyranitar (Male Lapras + Female Tyranitar).</p>
+        <h3>03. The Mother's Law</h3>
+        <p>The <b>Species</b> is always determined by the Mother. If you breed a Female Tyranitar with a Male Lapras, the result is always a <b>Larvitar</b> (Genesis Law).</p>
     </div>
 
     <div class="guide-section">
-        <h3>04. THE MASUDA METHOD</h3>
-        <p>Breeding two Pokémon from different real-world languages (e.g., English Ditto + Japanese Charmander) significantly increases Shiny odds.</p>
+        <h3>04. Egg Groups</h3>
+        <p>Pokémon cannot breed with just anyone. They must share an <b>Egg Group</b> (e.g., "Monster," "Dragon," "Field"). Ditto is the "Universal Donor" and can breed with any group except "Undiscovered."</p>
+    </div>
+
+    <div class="guide-section">
+        <h3>05. The Masuda Method</h3>
+        <p>Named after Junichi Masuda. If parents are from different real-world regions (e.g., a French Ditto and an English Pikachu), the Shiny rate increases by roughly 500%.</p>
     </div>
 </div>
 
 <div id="overlay">
-    <div class="modal">
-        <h2 style="color:var(--ring);">LEGAL NOTICE</h2>
-        <p style="color:var(--warn); font-weight:900;">[FAN-MADE CONTENT]</p>
-        <p>This project is an independent research tool. <b>NOT affiliated with Nintendo, Game Freak, or The Pokémon Company.</b></p>
-        <button onclick="document.getElementById('overlay').style.display='none'" style="width:100%; background:var(--ring); border:none; padding:15px; font-weight:900; cursor:pointer;">I UNDERSTAND</button>
+    <div style="background:var(--surface); padding:50px; border:1px solid var(--ring); max-width:600px; text-align:center;">
+        <h2 style="letter-spacing:5px; color:var(--ring);">SYSTEM ACCESS</h2>
+        <p style="color:var(--warn); font-weight:900;">FAN-MADE PROJECT</p>
+        <p style="font-size:12px; color:var(--sub);">This tool is not affiliated with Nintendo, Game Freak, or The Pokémon Company. It is a simulated research archive for the breeding community.</p>
+        <button class="btn" onclick="document.getElementById('overlay').style.display='none'" style="width:100%; background:var(--ring); padding:20px; border:none; font-weight:900; margin-top:20px; cursor:pointer;">I UNDERSTAND</button>
     </div>
 </div>
 
 <div class="container">
     <div class="prof-bar">
-        <div id="profIcon" style="width:50px; height:50px; border-radius:50%; border:2px solid var(--ring); display:flex; align-items:center; justify-content:center; font-weight:900;">?</div>
+        <div id="profIcon" style="width:60px; height:60px; border-radius:50%; border:2px solid var(--ring); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:20px;">?</div>
         <div>
-            <span id="profTitle" style="font-size: 9px; font-weight: 900; color: var(--sub); letter-spacing: 3px;">UPLINK</span>
-            <div id="profTalk" style="font-size: 14px; font-style: italic;">"Accuracy is the researcher's greatest tool."</div>
+            <span id="profTitle" style="font-size: 10px; font-weight: 900; color: var(--sub); letter-spacing: 5px;">GENETIC OVERSEER</span>
+            <div id="profTalk" style="font-size: 16px; font-style: italic;">"Choose a specimen. Let us begin the 250 millionth simulation."</div>
         </div>
-        <button onclick="toggleGuide()" style="margin-left: auto; background: var(--ring); color: var(--void); border: none; padding: 10px 20px; font-weight: 900; cursor: pointer; font-size: 11px;">OPEN ENCYCLOPEDIA</button>
+        <button onclick="toggleGuide()" style="margin-left:auto; background:var(--ring); color:var(--void); border:none; padding:12px 25px; font-weight:900; cursor:pointer;">BREEDING ENCYCLOPEDIA</button>
     </div>
 
-    <input type="text" id="target" placeholder="DIRECTIVE (e.g. '0 Spe Quiet Munchlax')" onkeypress="if(event.key==='Enter') execute()">
+    <input type="text" id="target" placeholder="INITIATE SCAN..." onkeypress="if(event.key==='Enter') execute()">
 
     <div id="ui" class="main-grid">
         <div class="panel"><span class="tag">01. Logistics</span><div id="gear"></div></div>
-        <div class="panel"><span class="tag">02. Genesis Form</span><div id="gen" style="text-align:center; padding:20px; border:1px solid var(--ring);">---</div></div>
+        <div class="panel"><span class="tag">02. Genesis Form</span><div id="genResult" style="text-align:center; padding:30px; border:1px solid var(--ring); font-size:22px; font-weight:200;">---</div></div>
         <div class="panel"><span class="tag">03. Nexus</span><div id="nexus"></div></div>
         <div class="panel"><span class="tag">04. Biometrics</span><div id="stats"></div></div>
-        <div class="panel"><span class="tag">05. Timeline</span><div id="moves" style="height:350px; overflow-y:auto; font-size:12px;"></div></div>
+        <div class="panel"><span class="tag">05. Timeline</span><div id="moves" style="height:400px; overflow-y:auto; font-size:12px;"></div></div>
     </div>
 </div>
 
@@ -109,16 +118,27 @@
         ]);
         const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
 
+        // Dynamic Professor Logic
+        const gen = sp.generation.name;
+        let prof = {n: 'OAK', t: 'A classic choice! Let us look at the genetics.'};
+        if(gen.includes('iv')) prof = {n: 'ROWAN', t: 'I tolerate no errors. Follow the items exactly.'};
+        if(gen.includes('iii')) prof = {n: 'BIRCH', t: 'Looking for a wild-style build? I can help!'};
+        
+        document.getElementById('profIcon').innerText = prof.n[0];
+        document.getElementById('profTitle').innerText = `PROFESSOR ${prof.n} UPLINK`;
+        document.getElementById('profTalk').innerText = `"${prof.t}"`;
+
         document.getElementById('ui').style.display = 'grid';
+        
         let chain = []; let curr = evo.chain;
         while(curr) { chain.push(curr.species.name); curr = curr.evolves_to[0]; }
         
-        document.getElementById('gen').innerText = chain[0].toUpperCase();
+        document.getElementById('genResult').innerText = chain[0].toUpperCase();
         document.getElementById('nexus').innerHTML = chain.map(n => `<div style="padding:10px; border:1px solid ${n===t?'var(--ring)':'#222'}; text-align:center; font-size:10px; margin-bottom:5px;">${n.toUpperCase()}</div>`).join('');
-        document.getElementById('gear').innerHTML = `<div class="item-chip">💎 EVERSTONE</div><div class="item-chip">⛓️ DESTINY KNOT</div>`;
-        document.getElementById('stats').innerHTML = p.stats.map(s => `<div style="margin-bottom:10px; font-size:10px;"><span>${s.stat.name}</span><div style="height:2px; background:#111;"><div style="height:100%; background:var(--ring); width:${(s.base_stat/255)*100}%"></div></div></div>`).join('');
+        document.getElementById('gear').innerHTML = `<div class="item-chip">💎 EVERSTONE (Nature)</div><div class="item-chip">⛓️ DESTINY KNOT (IVs)</div>`;
+        document.getElementById('stats').innerHTML = p.stats.map(s => `<div style="margin-bottom:12px;"><div style="display:flex; justify-content:space-between; font-size:10px;"><span>${s.stat.name}</span><span>${s.base_stat}</span></div><div style="height:2px; background:#111;"><div style="height:100%; background:var(--ring); width:${(s.base_stat/255)*100}%"></div></div></div>`).join('');
         const moves = p.moves.map(m => ({name: m.move.name, lvl: m.version_group_details[0].level_learned_at})).sort((a,b)=>a.lvl-b.lvl);
-        document.getElementById('moves').innerHTML = moves.map(m => `<div style="padding:5px 0; border-bottom:1px solid #111;">Lv.${m.lvl} ${m.name}</div>`).join('');
+        document.getElementById('moves').innerHTML = moves.map(m => `<div style="padding:8px 0; border-bottom:1px solid #111;">Lv.${m.lvl} ${m.name.toUpperCase()}</div>`).join('');
     }
 </script>
 </body>
