@@ -3,139 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | v60M Full Apex</title>
+    <title>PokeBreed Pro | Regional v95M</title>
     <style>
         :root { 
             --void: #020408; --ring: #00f2ff; --ring-glow: rgba(0, 242, 255, 0.3);
-            --sub: #475569; --warn: #ff0055; --surface: rgba(15, 23, 42, 0.95);
+            --sub: #475569; --warn: #ff0055; --surface: rgba(15, 23, 42, 0.98);
         }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; cursor: crosshair; }
         body { 
             background: var(--void); background-image: radial-gradient(circle at 50% 0%, #0f172a 0%, var(--void) 90%);
-            color: #f1f5f9; margin: 0; padding: 40px 20px; min-height: 100vh;
+            color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh;
         }
-        .container { max-width: 1300px; margin: 0 auto; }
+        .container { max-width: 1500px; margin: 0 auto; }
 
-        /* SIX BALL STORAGE */
-        .rack { display: flex; gap: 15px; margin-bottom: 50px; justify-content: center; }
-        .ball { 
-            flex: 1; max-width: 180px; background: var(--surface); border: 1px solid rgba(0, 242, 255, 0.1);
-            padding: 20px; border-radius: 4px; text-align: center; cursor: pointer; transition: 0.3s;
+        /* MULTI-PROFESSOR HUD */
+        .prof-header { 
+            display: flex; align-items: center; gap: 30px; background: var(--surface);
+            padding: 30px; border-left: 4px solid var(--ring); margin-bottom: 40px;
         }
-        .ball.active { border-color: var(--ring); box-shadow: 0 0 25px var(--ring-glow); background: rgba(0, 242, 255, 0.05); }
-        .ball-name { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+        .prof-avatar { width: 80px; height: 80px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--ring); border: 2px solid var(--ring); }
+        
+        .rack { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; }
+        .ball { flex: 1; background: var(--surface); border: 1px solid rgba(0, 242, 255, 0.1); padding: 15px; border-radius: 4px; text-align: center; cursor: pointer; }
+        .ball.active { border-color: var(--ring); box-shadow: 0 0 20px var(--ring-glow); }
 
-        /* SEARCH CONSOLE */
-        .console-wrap { max-width: 800px; margin: 0 auto 50px; }
-        input { 
-            width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(0,242,255,0.2);
-            padding: 20px; color: var(--ring); font-size: 20px; font-family: 'Fira Code', monospace; outline: none; text-align: center;
-        }
-        input:focus { border-bottom-color: var(--ring); }
+        /* THE TRIPLE PANEL GRID */
+        .grid { display: grid; grid-template-columns: 1fr 1.2fr 0.8fr; gap: 25px; display: none; }
+        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 30px; position: relative; }
+        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; display: block; }
 
-        /* THE REPRIMAND */
-        .breach { 
-            background: rgba(255, 0, 85, 0.05); border: 1px solid var(--warn); 
-            padding: 25px; margin-bottom: 40px; display: none;
-        }
+        /* MOVE SCROLLER */
+        .move-list { height: 400px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
+        .move-row { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; font-size: 13px; }
+        .legacy { color: var(--warn); font-size: 8px; font-weight: 900; border: 1px solid var(--warn); padding: 1px 4px; border-radius: 2px; }
 
-        /* GRID SYSTEM */
-        .display { display: grid; grid-template-columns: 1fr; gap: 30px; display: none; }
-        @media (min-width: 1100px) { .display { grid-template-columns: 1.4fr 0.6fr; } }
-
-        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 45px; border-radius: 2px; }
-        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 25px; display: block; }
-
-        /* DATA VISUALS */
-        .stat-line { margin-bottom: 22px; }
-        .stat-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--sub); }
-        .stat-bar-bg { height: 2px; background: rgba(255,255,255,0.05); margin-top: 10px; }
-        .stat-bar-fill { height: 100%; background: var(--ring); box-shadow: 0 0 15px var(--ring); transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .delta { font-size: 10px; margin-left: 5px; font-weight: 900; }
-        .plus { color: #22c55e; } .minus { color: var(--warn); }
-
-        /* EQUIPMENT MODULE */
-        .gear-card { 
-            background: rgba(0, 242, 255, 0.03); border: 1px solid var(--ring-dim); 
-            padding: 20px; margin-top: 20px; border-left: 3px solid var(--ring);
-        }
-        .gear-title { font-size: 11px; font-weight: 900; color: var(--ring); letter-spacing: 2px; }
-        .gear-desc { font-size: 12px; color: var(--sub); margin-top: 5px; line-height: 1.5; }
+        input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--ring); padding: 15px; color: var(--ring); text-align: center; font-size: 20px; outline: none; margin-bottom: 40px; font-family: 'Fira Code', monospace; }
     </style>
 </head>
 <body onload="init()">
 
 <div class="container">
-    <header style="text-align: center; margin-bottom: 60px;">
-        <span style="font-size: 10px; letter-spacing: 10px; color: var(--sub); font-weight: 900;">GENETIC CALIBRATION SUITE</span>
-        <h1 style="margin: 10px 0; font-size: 32px; font-weight: 200; letter-spacing: 16px;">OBSIDIAN <span style="color:var(--ring); font-weight: 900;">CORE</span></h1>
-    </header>
+    <div class="prof-header" id="profHUD">
+        <div class="prof-avatar" id="profIcon">?</div>
+        <div>
+            <span id="profName" style="font-size: 10px; font-weight: 900; color: var(--sub); letter-spacing: 4px;">WAITING FOR INPUT...</span>
+            <div id="profTalk" style="font-size: 16px; margin-top: 5px; line-height: 1.5; font-style: italic; max-width: 800px;">"Science requires data. Provide a specimen name to begin the regional link."</div>
+        </div>
+    </div>
 
     <div class="rack" id="rack">
         <script>
-            for(let i=0; i<6; i++) document.write(`<div class="ball" id="b${i}" onclick="sel(${i})"><span class="ball-name" id="n${i}">unassigned</span><br><span style="font-size:7px; color:var(--sub); letter-spacing:1px; margin-top:5px; display:block;">CHAMBER_0${i+1}</span></div>`);
+            for(let i=0; i<6; i++) document.write(`<div class="ball" id="b${i}" onclick="sel(${i})"><span style="font-size:10px; font-weight:900;" id="n${i}">EMPTY</span></div>`);
         </script>
     </div>
 
-    <div class="console-wrap">
-        <input type="text" id="inp" placeholder="SPECIMEN DIRECTIVE (e.g. '0 Atk Modest Sylveon')..." onkeypress="if(event.key==='Enter') execute()">
-    </div>
+    <input type="text" id="inp" placeholder="Target Specimen (e.g. 'Jolly Dragonite')" onkeypress="if(event.key==='Enter') execute()">
 
-    <div id="breach" class="breach">
-        <span style="color:var(--warn); font-size:10px; font-weight:900; letter-spacing:4px;">SYSTEM BREACH DETECTED</span>
-        <div id="rowanTalk" style="margin-top: 15px; font-size: 16px; line-height: 1.6; color: #fff;"></div>
-    </div>
-
-    <div id="display" class="display">
+    <div id="display" class="grid">
         <div class="panel">
-            <span class="tag">Biological Abstract</span>
-            <h2 id="name" style="font-size: 52px; font-weight: 200; margin: 0; letter-spacing: -2px;"></h2>
-            <p id="bio" style="color: var(--sub); line-height: 1.8; margin: 35px 0; font-size: 15px;"></p>
-            
-            <span class="tag">Logistics & Equipment</span>
-            <div id="gearBox"></div>
+            <span class="tag">I. Inheritance Protocol</span>
+            <div style="background:rgba(0,0,0,0.2); padding:20px; border:1px dashed var(--sub); text-align:center; margin-bottom:20px;">
+                <div style="font-size:10px; color:var(--ring); font-weight:900;">PARENT A (Everstone)</div>
+                <div style="font-size:18px; margin:10px 0;">✚</div>
+                <div style="font-size:10px; color:var(--ring); font-weight:900;">PARENT B (Destiny Knot)</div>
+            </div>
+            <div id="inheritanceSteps" style="font-size:13px; color:var(--sub); line-height:1.8;"></div>
         </div>
 
-        <div class="side">
-            <div class="panel">
-                <span class="tag">Performance Metrics</span>
-                <div id="stats"></div>
-                
-                <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);">
-                    <span class="tag">Laboratory Roadmap</span>
-                    <div id="roadmap" style="font-size: 12px; color: var(--sub); line-height: 2.2; font-family: 'Fira Code', monospace;"></div>
-                    <button onclick="commit()" style="width:100%; margin-top: 30px; background: var(--ring); color: var(--void); border: none; padding: 20px; font-weight: 900; font-size: 11px; text-transform: uppercase; cursor: pointer; letter-spacing: 2px;">Commit Specimen</button>
-                </div>
+        <div class="panel">
+            <span class="tag">II. Specimen Biometrics</span>
+            <h2 id="name" style="font-size: 40px; margin: 0; font-weight: 200;"></h2>
+            <div id="stats" style="margin: 30px 0;"></div>
+            <div id="errorLog" style="padding:20px; border-left:2px solid var(--warn); background:rgba(255,0,85,0.05); display:none;">
+                <span style="font-size:9px; font-weight:900; color:var(--warn);">SYSTEM DISCREPANCY</span>
+                <p id="errorText" style="font-size:13px; margin-top:5px;"></p>
             </div>
+        </div>
+
+        <div class="panel">
+            <span class="tag">III. Developmental Movepool</span>
+            <div class="move-list" id="moveList"></div>
+            <div style="margin-top:20px; font-size:10px; color:var(--sub);">*LEGACY TAG: Indicates move is lost upon evolution.</div>
         </div>
     </div>
 </div>
 
 <script>
-    let activeBall = 0; let cur = null;
+    let active = 0; let cur = null;
     const clean = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+    const regionData = {
+        'kanto': { prof: 'Oak', color: '#22c55e', talk: 'This Pokémon has been a staple of my research for years! Treat it with kindness and it will serve you well.' },
+        'johto': { prof: 'Elm', color: '#eab308', talk: 'Ah, a rare discovery! Breeding these requires immense patience. Focus on the evolutionary timing!' },
+        'hoenn': { prof: 'Birch', color: '#3b82f6', talk: 'From the wilds to the lab! This specimen is known for its rugged adaptability. Check the moves!' },
+        'sinnoh': { prof: 'Rowan', color: '#00f2ff', talk: 'Evolution is a profound mystery. If you rush this, you are no better than a common collector. PAY ATTENTION.' },
+        'kalos': { prof: 'Sycamore', color: '#ec4899', talk: 'Magnificent! Its potential for beauty and power is limitless. Let us perfect its genetic elegance.' }
+    };
 
     function init() {
         for(let i=0; i<6; i++) {
-            const d = localStorage.getItem('apex60m_'+i);
+            const d = localStorage.getItem('v95_'+i);
             if(d) document.getElementById('n'+i).innerText = JSON.parse(d).name;
         }
         sel(0);
     }
 
     function sel(i) {
-        activeBall = i;
+        active = i;
         document.querySelectorAll('.ball').forEach(b => b.classList.remove('active'));
         document.getElementById('b'+i).classList.add('active');
-        const d = localStorage.getItem('apex60m_'+i);
+        const d = localStorage.getItem('v95_'+i);
         if(d) render(JSON.parse(d));
         else document.getElementById('display').style.display = 'none';
-    }
-
-    function commit() {
-        if(!cur) return;
-        localStorage.setItem('apex60m_'+activeBall, JSON.stringify(cur));
-        document.getElementById('n'+activeBall).innerText = cur.name;
     }
 
     async function execute() {
@@ -149,55 +128,59 @@
             fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
         ]);
 
-        const bio = sp.flavor_text_entries.find(e => e.language.name === 'en').flavor_text.replace(/\f/g, ' ');
-        let talk = "";
-        const isSpec = p.stats[3].base_stat > p.stats[1].base_stat;
-        const nature = q.match(/(modest|timid|adamant|jolly)/);
-
-        if (nature && (nature[0] === 'adamant') && isSpec) {
-            talk = `This is unacceptable. ${clean(t)} is a Special Specialist. Forcing an Adamant nature on it is biological sabotage. Start over!`;
+        const reg = sp.generation.name.split('-')[1] || 'kanto';
+        const moves = p.moves.map(m => ({name: m.move.name, lvl: m.version_group_details[0].level_learned_at})).sort((a,b)=>a.lvl-b.lvl);
+        
+        // ROWAN INTERVENTION
+        let err = "";
+        if (q.includes('adamant') && p.stats[3].base_stat > p.stats[1].base_stat) {
+            err = "Rowan here. You are trying to lock a Physical nature into a Special Attacker. This is academic negligence. Fix it.";
         }
 
-        // GEAR LOGIC
-        let gear = { name: "DESTINY KNOT", desc: "Locks 5 inherited genetic traits (IVs) from the parental line." };
-        if (nature) gear = { name: "EVERSTONE", desc: "Locks the Specimen's Personality (Nature) to the next generation." };
-        if (q.includes('0')) gear = { name: "POWER WEIGHT/ANKLET", desc: "Forces the specific synchronization of a low-potential stat." };
-
-        cur = { name: clean(t), stats: p.stats, bio, gear, talk, q };
+        cur = { name: clean(t), stats: p.stats, moves, err, q, reg: regionData[reg] || regionData['kanto'] };
         render(cur);
     }
 
     function render(d) {
         document.getElementById('display').style.display = 'grid';
-        const b = document.getElementById('breach');
-        if (d.talk) { b.style.display = 'block'; document.getElementById('rowanTalk').innerText = d.talk; }
-        else { b.style.display = 'none'; }
+        document.getElementById('profName').innerText = `PROFESSOR ${d.reg.prof.toUpperCase()} // ${d.reg.prof === 'Rowan' ? 'URGENT' : 'ADVISORY'}`;
+        document.getElementById('profTalk').innerText = d.reg.talk;
+        document.getElementById('profIcon').innerText = d.reg.prof[0];
+        document.getElementById('profIcon').style.borderColor = d.reg.color;
 
         document.getElementById('name').innerText = d.name;
-        document.getElementById('bio').innerText = d.bio;
-        document.getElementById('gearBox').innerHTML = `
-            <div class="gear-card">
-                <div class="gear-title">REQUIRED GEAR: ${d.gear.name}</div>
-                <div class="gear-desc">${d.gear.desc}</div>
-            </div>`;
+        const errBox = document.getElementById('errorLog');
+        if (d.err) { errBox.style.display = 'block'; document.getElementById('errorText').innerText = d.err; }
+        else { errBox.style.display = 'none'; }
 
-        const sMap = {'hp':'HP', 'attack':'Attack', 'defense':'Defense', 'special-attack':'Special Attack', 'special-defense':'Special Defense', 'speed':'Speed'};
-        document.getElementById('stats').innerHTML = d.stats.map((st, i) => {
-            let dlt = "";
-            if(d.q.includes('modest')) { if(i===3) dlt='<span class="delta plus">(+)</span>'; if(i===1) dlt='<span class="delta minus">(-)</span>'; }
-            if(d.q.includes('adamant')) { if(i===1) dlt='<span class="delta plus">(+)</span>'; if(i===3) dlt='<span class="delta minus">(-)</span>'; }
-            return `
-            <div class="stat-line">
-                <div class="stat-header"><span>${sMap[st.stat.name]} ${dlt}</span><span>${st.base_stat}</span></div>
-                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(st.base_stat/255)*100}%"></div></div>
-            </div>`;
-        }).join('');
-
-        document.getElementById('roadmap').innerHTML = `
-            > SPECIMEN: ${d.name.toUpperCase()}<br>
-            > GEAR_CHECK: ${d.gear.name}<br>
-            > STATUS: ${d.talk ? 'ERROR_REJECTED' : 'SYNCHRONIZED'}
+        document.getElementById('inheritanceSteps').innerHTML = `
+            1. Secure Parent A with <b>${d.q.split(' ')[0]}</b> nature.<br>
+            2. Apply <b>Everstone</b> to Parent A.<br>
+            3. Apply <b>Destiny Knot</b> to Parent B.<br>
+            4. Incubate <b>${d.name}</b> DNA.
         `;
+
+        document.getElementById('stats').innerHTML = d.stats.map(st => `
+            <div style="margin-bottom:15px;">
+                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:900; color:var(--sub);">
+                    <span>${st.stat.name.toUpperCase()}</span><span>${st.base_stat}</span>
+                </div>
+                <div style="height:2px; background:rgba(255,255,255,0.05); margin-top:5px;">
+                    <div style="height:100%; background:var(--ring); width:${(st.base_stat/255)*100}%"></div>
+                </div>
+            </div>`).join('');
+
+        document.getElementById('moveList').innerHTML = d.moves.map(m => `
+            <div class="move-row">
+                <span><b>Lv.${m.lvl}</b> ${clean(m.name)}</span>
+                ${m.lvl > 35 ? '<span class="legacy">LEGACY</span>' : ''}
+            </div>`).join('');
+    }
+
+    function save() {
+        if(!cur) return;
+        localStorage.setItem('v95_'+active, JSON.stringify(cur));
+        document.getElementById('n'+active).innerText = cur.name;
     }
 </script>
 </body>
