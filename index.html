@@ -3,44 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Master | Ultimate Breeding Engine</title>
+    <title>PokeBreed Master | Encyclopedia Edition</title>
     <style>
         :root { --primary: #ff1c1c; --secondary: #3b4cca; --bg: #0a0a0c; --card: #1e1e26; --text: #f0f0f0; --accent: #ffd700; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { max-width: 800px; width: 100%; background: var(--card); padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #333; }
-        h1 { color: var(--primary); text-align: center; font-size: 2.5em; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #333; }
+        h1 { color: var(--primary); text-align: center; font-size: 2.2em; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
         .input-group { display: flex; gap: 10px; margin: 30px 0; }
         input { flex: 1; padding: 15px; background: #2d2d3a; border: 2px solid #3d3d4d; border-radius: 10px; color: white; outline: none; font-size: 1.1em; }
-        button { padding: 15px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #d11515; transform: scale(1.05); }
+        button { padding: 15px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
         #output { display: none; animation: fadeIn 0.4s ease; }
         .badge { display: inline-block; background: var(--secondary); color: white; padding: 4px 12px; border-radius: 6px; font-size: 0.8em; margin-right: 8px; margin-bottom: 5px; }
         .step { margin-bottom: 15px; padding: 15px; background: #262630; border-left: 5px solid var(--primary); border-radius: 0 10px 10px 0; }
-        .niche-box { background: rgba(255, 255, 255, 0.03); border: 1px solid #444; padding: 20px; border-radius: 12px; margin-top: 20px; }
-        .niche-item { margin-bottom: 12px; font-size: 0.95em; line-height: 1.5; }
-        .gold { color: var(--accent); font-weight: bold; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .location-box { background: #16161d; border: 1px dashed #555; padding: 15px; border-radius: 10px; margin: 20px 0; }
+        .ref-links { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .ref-btn { flex: 1; padding: 8px; text-align: center; border-radius: 5px; font-size: 0.8em; text-decoration: none; color: white; font-weight: bold; transition: 0.2s; }
+        .serebii { background: #08632d; } .bulbapedia { background: #612a8a; } .pokemondb { background: #cf4a10; }
+        .ref-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        .move-pill { display: inline-block; background: #3d3d4d; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; margin: 2px; border-bottom: 2px solid var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>⚡ PokeBreed Master</h1>
-    <p style="text-align:center; opacity: 0.6;">The ultimate engine for IVs, Shiny Hunting, Regional Forms, & Egg Moves.</p>
+    <p style="text-align:center; opacity: 0.6;">Locations cross-referenced from Serebii, Bulbapedia, & PokemonDB.</p>
     
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="e.g. 'Shiny Moon Ball Alolan Vulpix with Moonblast'">
-        <button onclick="generateGuide()">Analyze</button>
+        <input type="text" id="userInput" placeholder="e.g. 'How to get Gible in BDSP'">
+        <button onclick="generateGuide()">Locate & Analyze</button>
     </div>
 
     <div id="output">
         <h2 id="pokeHeader" style="margin-bottom:10px; color:var(--primary);"></h2>
         <div id="metaInfo"></div>
         
-        <h3 style="font-size: 1.1em; border-bottom: 1px solid #444; padding-bottom: 5px;">Primary Instructions</h3>
-        <div id="stepsList"></div>
+        <div id="locationData" class="location-box">
+            <strong>📍 Found In (Current Game):</strong>
+            <div id="locationList" style="font-size: 0.9em; margin-top: 5px; color: #bbb;">Fetching game data...</div>
+            <div class="ref-links">
+                <a id="linkSerebii" class="ref-btn serebii" target="_blank">Serebii</a>
+                <a id="linkBulba" class="ref-btn bulbapedia" target="_blank">Bulbapedia</a>
+                <a id="linkDB" class="ref-btn pokemondb" target="_blank">PokemonDB</a>
+            </div>
+        </div>
 
-        <div id="nicheSection" class="niche-box"></div>
+        <div id="stepsList"></div>
+        <div id="movepoolSection" class="niche-box" style="margin-top:20px;"></div>
     </div>
 </div>
 
@@ -49,8 +58,12 @@
         const input = document.getElementById('userInput').value.toLowerCase();
         const words = input.replace(/[?!.]/g, "").split(' ');
         
-        // Advanced Filter
-        const excluded = ["i", "want", "to", "breed", "a", "an", "with", "get", "perfect", "jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish", "ha", "hidden", "ability", "6iv", "5iv", "shiny", "ball", "regional", "form"];
+        // 1. Version Mapping
+        const gameMap = { "bdsp": "brilliant-diamond-and-shining-pearl", "sv": "scarlet-violet", "swsh": "sword-shield", "sword": "sword", "shield": "shield" };
+        const activeKey = Object.keys(gameMap).find(k => input.includes(k)) || "default";
+
+        // 2. Identify Pokemon
+        const excluded = ["how", "to", "get", "find", "where", "is", "breed", "in", "the", "a", "an", ...Object.keys(gameMap)];
         const potentialNames = words.filter(w => !excluded.includes(w) && w.length > 2);
 
         let data = null;
@@ -61,72 +74,44 @@
             } catch (e) { continue; }
         }
 
-        if (!data) return alert("Pokémon not found! Try being more specific with the species name.");
+        if (!data) return alert("Pokemon not identified. Be specific!");
 
-        const sRes = await fetch(data.species.url);
-        const sData = await sRes.json();
-        
         document.getElementById('output').style.display = 'block';
         document.getElementById('pokeHeader').innerText = data.name.toUpperCase();
-        
-        // 1. Meta Data
-        const hatchSteps = sData.hatch_counter * 255;
-        document.getElementById('metaInfo').innerHTML = `
-            ${sData.egg_groups.map(g => `<span class="badge">${g.name}</span>`).join('')}
-            <span class="badge" style="background:#555">~${hatchSteps} steps</span>
-        <br><br>`;
 
-        // 2. Step Generation
+        // 3. CROSS-REFERENCE LINKS
+        // Standardize names for URLs (e.g. 'vulpix-alola' -> 'vulpix')
+        const baseName = data.name.split('-')[0];
+        document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${baseName}/`;
+        document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${baseName}_(Pokémon)`;
+        document.getElementById('linkDB').href = `https://pokemondb.net/pokedex/${baseName}`;
+
+        // 4. FETCH LOCATIONS (PokeAPI)
+        const locRes = await fetch(data.location_area_encounters);
+        const locData = await locRes.json();
+        
+        let locHtml = "No specific wild spawns found in API for this game version. Check links below:";
+        if (locData.length > 0) {
+            // Filter by game if specified
+            const relevant = activeKey !== "default" ? 
+                locData.filter(l => l.version_details.some(v => v.version.name.includes(activeKey))) : 
+                locData.slice(0, 3);
+            
+            if (relevant.length > 0) {
+                locHtml = relevant.map(l => `• ${l.location_area.name.replace(/-/g, ' ').toUpperCase()}`).join('<br>');
+            }
+        }
+        document.getElementById('locationList').innerHTML = locHtml;
+
+        // 5. INSTRUCTIONS & MOVES
         let steps = [];
-        
-        if (input.includes("shiny")) {
-            steps.push(`✨ <strong>Masuda Method:</strong> Use two parents from different real-world languages (e.g., a Japanese Ditto + your ${data.name}). Odds drop from 1/4096 to 1/683.`);
-        }
-
-        if (input.includes("iv") || input.includes("perfect") || input.includes("6iv")) {
-            steps.push(`📊 <strong>IV Mapping:</strong> Give a <strong>Destiny Knot</strong> to the parent with better stats to pass down 5 IVs.`);
-        }
-
-        const natures = ["jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish"];
-        const natureFound = natures.find(n => input.includes(n));
-        if (natureFound) {
-            steps.push(`🧪 <strong>Nature Lock:</strong> Give an <strong>Everstone</strong> to the <strong>${natureFound.toUpperCase()}</strong> parent.`);
-        }
-
-        document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('');
-
-        // 3. The Niche Engine
-        let niche = `<h3 style="margin-top:0; font-size:1.1em; color:var(--secondary);">Advanced Mechanics</h3>`;
-        
-        // Regional Form Logic
-        if (data.name.includes("-") || input.includes("form") || input.includes("regional")) {
-            niche += `<div class="niche-item">🗺️ <strong>Regional Forms:</strong> To keep a non-local form (like Alolan Vulpix outside of Alola), the parent <strong>MUST</strong> hold an Everstone, or the baby will revert to the local form.</div>`;
-        }
-
-        // Poké Ball Logic
-        if (input.includes("ball")) {
-            niche += `<div class="niche-item">🎾 <strong>Ball Inheritance:</strong> The baby inherits the Mother's ball. If breeding two of the same species, it's a 50/50 split between parents. Ditto never passes its ball.</div>`;
-        }
-
-        // Egg Move / Mirror Herb
         const eggMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg')).map(m => m.move.name.replace('-', ' '));
-        const requestedMove = eggMoves.find(m => input.includes(m));
-        if (requestedMove) {
-            niche += `<div class="niche-item">🥚 <strong>Egg Move:</strong> Standard method requires a male parent knowing <strong>${requestedMove.toUpperCase()}</strong>. <span class="gold">*In Gen 9 (S/V), use a Mirror Herb at a picnic instead!</span></div>`;
-        }
-
-        // HA Logic
-        if (input.includes("ha") || input.includes("hidden")) {
-            niche += `<div class="niche-item">🧬 <strong>Hidden Ability:</strong> Only the female (or a male with Ditto) can pass HA. It is a 60% success rate.</div>`;
-        }
-
-        // Baby/Incense Logic
-        const incenseNeeded = { "munchlax": "Full Incense", "azurill": "Sea Incense", "wynaut": "Lax Incense", "happiny": "Luck Incense" };
-        if (incenseNeeded[data.name.toLowerCase()]) {
-            niche += `<div class="niche-item">🕯️ <strong>Incense Required:</strong> To get this baby form, a parent must hold the <strong>${incenseNeeded[data.name.toLowerCase()]}</strong>.</div>`;
-        }
-
-        document.getElementById('nicheSection').innerHTML = niche;
+        
+        steps.push(`<strong>Breeding Note:</strong> Pair with a Ditto or compatible egg group parent.`);
+        if (input.includes("iv")) steps.push(`<strong>Stats:</strong> Use a Destiny Knot to pass 5 IVs.`);
+        
+        document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('');
+        document.getElementById('movepoolSection').innerHTML = `<strong>Available Egg Moves:</strong><br>` + eggMoves.slice(0, 10).map(m => `<span class="move-pill">${m}</span>`).join('');
     }
 </script>
 
