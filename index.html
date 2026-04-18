@@ -8,82 +8,79 @@
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; font-size: 13px; line-height: 1.5; }
         
-        /* --- THE SHIELD --- */
+        /* --- THE LEGAL SHIELD (ANTI-LITIGATION) --- */
         .overlay { position: fixed; inset: 0; background: #000; z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .legal-card { max-width: 600px; border: 2px solid var(--warn); padding: 40px; background: #050505; }
+        .legal-card { max-width: 650px; border: 2px solid var(--warn); padding: 40px; background: #050505; box-shadow: 0 0 50px rgba(255, 0, 85, 0.2); }
+        .legal-header { color: var(--warn); font-size: 22px; font-weight: 900; letter-spacing: 4px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
 
-        /* --- THE WIDE-TALK HEADER --- */
-        .header { display: flex; flex-direction: column; padding: 30px; background: #0d1421; border-left: 12px solid var(--ring); margin-bottom: 25px; border-radius: 0 15px 15px 0; min-height: 180px; position: relative; }
+        /* --- THE WIDE-TALK VOID --- */
+        .header { display: flex; flex-direction: column; padding: 30px; background: #0d1421; border-left: 12px solid var(--ring); margin-bottom: 25px; border-radius: 0 15px 15px 0; min-height: 200px; }
         .prof-row { display: flex; gap: 25px; align-items: flex-start; }
         .p-avatar { width: 90px; height: 90px; border: 4px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 35px; background: #000; flex-shrink: 0; }
-        .talk-bubble { flex-grow: 1; }
-        .p-name { font-weight: 900; color: var(--ring); letter-spacing: 3px; font-size: 11px; margin-bottom: 8px; }
+        .p-name { font-weight: 900; color: var(--ring); letter-spacing: 3px; font-size: 11px; margin-bottom: 10px; }
         .p-quote { font-style: italic; font-size: 15px; color: #fff; line-height: 1.6; }
 
-        /* --- ANIMATIONS --- */
-        .crash-oak { animation: havoc 0.05s infinite; border-color: var(--warn) !important; color: var(--warn); }
-        .crash-elm { animation: panic 0.15s infinite; border-color: var(--gold) !important; }
-        @keyframes havoc { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -3px); } 100% { transform: translate(0,0); } }
-        @keyframes panic { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        /* --- CORE UI --- */
+        /* --- UI ELEMENTS --- */
         #target { width: 100%; background: #000; border: 4px solid var(--ring); padding: 30px; color: var(--ring); font-size: 35px; text-align: center; outline: none; margin-bottom: 20px; }
         .party { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px; }
         .slot { background: #0d1421; border: 1px dashed #333; padding: 20px; text-align: center; cursor: pointer; border-radius: 8px; font-size: 11px; }
-        .slot.active { border: 3px solid var(--ring); background: rgba(0, 242, 255, 0.1); }
+        .slot.active { border: 3px solid var(--ring); background: rgba(0, 242, 255, 0.05); }
         
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .panel { background: #0d1421; padding: 25px; border-radius: 12px; border: 1px solid #1a2333; }
         .tag { font-size: 10px; color: var(--ring); font-weight: 900; border-bottom: 1px solid #333; display: block; margin-bottom: 15px; letter-spacing: 2px; }
 
-        .btn { padding: 15px 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; border: none; border-radius: 5px; }
-        .move-row { background: #000; padding: 10px; border: 1px solid #222; margin-bottom: 5px; font-size: 10px; display: flex; justify-content: space-between; }
+        .btn { padding: 15px 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; border: none; border-radius: 5px; width: 100%; margin-bottom: 20px; }
+        .move-row { background: #000; padding: 8px; border: 1px solid #222; margin-bottom: 4px; font-size: 10px; display: flex; justify-content: space-between; }
+        
+        .crash-oak { animation: havoc 0.05s infinite; border-color: var(--warn) !important; color: var(--warn); }
+        @keyframes havoc { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0,0); } }
     </style>
 </head>
 <body onload="boot()">
 
 <div id="pop" class="overlay">
     <div class="legal-card">
-        <h2 style="color:var(--warn)">NON-AFFILIATION DISCLOSURE</h2>
-        <p style="font-size:12px; color:var(--sub); line-height:1.6;">
-            This lab is a <b>Fan-Made Project</b> by <b>Architect Lime</b>. It is NOT affiliated with Nintendo or Game Freak. No copyright infringement is intended. By entering, you indemnify Lime from all legal and RNG-based distress.
+        <div class="legal-header">NON-AFFILIATION DISCLOSURE</div>
+        <p style="font-size:13px; color:#eee;">
+            This application, <b>PokeBreed Pro</b>, is an independent, <b>Fan-Made Project</b> created by <b>Architect Lime</b>. 
+            <br><br>
+            It is <b>NOT affiliated with, endorsed by, or in any way related to Nintendo, Game Freak, or The Pokémon Company</b>. All Pokémon intellectual property belongs to its respective owners. This tool is for educational and simulation use only.
         </p>
-        <button class="btn" style="background:var(--gold); width:100%" onclick="document.getElementById('pop').style.display='none'">AUTHORIZE LIME-CORE</button>
+        <button class="btn" style="background:var(--gold); margin-top:20px;" onclick="document.getElementById('pop').style.display='none'">I ACKNOWLEDGE | ENTER LIME-TOWER</button>
     </div>
 </div>
 
 <div class="header">
     <div class="prof-row">
         <div id="pImg" class="p-avatar">O</div>
-        <div class="talk-bubble">
+        <div style="flex-grow:1">
             <div id="pName" class="p-name">PROF. OAK</div>
-            <div id="pQuote" class="p-quote">"The lab is silent... too silent. Give me something to analyze, Lime. A genetic strand, a species name—anything but this void."</div>
+            <div id="pQuote" class="p-quote">"The tower is closing, Lime? A well-earned rest for the Architect. Scan one last genetic strand before we shut down the main power grid for the night."</div>
         </div>
     </div>
 </div>
 
 <div class="party" id="party"></div>
-<input type="text" id="target" placeholder="SCAN DIRECTIVE" onkeypress="if(event.key==='Enter') scan()">
-<button onclick="location.reload()" class="btn" style="background:var(--warn); width:100%; margin-bottom:20px;">PURGE LAB (ARCHITECT: LIME)</button>
+<input type="text" id="target" placeholder="FINAL COMMAND" onkeypress="if(event.key==='Enter') scan()">
+<button onclick="location.reload()" class="btn" style="background:var(--warn);">HARD RESET TOWER (LIME-COMMAND)</button>
 
 <div class="grid">
     <div class="panel"><span class="tag">I. ORIGIN DATA</span><div id="d1">--</div></div>
-    <div class="panel"><span class="tag">II. STATS</span><div id="d2">--</div></div>
+    <div class="panel"><span class="tag">II. BASE STATS</span><div id="d2">--</div></div>
     <div class="panel"><span class="tag">III. LOCATIONS</span><div id="d3">--</div></div>
-    <div class="panel" style="grid-column: span 2;"><span class="tag">IV. COMPREHENSIVE MOVEPOOL</span><div id="d4" style="height:300px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div></div>
+    <div class="panel" style="grid-column: span 2;"><span class="tag">IV. MOVEPOOL LOGS</span><div id="d4" style="height:300px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div></div>
 </div>
 
-<footer style="text-align:center; padding:50px; color:var(--sub); font-size:10px; letter-spacing:10px;">
-    LIME-ARCHITECT | FAN-MADE | NOT AFFILIATED WITH NINTENDO
+<footer style="text-align:center; padding:60px; color:var(--sub); font-size:10px; letter-spacing:8px;">
+    PRODUCED BY ARCHITECT LIME | FAN PROJECT | NOT AFFILIATED WITH NINTENDO
 </footer>
 
 <script>
     let active = 0;
-    const ARCHIVES = {
+    const FACULTY = {
         oak: { n: "PROF. OAK", i: "O", c: "crash-oak", m: "DITTO CANNOT BREED DITTO! I've spent fifty years studying the biology of these creatures and you think you can just double-up on the Pink Blob? You're tearing the very fabric of the Kanto region apart, Lime! Staff, restrain the Architect immediately!" },
-        elm: { n: "PROF. ELM", i: "E", c: "crash-elm", m: "THE EVERSTONE! Where is the Everstone?! Do you have any idea how many generations it takes to fix a botched Nature? We're looking at a 1-in-25 failure rate now because you were in such a hurry! My laboratory... my beautiful eggs... all randomized!" },
-        rowan: { n: "PROF. ROWAN", i: "R", c: "crash-oak", m: "Legendary entities do not possess egg groups. They are singular forces of nature. To attempt to 'breed' a Mewtwo is not just a waste of Sinnoh's resources—it is an insult to evolution itself. Leave my sight before I have you removed." },
-        lime: { n: "ARCHITECT LIME", i: "L", c: "", m: "System stabilized. Legal shields are holding at 100%. The professors have been fed their medication and are ready to resume the scan. Proceed with caution." }
+        rowan: { n: "PROF. ROWAN", i: "R", c: "crash-oak", m: "Legendary entities do not possess egg groups. They are singular forces of nature. To attempt to 'breed' a Mewtwo is not just a waste of Sinnoh's resources—it is an insult to evolution itself. Leave my sight before I have you removed." }
     };
 
     function boot() {
@@ -93,25 +90,20 @@
 
     function setS(i) { active=i; document.querySelectorAll('.slot').forEach((s,x)=>s.classList.toggle('active', x==i)); }
 
-    function crashout(who) {
-        const p = ARCHIVES[who];
+    function crash(who) {
+        const p = FACULTY[who];
         const img = document.getElementById('pImg');
         img.className = "p-avatar " + p.c;
         img.innerText = p.i;
         document.getElementById('pName').innerText = p.n;
         document.getElementById('pQuote').innerHTML = `<span style="color:var(--warn)">${p.m}</span>`;
-        setTimeout(() => { 
-            img.className = "p-avatar"; img.innerText = "O"; 
-            document.getElementById('pName').innerText = "PROF. OAK"; 
-            document.getElementById('pQuote').innerText = '"Deep breaths. The data is clear again."'; 
-        }, 8000);
+        setTimeout(() => { img.className = "p-avatar"; img.innerText="O"; document.getElementById('pName').innerText="PROF. OAK"; document.getElementById('pQuote').innerText='"Deep breaths. Systems nominal."'; }, 7000);
     }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
-        if(q.includes("ditto ditto")) return crashout('oak');
-        if(q.includes("legendary") || q.includes("mewtwo")) return crashout('rowan');
-        if(q.includes("why") || q.includes("everstone")) return crashout('elm');
+        if(q.includes("ditto ditto")) return crash('oak');
+        if(q.includes("mewtwo")) return crash('rowan');
 
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = res.results.find(p => q.includes(p.name))?.name;
