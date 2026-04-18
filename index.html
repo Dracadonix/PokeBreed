@@ -3,223 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Shiny Umbreon Edition</title>
+    <title>PokeBreed Pro | Shiny Umbreon Intelligence</title>
     <style>
-        /* SHINY UMBREON COLOR PALETTE */
+        /* THE SHINY UMBREON THEME - DEPTH & GLOW */
         :root { 
-            --bg: #0c0d10;              /* Main body fur (Near black) */
-            --bg-offset: #14161a;        /* UI Elements offset */
-            --card: rgba(20, 22, 26, 0.95); /* Semi-Transparent cards */
-            
-            --primary: #00e5ff;          /* THE GLOW (Vibrant Cyan Blue) */
-            --secondary: #303541;        /* Secondary fur tone (Deep Slate Grey) */
-            --text: #f0f0f0;             /* Clean white text */
-            --sub-text: #a0a8b5;         /* Muted grey text */
-            
-            --evo-color: #00d4ff;        /* Kept for evolution, but matches the theme */
-            --border: #2d333f;           /* Card borders */
+            --bg: #0c0d10;              /* Deep fur black */
+            --bg-offset: #14161a;        /* UI contrast */
+            --card: rgba(20, 22, 26, 0.96); 
+            --primary: #00e5ff;          /* UMBREON BLUE GLOW */
+            --secondary: #303541;        /* Slate grey shadows */
+            --text: #f0f0f0; 
+            --sub-text: #a0a8b5; 
+            --border: #2d333f;
+            --evo-cyan: #00d4ff;
         }
         
         body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            color: var(--text); 
-            margin: 0; 
-            padding: 20px; 
-            display: flex; 
-            justify-content: center;
-            background-color: var(--bg);
-            /* Adds a very subtle grid texture to the background */
+            font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); color: var(--text);
+            margin: 0; padding: 20px; display: flex; justify-content: center;
             background-image: radial-gradient(var(--border) 1px, transparent 1px);
-            background-size: 20px 20px;
-            background-attachment: fixed;
+            background-size: 24px 24px; background-attachment: fixed;
         }
         
         .container { 
-            max-width: 850px; 
-            width: 100%; 
-            background: var(--card); 
-            padding: 40px; 
-            border-radius: 24px; 
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6); 
-            border: 1px solid var(--border); 
-            backdrop-filter: blur(10px); /* Glassmorphism for depth */
+            max-width: 850px; width: 100%; background: var(--card); padding: 40px; 
+            border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); 
+            border: 1px solid var(--border); backdrop-filter: blur(12px);
         }
         
         h1 { 
-            color: var(--primary);       /* The cyan-blue glow */
-            text-align: center; 
-            font-size: 2.5em; 
-            margin-bottom: 5px; 
-            text-transform: uppercase; 
-            letter-spacing: 3px; 
-            font-weight: 800;
-            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); /* Primary glow */
+            color: var(--primary); text-align: center; font-size: 2.6em; margin-bottom: 5px; 
+            text-transform: uppercase; letter-spacing: 4px; font-weight: 900;
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
         }
         
-        .subtitle { 
-            text-align: center; 
-            color: var(--sub-text); 
-            margin-bottom: 30px; 
-            font-size: 0.9em; 
-        }
+        .subtitle { text-align: center; color: var(--sub-text); margin-bottom: 30px; font-size: 0.9em; letter-spacing: 1px; }
         
-        .input-group { 
-            display: flex; 
-            gap: 12px; 
-            margin-bottom: 30px; 
-        }
+        .input-group { display: flex; gap: 12px; margin-bottom: 35px; }
         
         input { 
-            flex: 1; 
-            padding: 16px; 
-            background: var(--bg-offset); 
-            border: 2px solid var(--border); 
-            border-radius: 12px; 
-            color: white; 
-            outline: none; 
-            font-size: 1.1em; 
-            transition: 0.3s; 
+            flex: 1; padding: 18px; background: var(--bg-offset); border: 2px solid var(--border); 
+            border-radius: 14px; color: white; outline: none; font-size: 1.1em; transition: 0.3s;
         }
         
-        input:focus { 
-            border-color: var(--primary); 
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); 
-        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 229, 255, 0.15); }
         
         button { 
-            padding: 16px 28px; 
-            background: var(--bg-offset); /* Dark background button */
-            color: var(--primary);       /* Cyan glow text */
-            border: 2px solid var(--primary); /* Glowing border */
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            transition: 0.2s;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+            padding: 16px 30px; background: var(--bg-offset); color: var(--primary); 
+            border: 2px solid var(--primary); border-radius: 14px; cursor: pointer; 
+            font-weight: 800; text-transform: uppercase; transition: 0.3s;
         }
         
-        button:hover { 
-            background: var(--primary);  /* Filled button on hover */
-            color: var(--bg); 
-            transform: translateY(-2px); 
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
-        }
+        button:hover { background: var(--primary); color: var(--bg); transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 229, 255, 0.4); }
         
-        #output { 
-            display: none; 
-            animation: slideUp 0.5s ease forwards; 
-        }
+        #output { display: none; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
         
         .section-title { 
-            font-size: 0.85em; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            color: var(--sub-text); 
-            margin: 25px 0 10px; 
-            font-weight: 700; 
-            border-bottom: 1px solid var(--border); 
-            padding-bottom: 5px; 
+            font-size: 0.8em; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); 
+            margin: 30px 0 12px; font-weight: 800; border-bottom: 1px solid var(--border); padding-bottom: 6px; opacity: 0.8;
         }
         
         .badge { 
-            display: inline-block; 
-            background: var(--secondary);  /* Deep grey badge */
-            color: var(--primary);         /* Cyan glow text */
-            padding: 5px 14px; 
-            border-radius: 8px; 
-            font-size: 0.75em; 
-            font-weight: bold; 
-            margin: 0 8px 8px 0; 
-            text-transform: capitalize;
-            border: 1px solid rgba(0, 229, 255, 0.1);
+            display: inline-block; background: var(--secondary); color: var(--primary); 
+            padding: 6px 15px; border-radius: 9px; font-size: 0.75em; font-weight: 700; 
+            margin: 0 8px 8px 0; border: 1px solid rgba(0, 229, 255, 0.15);
         }
         
         .step { 
-            margin-bottom: 12px; 
-            padding: 18px; 
-            background: rgba(0, 0, 0, 0.2); 
-            border-left: 6px solid var(--primary); /* Cyan glowing left border */
-            border-radius: 0 12px 12px 0; 
-            line-height: 1.6; 
-            border-top: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            margin-bottom: 14px; padding: 20px; background: rgba(0, 0, 0, 0.25); 
+            border-left: 6px solid var(--primary); border-radius: 0 14px 14px 0; 
+            line-height: 1.6; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
         }
         
-        .evo-box { 
-            background: rgba(0, 212, 255, 0.05); 
-            border: 1px solid var(--evolution); 
-            padding: 15px; 
-            border-radius: 12px; 
-            margin-bottom: 20px; 
-        }
+        .evo-box { background: rgba(0, 212, 255, 0.08); border: 1px solid var(--evo-cyan); padding: 18px; border-radius: 14px; margin-bottom: 25px; font-size: 0.95em; }
         
-        .ev-box { 
-            background: rgba(48, 53, 65, 0.2); 
-            border: 1px solid var(--secondary); 
-            padding: 20px; 
-            border-radius: 15px; 
-            margin: 20px 0; 
-        }
+        .location-box { background: var(--bg-offset); border: 1px solid var(--border); padding: 22px; border-radius: 16px; margin: 20px 0; }
         
-        .location-box { 
-            background: var(--bg-offset); 
-            border: 1px solid var(--border); 
-            padding: 20px; 
-            border-radius: 15px; 
-            margin: 20px 0; 
-        }
-        
-        .ref-links { 
-            display: flex; 
-            gap: 12px; 
-            margin-top: 15px; 
-            flex-wrap: wrap; 
-        }
-        
-        .ref-btn { 
-            flex: 1; 
-            padding: 10px; 
-            text-align: center; 
-            border-radius: 8px; 
-            font-size: 0.8em; 
-            text-decoration: none; 
-            color: var(--text); 
-            font-weight: bold; 
-            transition: 0.2s; 
-            border: 1px solid transparent; 
-        }
-        
-        /* Expert References retain their unique, game-authentic colors */
-        .serebii { background: #0e7a3a; } 
-        .bulbapedia { background: #70379b; } 
-        .pokemondb { background: #e05210; }
-        
-        .ref-btn:hover { 
-            transform: translateY(-2px); 
-            filter: brightness(1.1); 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
-        }
+        .ref-links { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+        .ref-btn { flex: 1; padding: 12px; text-align: center; border-radius: 10px; font-size: 0.85em; text-decoration: none; color: white; font-weight: 800; transition: 0.2s; }
+        .serebii { background: #0e7a3a; } .bulbapedia { background: #60298a; } .pokemondb { background: #cf4a10; }
+        .ref-btn:hover { filter: brightness(1.2); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         
         .move-pill { 
-            display: inline-block; 
-            background: var(--bg-offset); 
-            color: var(--primary); 
-            padding: 4px 10px; 
-            border-radius: 6px; 
-            font-size: 0.8em; 
-            margin: 3px; 
-            border: 1px solid var(--border); 
-            text-transform: capitalize; 
+            display: inline-block; background: var(--bg-offset); color: var(--primary); 
+            padding: 5px 12px; border-radius: 7px; font-size: 0.8em; margin: 4px; border: 1px solid var(--border);
         }
-        
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    </body>
+
+<div class="container">
+    <h1>⚡ PokeBreed Pro</h1>
+    <p class="subtitle">Breeding • Evolution • Location • Effort</p>
+    
+    <div class="input-group">
+        <input type="text" id="userInput" placeholder="e.g. 'I need a 5IV Garchomp in SV Mr White...'">
+        <button onclick="generateGuide()">Analyze</button>
+    </div>
+
+    <div id="output">
+        <h2 id="pokeHeader" style="margin-bottom:5px; color:var(--primary); font-size: 2.2em; text-transform: capitalize;"></h2>
+        <div id="metaInfo"></div>
+        
+        <div id="evolutionData"></div>
+
+        <div class="section-title">📍 Direct World Locations</div>
+        <div id="locationData" class="location-box">
+            <div id="locationList" style="font-size: 1em; line-height: 1.6; color: #ddd;"></div>
+            <div class="ref-links">
+                <a id="linkSerebii" class="ref-btn serebii" target="_blank">Serebii Dex</a>
+                <a id="linkBulba" class="ref-btn bulbapedia" target="_blank">Bulbapedia</a>
+                <a id="linkDB" class="ref-btn pokemondb" target="_blank">PokemonDB</a>
+            </div>
+        </div>
+
+        <div class="section-title">🏋️ Effort Value (EV) Strategy</div>
+        <div id="evData" class="step" style="border-left-color: #ff8c00;"></div>
+
+        <div class="section-title">🛠️ Breeding Roadmap</div>
+        <div id="stepsList"></div>
+
+        <div class="section-title">🥚 Egg Movepool</div>
+        <div id="movepoolSection"></div>
+    </div>
+</div>
+
+<script>
+    const format = (str) => !str ? "" : str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+    async function generateGuide() {
+        const input = document.getElementById('userInput').value.toLowerCase().trim();
+        if (!input) return;
+        
+        const words = input.replace(/[?!.]/g, "").split(/\s+/);
+        const gameMap = { "bdsp": "BDSP", "sv": "Scarlet/Violet", "swsh": "Sword/Shield", "sword": "Sword", "shield": "Shield", "scarlet": "Scarlet/Violet", "violet": "Scarlet/Violet" };
+        const activeKey = Object.keys(gameMap).find(k => input.includes(k)) || "default";
+
+        const noise = ["how", "to", "get", "find", "where", "is", "breed", "in", "the", "a", "an", "with", "of", "shiny", "jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish", "5iv", "6iv", "iv", "ha", "hidden", "ability", "ev", "train", "need", "mr", "white", "pinkman", ...Object.keys(gameMap)];
+        const targets = words.filter(w => !noise.includes(w) && w.length > 2);
+
+        let data = null;
+        for (let name of targets) {
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+                if (res.ok) { data = await res.json(); break; }
+            } catch (e) { continue; }
+        }
+
+        if (!data) return alert("Pokémon name not recognized. Stay focused!");
+
+        const sRes = await fetch(data.species.url);
+        const sData = await sRes.json();
+        const evoRes = await fetch(sData.evolution_chain.url);
+        const evoData = await evoRes.json();
+        
+        document.getElementById('output').style.display = 'block';
+        document.getElementById('pokeHeader').innerText = format(data.name);
+
+        // 1. Evolution Chain Logic
+        let baseForm = evoData.chain.species.name;
+        let evoNotes = "";
+        if (baseForm !== data.name) {
+            let curr = evoData.chain;
+            while(curr) {
+                const match = curr.evolves_to.find(e => e.species.name === data.name);
+                if (match) {
+                    const d = match.evolution_details[0];
+                    let trigger = d.trigger.name.replace(/-/g, ' ');
+                    let req = d.min_level ? `Level ${d.min_level}` : d.item ? format(d.item.name) : d.min_happiness ? "High Friendship" : "Special Condition";
+                    evoNotes = `🧬 <strong>Evolution Alert:</strong> You cannot hatch ${format(data.name)}. Breed <strong>${format(baseForm)}</strong> and evolve it via ${trigger} (${req}).`;
+                    break;
+                }
+                curr = curr.evolves_to[0];
+            }
+        }
+        document.getElementById('evolutionData').innerHTML = evoNotes ? `<div class="evo-box">${evoNotes}</div>` : "";
+
+        // 2. Effort Value Logic
+        let evs = data.stats.filter(s => s.effort > 0).map(s => `${s.effort} ${format(s.stat.name)}`);
+        document.getElementById('evData').innerHTML = `<strong>Yield:</strong> Defeating this species gives <strong>${evs.join(', ')}</strong>. <br>Use Vitamins (26 per stat) or Power Items (+8 per battle) to finalize the build.`;
+
+        // 3. Location Scraper (Deduplicated)
+        const locRes = await fetch(data.location_area_encounters);
+        const locData = await locRes.json();
+        let locHtml = "Wild data unavailable. Likely a Gift, Static Encounter, or Raid-only species.";
+        if (locData.length > 0) {
+            const gameFilter = activeKey === "default" ? "" : activeKey.split('/')[0];
+            const filtered = locData.filter(l => l.version_details.some(v => v.version.name.includes(gameFilter)));
+            const source = filtered.length > 0 ? filtered : locData;
+            const uniqueLocs = [...new Set(source.slice(0, 5).map(l => format(l.location_area.name.split('-')[0] + " " + l.location_area.name.split('-')[1] || "")))];
+            locHtml = "Can be found at: " + uniqueLocs.map(l => `<strong>${l}</strong>`).join(' • ');
+        }
+        document.getElementById('locationList').innerHTML = locHtml;
+
+        // 4. External Deep-Links
+        const clean = data.name.split('-')[0];
+        document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${clean}/`;
+        document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${format(clean)}_(Pokémon)`;
+        document.getElementById('linkDB').href = `https://pokemondb.net/pokedex/${clean}`;
+
+        // 5. Instruction Logic
+        let steps = [];
+        if (input.includes("iv") || input.includes("5iv")) steps.push(`📊 <strong>Best IVs:</strong> Give a <strong>Destiny Knot</strong> to the parent with 5-6 perfect stats.`);
+        if (input.includes("shiny")) steps.push(`✨ <strong>Masuda Method:</strong> Use parents from different language regions (e.g., Japanese Ditto) to max Shiny odds.`);
+        const natures = ["jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish"];
+        const n = natures.find(x => input.includes(x));
+        if (n) steps.push(`🧪 <strong>Locked Nature:</strong> Give an <strong>Everstone</strong> to the <strong>${n.toUpperCase()}</strong> parent.`);
+        
+        document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('') || `<div class="step">Target acquired. Ready for breeding <strong>${format(baseForm)}</strong>.</div>`;
+        
+        const eggs = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg')).map(m => m.move.name);
+        document.getElementById('movepoolSection').innerHTML = eggs.length ? eggs.map(m => `<span class="move-pill">${format(m)}</span>`).join('') : "No Egg Moves available.";
+
+        const hatchSteps = (sData.hatch_counter + 1) * 255;
+        document.getElementById('metaInfo').innerHTML = `
+            ${sData.egg_groups.map(g => `<span class="badge">${format(g.name)} Group</span>`).join('')}
+            <span class="badge" style="background:#000; border-color:var(--primary)">~${hatchSteps.toLocaleString()} Steps</span>
+        `;
+    }
+</script>
+</body>
 </html>
