@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Grand Curriculum</title>
+    <title>PokeBreed Pro | Statistical Perfection</title>
     <style>
         :root { 
             --bg: #010204; --card: #0d1117; --primary: #00e5ff; --accent: #ff00ff; 
@@ -15,10 +15,9 @@
         .header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
         
         /* SEARCH ENGINE */
-        .search-container { position: sticky; top: 0; z-index: 100; background: var(--bg); padding-bottom: 20px; }
-        .input-wrap { display: flex; gap: 10px; background: #000; padding: 10px; border: 2px solid var(--primary); border-radius: 12px; }
+        .input-wrap { display: flex; gap: 10px; background: #000; padding: 10px; border: 2px solid var(--primary); border-radius: 12px; margin-bottom: 20px; }
         input { flex: 1; background: transparent; border: none; padding: 15px; color: #fff; font-size: 1.1rem; outline: none; }
-        .btn-run { background: var(--primary); color: #000; border: none; padding: 0 35px; border-radius: 8px; font-weight: 900; cursor: pointer; }
+        .btn-run { background: var(--primary); color: #000; border: none; padding: 0 35px; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
 
         /* DATA ARCHITECTURE */
         #output { display: none; }
@@ -26,14 +25,16 @@
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; }
         .h-tag { color: var(--primary); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
 
-        /* PROGRESSION TIMELINE */
-        .milestone { position: relative; padding-left: 30px; border-left: 2px solid #30363d; margin-bottom: 20px; }
-        .milestone::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 10px var(--primary); }
-        .m-lvl { font-weight: 900; color: var(--accent); margin-right: 10px; }
-        
-        .move-kit { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .pill { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; background: #161b22; border: 1px solid var(--border); }
-        .p-rec { border-color: var(--primary); color: var(--primary); }
+        /* BASE STAT BARS */
+        .stat-container { margin-bottom: 10px; }
+        .stat-label { font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; text-transform: uppercase; }
+        .stat-bar-bg { width: 100%; height: 8px; background: #161b22; border-radius: 4px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 1s ease-in-out; box-shadow: 0 0 10px var(--primary); }
+
+        /* TACTICAL KIT */
+        .move-item { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--accent); }
+        .move-info { font-weight: 700; text-transform: capitalize; }
+        .move-meta { font-size: 0.7rem; color: var(--sub-text); font-family: monospace; }
 
         /* ROWAN'S TEMPER */
         #rowanBox {
@@ -48,22 +49,20 @@
 <body>
 
 <div id="rowanBox">
-    <div style="font-weight:900; color:red; border-bottom:2px solid #000; margin-bottom:10px;">SINNOH LAB: CRITICAL ERROR</div>
+    <div style="font-weight:900; color:red; border-bottom:2px solid #000; margin-bottom:10px;">PROF. ROWAN: FIELD REPORT AUDIT</div>
     <div id="rowanMsg">...</div>
     <button style="float:right; margin-top:15px; padding:10px 20px; background: #000; color:#fff;" onclick="document.getElementById('rowanBox').style.display='none'">ACKNOWLEDGE</button>
 </div>
 
 <div class="container">
     <div class="header">
-        <h1>POKEBREED <span style="color:var(--primary)">GRAND CURRICULUM</span></h1>
-        <p style="color:var(--sub-text); letter-spacing: 2px;">End-to-End Leveling & Move Progression v10.0</p>
+        <h1>POKEBREED <span style="color:var(--primary)">STATISTICAL ARCHITECT</span></h1>
+        <p style="color:var(--sub-text);">V12.0 // Base Stats, Heredity, & BiS Move Analysis</p>
     </div>
 
-    <div class="search-container">
-        <div class="input-wrap">
-            <input type="text" id="userInput" placeholder="Search: '5iv Jolly Weavile with Ice Shard'" onkeypress="if(event.key === 'Enter') architectGrand()">
-            <button class="btn-run" onclick="architectGrand()">Architect Plan</button>
-        </div>
+    <div class="input-wrap">
+        <input type="text" id="userInput" placeholder="Search: 'Jolly Weavile'" onkeypress="if(event.key === 'Enter') architectFull()">
+        <button class="btn-run" onclick="architectFull()">Generate Report</button>
     </div>
 
     <div id="output">
@@ -76,26 +75,25 @@
                 </div>
 
                 <div class="card">
-                    <span class="h-tag">Master Leveling Progression</span>
-                    <div id="progression"></div>
+                    <span class="h-tag">The Optimal Move Curriculum (BiS)</span>
+                    <div id="bestKit"></div>
+                </div>
+                
+                <div class="card">
+                    <span class="h-tag">Evolutionary Protocol</span>
+                    <div id="evoSteps" style="font-size:0.9rem; line-height:1.6;"></div>
                 </div>
             </div>
 
             <div class="col-right">
                 <div class="card">
-                    <span class="h-tag">Recommended Competitive Kit</span>
-                    <div id="recommendedKit" class="move-kit"></div>
-                    <p style="font-size:0.75rem; color:var(--sub-text); margin-top:15px;">*Kit based on Nature and Species Tiering.</p>
+                    <span class="h-tag">Base Stat Spread</span>
+                    <div id="statBars"></div>
                 </div>
 
                 <div class="card">
-                    <span class="h-tag">Evolutionary Protocol</span>
-                    <div id="evoSteps" style="font-size:0.95rem; line-height:1.6;"></div>
-                </div>
-
-                <div class="card">
-                    <span class="h-tag">Breeding Checklist</span>
-                    <div id="breedingList" style="font-size:0.85rem;"></div>
+                    <span class="h-tag">Growth Roadmap</span>
+                    <div id="roadmap" style="font-size:0.85rem; line-height: 1.8;"></div>
                 </div>
             </div>
         </div>
@@ -106,63 +104,79 @@
     let pLib = [];
     fetch('https://pokeapi.co/api/v2/pokemon?limit=2000').then(r => r.json()).then(d => pLib = d.results.map(p => p.name));
 
-    async function architectGrand() {
+    async function architectFull() {
         const raw = document.getElementById('userInput').value.toLowerCase();
         const target = pLib.find(name => raw.includes(name)) || raw.split(' ').find(w => w.length > 3 && !["with","5iv","jolly"].includes(w));
 
         try {
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${target}`);
-            if(!r.ok) throw new Error();
             const d = await r.json();
             const sR = await fetch(d.species.url);
             const sD = await sR.json();
 
             document.getElementById('output').style.display = 'block';
             document.getElementById('pName').innerText = d.name;
-            document.getElementById('pTypes').innerHTML = d.types.map(t => `<span class="pill" style="color:var(--primary)">${t.type.name.toUpperCase()}</span>`).join('');
+            document.getElementById('pTypes').innerHTML = d.types.map(t => `<span style="color:var(--primary); font-weight:800; margin-right:15px;">${t.type.name.toUpperCase()}</span>`).join('');
 
-            // --- PROGRESSION PLOTTER ---
-            const levelMoves = d.moves
-                .filter(m => m.version_group_details[0].move_learn_method.name === 'level-up')
-                .map(m => ({ name: m.move.name.replace(/-/g, ' '), lvl: m.version_group_details[0].level_learned_at }))
-                .sort((a,b) => a.lvl - b.lvl);
-
-            let progHTML = `<div class="milestone"><span class="m-lvl">LVL 01</span> Hatch <span style="color:var(--primary)">${sD.name.toUpperCase()}</span>. (Inherit Egg Moves now).</div>`;
-            
-            // Major Milestones (Every 15-20 levels or key moves)
-            const milestones = levelMoves.filter((m, i) => m.lvl > 1 && (i % 4 === 0 || m.lvl > 40));
-            milestones.forEach(m => {
-                progHTML += `<div class="milestone"><span class="m-lvl">LVL ${m.lvl.toString().padStart(2, '0')}</span> Learns <strong style="text-transform:capitalize">${m.name}</strong>.</div>`;
+            // --- BASE STATS ---
+            const stats = d.stats.map(s => ({ name: s.stat.name, val: s.base_stat }));
+            let statHTML = "";
+            stats.forEach(s => {
+                const percent = (s.val / 255) * 100;
+                statHTML += `
+                <div class="stat-container">
+                    <div class="stat-label"><span>${s.name.replace('-', ' ')}</span><span>${s.val}</span></div>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${percent}%"></div></div>
+                </div>`;
             });
-            progHTML += `<div class="milestone" style="border:none;"><span class="m-lvl">LVL 50+</span> Final Competitive Training & Hyper Training.</div>`;
-            document.getElementById('progression').innerHTML = progHTML;
+            document.getElementById('statBars').innerHTML = statHTML;
 
-            // --- RECOMMENDED KIT ---
-            // Logic: Pick the 4 highest power moves from level-up + search context
-            const highPower = levelMoves.slice(-4).reverse();
-            let kitHTML = highPower.map(m => `<div class="pill p-rec" style="text-transform:capitalize">${m.name}</div>`).join('');
-            if(raw.includes("ice shard")) kitHTML = `<div class="pill p-rec">Ice Shard (Egg)</div>` + kitHTML;
-            document.getElementById('recommendedKit').innerHTML = kitHTML;
+            // --- BEST-IN-SLOT MOVE LOGIC ---
+            const movePromises = d.moves.slice(0, 40).map(m => fetch(m.move.url).then(res => res.json()));
+            const moveDetails = await Promise.all(movePromises);
+            const pTypes = d.types.map(t => t.type.name);
+            
+            let scoredMoves = moveDetails
+                .filter(m => m.power !== null)
+                .map(m => {
+                    let score = m.power;
+                    if (pTypes.includes(m.type.name)) score *= 1.5;
+                    return { name: m.name, power: m.power, score, cat: m.damage_class.name, isStab: pTypes.includes(m.type.name) };
+                });
 
-            // --- EVO PROTOCOL ---
-            let evo = "Standard Level-up evolution detected.";
-            if(d.name.includes("weavile")) evo = "1. Obtain <strong>Razor Claw</strong>.<br>2. Wait for <strong>Nighttime</strong>.<br>3. Level up Sneasel once.";
-            if(d.name.includes("lucario")) evo = "1. Max <strong>Friendship</strong>.<br>2. Level up during the <strong>Day</strong>.";
-            document.getElementById('evoSteps').innerHTML = evo;
+            // Nature Bias
+            if(raw.includes("jolly") || raw.includes("adamant")) {
+                scoredMoves = scoredMoves.sort((a,b) => (a.cat === 'physical' ? 0 : 1) - (b.cat === 'physical' ? 0 : 1));
+            }
+            
+            let kitHTML = "";
+            scoredMoves.sort((a,b) => b.score - a.score).slice(0, 4).forEach(m => {
+                kitHTML += `
+                <div class="move-item">
+                    <span class="move-info">${m.name.replace(/-/g, ' ')} ${m.isStab ? '<small style="color:var(--primary)">[STAB]</small>' : ''}</span>
+                    <span class="move-meta">${m.power} BP | ${m.cat.toUpperCase()}</span>
+                </div>`;
+            });
+            document.getElementById('bestKit').innerHTML = kitHTML;
 
-            // --- BREEDING CHECKLIST ---
-            document.getElementById('breedingList').innerHTML = `
-                • Nature: <span style="color:var(--accent)">${raw.includes("jolly") ? "Jolly (Locked)" : "Check Search"}</span><br>
-                • Item: <strong>Destiny Knot</strong> (IV Pass)<br>
-                • Item: <strong>Everstone</strong> (Nature Lock)<br>
-                • Step Count: ~${sD.hatch_counter * 255}
+            // --- ROADMAP & EVO ---
+            document.getElementById('roadmap').innerHTML = `
+                • Start with <strong>${sD.name.toUpperCase()}</strong>.<br>
+                • Item: <strong>Destiny Knot</strong> for genetic transfer.<br>
+                • Item: <strong>Everstone</strong> for Nature preservation.<br>
+                • Hatch Cycle: ${sD.hatch_counter} Cycles.
             `;
+
+            let evo = "Standard Level-up evolution.";
+            if(d.name.includes("weavile")) evo = "Apply <strong>Razor Claw</strong> and level up at <strong>Night</strong>.";
+            if(d.name.includes("lucario")) evo = "Achieve <strong>Max Friendship</strong> and level up during <strong>Day</strong>.";
+            document.getElementById('evoSteps').innerHTML = evo;
 
         } catch (e) {
             const rb = document.getElementById('rowanBox');
             rb.style.display = 'block';
             rb.classList.add('shaking');
-            document.getElementById('rowanMsg').innerText = "UNRELIABLE DATA! Your notes are a mess! How am I supposed to analyze a Pokémon I've never heard of?! Check your spelling!!";
+            document.getElementById('rowanMsg').innerText = "ABSURD! This specimen does not exist in the National Dex! Check your documentation and try again!!";
             setTimeout(() => rb.classList.remove('shaking'), 3000);
         }
     }
