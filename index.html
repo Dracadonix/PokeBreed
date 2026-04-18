@@ -2,201 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | v210M Omni-Gen</title>
+    <title>PokeBreed Pro | v400M Zenith</title>
     <style>
-        :root { 
-            --void: #010204; --ring: #00f2ff; --ring-glow: rgba(0, 242, 255, 0.4);
-            --sub: #475569; --warn: #ff0055; --surface: rgba(10, 15, 25, 0.98);
-            --oak: #22c55e; --rowan: #00f2ff; --elm: #eab308;
-        }
-        * { box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; cursor: crosshair; }
-        body { 
-            background: var(--void); background-image: radial-gradient(circle at 50% 0%, #0f172a 0%, var(--void) 90%);
-            color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh;
-        }
-        .container { max-width: 1600px; margin: 0 auto; }
-
-        /* THE PROFESSOR HUD */
-        .prof-bar { 
-            display: flex; align-items: center; gap: 25px; background: var(--surface);
-            padding: 25px; border-left: 4px solid var(--ring); margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .prof-circ { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--ring); display: flex; align-items: center; justify-content: center; font-weight: 900; }
-
-        /* INTERFACE TABS */
-        .main-ui { display: grid; grid-template-columns: 1fr 1.2fr 0.8fr; gap: 20px; display: none; }
-        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 30px; position: relative; }
-        .tag { font-size: 8px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; display: block; }
-
-        /* LOGISTICS / INCENSE MODULE */
-        .item-chip { 
-            display: flex; align-items: center; gap: 10px; background: rgba(0,242,255,0.05);
-            padding: 12px; border: 1px solid rgba(0,242,255,0.1); margin-bottom: 10px;
-        }
-        .item-icon { color: var(--ring); font-size: 18px; }
-
-        /* MOVE-POOL SCROLLER */
-        .scroll-list { height: 450px; overflow-y: auto; padding-right: 10px; }
-        .scroll-list::-webkit-scrollbar { width: 2px; }
-        .scroll-list::-webkit-scrollbar-thumb { background: var(--ring); }
-        .move-entry { 
-            display: flex; justify-content: space-between; padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px;
-        }
-        .legacy-pill { color: var(--warn); font-size: 8px; font-weight: 900; border: 1px solid var(--warn); padding: 1px 4px; border-radius: 2px; }
-
-        input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--ring); padding: 20px; color: var(--ring); text-align: center; font-size: 24px; outline: none; margin-bottom: 40px; }
+        :root { --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; --surface: rgba(15, 23, 42, 0.98); }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 25px; }
         
-        /* TUTORIAL OVERLAY */
-        #manual {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
-            z-index: 9999; display: none; align-items: center; justify-content: center;
-        }
-        .manual-card { background: var(--surface); border: 1px solid var(--ring); padding: 40px; max-width: 900px; line-height: 1.6; }
+        /* LAYOUT */
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; display: none; }
+        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 4px; }
+        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; display: block; }
+        
+        /* GEAR STYLING */
+        .gear-card { background: rgba(0,242,255,0.03); border: 1px solid rgba(0,242,255,0.1); padding: 15px; margin-bottom: 15px; }
+        .gear-title { color: var(--ring); font-size: 11px; font-weight: 900; margin-bottom: 5px; }
+        .alert { color: var(--warn); border-color: var(--warn); font-weight: 800; }
+
+        /* SCROLLABLE TIMELINE */
+        .timeline { height: 500px; overflow-y: auto; padding-right: 10px; }
+        .move-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; }
+        .legacy { color: var(--warn); font-size: 8px; border: 1px solid var(--warn); padding: 1px 4px; border-radius: 2px; }
+
+        input { width: 100%; background: #0b111e; border: 1px solid var(--ring); padding: 20px; color: var(--ring); font-size: 22px; outline: none; margin-bottom: 30px; border-radius: 4px; text-align: center; }
     </style>
 </head>
-<body onload="checkFirstTime()">
+<body>
 
-<div id="manual">
-    <div class="manual-card">
-        <span class="tag">Laboratory Manual // v210M</span>
-        <h2 style="font-weight: 200; font-size: 32px;">The <span style="color:var(--ring); font-weight: 900;">Breeding Protocol</span></h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
-            <div>
-                <h4 style="color:var(--ring);">1. Genetic Anchors</h4>
-                <p style="font-size: 13px; color: var(--sub);"><b>Everstone:</b> Holds Nature.<br><b>Destiny Knot:</b> Inherits 5 Stats.<br><b>Incense:</b> Required for specific Baby forms (e.g., Odd Incense for Mime Jr.).</p>
-            </div>
-            <div>
-                <h4 style="color:var(--ring);">2. Chronological Timing</h4>
-                <p style="font-size: 13px; color: var(--sub);">Check the <b>Legacy</b> tags. Some moves are only learned by the unevolved child. If you evolve too early, the move is lost forever.</p>
-            </div>
-        </div>
-        <button onclick="closeManual()" style="margin-top:30px; width:100%; background:var(--ring); color:var(--void); border:none; padding:15px; font-weight:900; cursor:pointer;">ENTER LABORATORY</button>
-    </div>
-</div>
+<div style="max-width: 1500px; margin: 0 auto;">
+    <header style="text-align: center; margin-bottom: 50px;">
+        <span style="font-size: 10px; letter-spacing: 12px; color: var(--sub);">GENETIC VALIDATION v400,000,000.0</span>
+        <h1 style="margin: 10px 0; font-weight: 200; letter-spacing: 15px;">OBSIDIAN <span style="color:var(--ring); font-weight: 900;">ZENITH</span></h1>
+    </header>
 
-<div class="container">
-    <div class="prof-bar" id="profBar">
-        <div class="prof-circ" id="pIcon">?</div>
-        <div>
-            <span id="pName" style="font-size: 10px; font-weight: 900; letter-spacing: 4px; color: var(--sub);">SYSTEM IDLE</span>
-            <div id="pTalk" style="font-size: 15px; margin-top: 5px; font-style: italic;">"Input specimen data to initiate regional professor uplink."</div>
-        </div>
-        <button onclick="showManual()" style="margin-left: auto;" class="btn-help">? MANUAL</button>
-    </div>
+    <input type="text" id="target" placeholder="DIRECTIVE (e.g. '0 Atk Timid Budew')" onkeypress="if(event.key==='Enter') execute()">
 
-    <input type="text" id="query" placeholder="SPECIMEN DIRECTIVE (e.g. 'Modest Azumarill')" onkeypress="if(event.key==='Enter') startAnalysis()">
-
-    <div id="mainUI" class="main-ui">
+    <div id="ui" class="grid">
         <div class="panel">
             <span class="tag">01. Logistic Deployment</span>
-            <div id="breedingLogic"></div>
-            <div id="incenseModule" style="margin-top: 20px;"></div>
+            <div id="gearList"></div>
+            <div id="incenseBox"></div>
         </div>
 
         <div class="panel">
-            <span class="tag">02. Genetic Analytics</span>
-            <h2 id="specName" style="font-size: 44px; margin: 0; font-weight: 200; letter-spacing: -1px;"></h2>
-            <div id="statBox" style="margin-top: 30px;"></div>
-            <div id="rowanIntervention" style="margin-top: 25px; padding: 20px; border-left: 2px solid var(--warn); background: rgba(255,0,85,0.05); display:none;">
-                <span style="font-size: 9px; font-weight: 900; color: var(--warn); letter-spacing: 2px;">LOGIC ERROR</span>
-                <p id="errorMsg" style="font-size: 13px; margin: 5px 0 0 0;"></p>
+            <span class="tag">02. Specimen Analytics</span>
+            <h2 id="pName" style="font-size: 44px; margin: 0 0 20px 0; font-weight: 200;"></h2>
+            <div id="statBox"></div>
+            <div id="rowanPanel" style="margin-top: 25px; padding: 20px; border-left: 2px solid var(--warn); background: rgba(255,0,85,0.05); display: none;">
+                <p id="rowanText" style="font-size: 13px; margin: 0;"></p>
             </div>
         </div>
 
         <div class="panel">
             <span class="tag">03. Developmental Timeline</span>
-            <div class="scroll-list" id="movePool"></div>
+            <div class="timeline" id="movePool"></div>
+            <p style="font-size: 10px; color: var(--sub); margin-top: 20px;">*LEGACY: This move is lost upon evolution. Do not evolve until learned.</p>
         </div>
     </div>
 </div>
 
 <script>
     const clean = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    function showManual() { document.getElementById('manual').style.display = 'flex'; }
-    function closeManual() { document.getElementById('manual').style.display = 'none'; }
-    function checkFirstTime() { if(!localStorage.getItem('v210_init')) { showManual(); localStorage.setItem('v210_init', 'true'); } }
-
-    const profs = {
-        'kanto': { n: 'Oak', c: '#22c55e', t: 'A classic choice! Let us ensure its ecological potential is maximized.' },
-        'johto': { n: 'Elm', c: '#eab308', t: 'Fascinating! The evolutionary patterns here are quite delicate.' },
-        'hoenn': { n: 'Birch', c: '#3b82f6', t: 'A rugged specimen! It will need the right moves to survive the field.' },
-        'sinnoh': { n: 'Rowan', c: '#00f2ff', t: 'Do not waste my time with mediocrity. If the DNA is flawed, start over.' },
-        'kalos': { n: 'Sycamore', c: '#ec4899', t: 'Such elegance! We must ensure its stats match its natural beauty.' }
+    const incenses = {
+        'azurill': 'Sea Incense', 'wynaut': 'Lax Incense', 'budew': 'Rose Incense',
+        'chingling': 'Pure Incense', 'bonsly': 'Rock Incense', 'mime-jr': 'Odd Incense',
+        'happiny': 'Luck Incense', 'munchlax': 'Full Incense', 'mantyke': 'Wave Incense'
     };
 
-    const incenseMap = {
-        'azurill': 'Sea Incense', 'wynaut': 'Lax Incense', 'mime-jr': 'Odd Incense', 
-        'happiny': 'Luck Incense', 'munchlax': 'Full Incense', 'mantyke': 'Wave Incense',
-        'budew': 'Rose Incense', 'chingling': 'Pure Incense', 'bonsly': 'Rock Incense'
-    };
-
-    async function startAnalysis() {
-        const q = document.getElementById('query').value.toLowerCase();
+    async function execute() {
+        const q = document.getElementById('target').value.toLowerCase();
         const list = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = list.results.find(p => q.includes(p.name))?.name;
         if(!t) return;
 
-        const [p, sp] = await Promise.all([
-            fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
-            fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
-        ]);
+        const p = await fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json());
+        document.getElementById('ui').style.display = 'grid';
+        document.getElementById('pName').innerText = clean(t);
 
-        const reg = sp.generation.name.split('-')[1] || 'kanto';
-        const professor = profs[reg] || profs['kanto'];
-        
-        document.getElementById('mainUI').style.display = 'grid';
-        document.getElementById('pIcon').innerText = professor.n[0];
-        document.getElementById('pIcon').style.borderColor = professor.c;
-        document.getElementById('pName').innerText = `PROFESSOR ${professor.n.toUpperCase()} // REGIONAL UPLINK`;
-        document.getElementById('pTalk').innerText = professor.t;
+        // GEAR LOGIC
+        const nature = q.match(/(modest|timid|adamant|jolly|bold|impish|calm|careful)/);
+        let gear = `<div class="gear-card"><div class="gear-title">⛓️ DESTINY KNOT</div>Inherits 5 Stats from parents.</div>`;
+        if(nature) gear += `<div class="gear-card"><div class="gear-title">💎 EVERSTONE</div>Locks <b>${clean(nature[0])}</b> nature.</div>`;
+        if(q.includes('0')) gear += `<div class="gear-card"><div class="gear-title">⚡ POWER ITEM</div>Guarantees the "0" stat inheritance.</div>`;
+        document.getElementById('gearList').innerHTML = gear;
 
-        document.getElementById('specName').innerText = clean(t);
+        const inc = incenses[t];
+        document.getElementById('incenseBox').innerHTML = inc ? `<div class="gear-card alert"><div class="gear-title">⚠️ ${inc.toUpperCase()} REQUIRED</div>Parent must hold this to produce ${clean(t)} egg.</div>` : '';
 
-        // INCENSE CHECK
-        let incense = incenseMap[t] || null;
-        document.getElementById('incenseModule').innerHTML = incense ? `
-            <div class="item-chip" style="border-color: var(--warn); background: rgba(255,0,85,0.05);">
-                <span class="item-icon">⚠️</span>
-                <div>
-                    <div style="font-size:10px; font-weight:900; color:var(--warn);">REQUIRED INCENSE</div>
-                    <div style="font-size:12px;">Parent must hold <b>${incense}</b> to produce an egg of this species.</div>
-                </div>
-            </div>` : '';
-
-        // STATS & ROWAN RAGE
+        // STATS & ROWAN
         document.getElementById('statBox').innerHTML = p.stats.map(s => `
             <div style="margin-bottom:15px;">
-                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:900; color:var(--sub);">
+                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800;">
                     <span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span>
                 </div>
-                <div style="height:2px; background:rgba(255,255,255,0.05); margin-top:5px;">
-                    <div style="height:100%; background:var(--ring); width:${(s.base_stat/255)*100}%"></div>
-                </div>
+                <div style="height:2px; background:rgba(255,255,255,0.05); margin-top:5px;"><div style="height:100%; background:var(--ring); width:${(s.base_stat/255)*100}%"></div></div>
             </div>`).join('');
 
-        const isSpec = p.stats[3].base_stat > p.stats[1].base_stat;
-        const err = document.getElementById('rowanIntervention');
-        if (q.includes('adamant') && isSpec) {
-            err.style.display = 'block';
-            document.getElementById('errorMsg').innerText = `You are assigning an Adamant nature to a ${clean(t)}, which excels in Special Attack. You are actively weakening the specimen.`;
-        } else { err.style.display = 'none'; }
+        const rowan = document.getElementById('rowanPanel');
+        if(nature && (nature[0] === 'adamant' || nature[0] === 'jolly') && p.stats[3].base_stat > p.stats[1].base_stat) {
+            rowan.style.display = 'block';
+            document.getElementById('rowanText').innerText = `Professor Rowan: You are wasting genetic potential by giving a Physical nature to a Special specialist.`;
+        } else { rowan.style.display = 'none'; }
 
-        // MOVEPOOL
+        // MOVE TIMELINE
         const moves = p.moves.map(m => ({name: m.move.name, lvl: m.version_group_details[0].level_learned_at})).sort((a,b)=>a.lvl-b.lvl);
         document.getElementById('movePool').innerHTML = moves.map(m => `
-            <div class="move-entry">
+            <div class="move-row">
                 <span><b>Lv.${m.lvl}</b> ${clean(m.name)}</span>
-                ${m.lvl > 35 ? '<span class="legacy-pill">LEGACY</span>' : ''}
+                ${m.lvl > 35 ? '<span class="legacy">LEGACY</span>' : ''}
             </div>`).join('');
-
-        document.getElementById('breedingLogic').innerHTML = `
-            <div class="item-chip"><span class="item-icon">💎</span><div><div style="font-size:9px; color:var(--sub);">PARENT A</div><div style="font-size:12px;">EVERSTONE (Locks Nature)</div></div></div>
-            <div class="item-chip"><span class="item-icon">⛓️</span><div><div style="font-size:9px; color:var(--sub);">PARENT B</div><div style="font-size:12px;">DESTINY KNOT (Inherits Stats)</div></div></div>
-        `;
     }
 </script>
 </body>
