@@ -5,136 +5,156 @@
     <title>PokeBreed Pro | ARCHITECT: LIME</title>
     <style>
         :root { --void: #010204; --ring: #00f2ff; --warn: #ff0055; --gold: #ffd700; --surface: #0a0f19; --sub: #64748b; }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s; }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; font-size: 13px; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; font-size: 13px; overflow-x: hidden; }
         
-        /* --- QUAD-CORE PROFESSOR HUB --- */
+        /* --- THE SHIELD (MANDATORY) --- */
+        .overlay { position: fixed; inset: 0; background: #000; z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .legal-card { max-width: 600px; border: 2px solid var(--warn); padding: 40px; background: #050505; border-radius: 4px; box-shadow: 0 0 50px rgba(255,0,85,0.2); }
+
+        /* --- THE ELDER QUAD-CORE HUB --- */
         .faculty-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
-        .prof-card { background: #0d1421; border-bottom: 4px solid var(--ring); padding: 20px; border-radius: 8px; text-align: center; position: relative; overflow: hidden; }
-        .prof-card.active-talk { border-color: var(--warn); background: #1a0a0f; }
-        .p-avatar { width: 60px; height: 60px; border: 3px solid var(--ring); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; background: #000; }
-        .p-status { font-size: 9px; letter-spacing: 2px; color: var(--sub); text-transform: uppercase; margin-bottom: 5px; }
-        .p-rant { font-size: 11px; font-style: italic; color: #fff; line-height: 1.3; min-height: 45px; display: flex; align-items: center; justify-content: center; }
+        .prof-card { background: #0d1421; border-top: 5px solid var(--ring); padding: 20px; border-radius: 8px; text-align: center; position: relative; min-height: 250px; display: flex; flex-direction: column; align-items: center; }
+        .p-avatar { width: 80px; height: 80px; border: 4px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 32px; background: #000; margin-bottom: 12px; }
+        .p-name { font-weight: 900; color: var(--ring); letter-spacing: 3px; font-size: 11px; margin-bottom: 10px; }
+        .p-rant { font-style: italic; font-size: 12px; color: #fff; line-height: 1.4; border-top: 1px solid #1a2333; padding-top: 10px; }
 
-        /* --- UI ELEMENTS --- */
-        .search-zone { display: grid; grid-template-columns: 1fr 200px; gap: 15px; margin-bottom: 20px; }
-        #target { background: #000; border: 4px solid var(--ring); padding: 20px; color: var(--ring); font-size: 28px; text-align: center; outline: none; border-radius: 12px; }
-        #gameFilter { background: #0d1421; border: 4px solid var(--gold); color: var(--gold); padding: 10px; font-weight: 900; border-radius: 12px; outline: none; cursor: pointer; }
+        /* --- UI COMPONENTS --- */
+        .search-bar-wrap { display: grid; grid-template-columns: 1fr 220px; gap: 15px; margin-bottom: 25px; }
+        #target { width: 100%; background: #000; border: 4px solid var(--ring); padding: 25px; color: var(--ring); font-size: 30px; text-align: center; outline: none; border-radius: 12px; }
+        #gameSelect { background: #0d1421; border: 4px solid var(--gold); color: var(--gold); font-weight: 900; border-radius: 12px; padding: 0 15px; outline: none; cursor: pointer; }
+
+        .party { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 25px; }
+        .slot { background: #0d1421; border: 1px dashed #333; padding: 20px; text-align: center; cursor: pointer; border-radius: 8px; font-size: 11px; }
+        .slot.active { border: 3px solid var(--ring); background: rgba(0, 242, 255, 0.05); color: #fff; }
         
-        .stat-bar-container { margin-bottom: 10px; }
-        .stat-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px; font-weight: 900; }
-        .bar-bg { height: 10px; background: #111; border-radius: 5px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 0%; border-radius: 5px; }
-
-        .panel { background: #0d1421; padding: 25px; border-radius: 15px; border: 1px solid #1a2333; }
+        /* --- DATA VISUALS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .panel { background: #0d1421; padding: 30px; border-radius: 15px; border: 1px solid #1a2333; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .tag { font-size: 10px; color: var(--ring); font-weight: 900; border-bottom: 1px solid #333; display: block; margin-bottom: 15px; letter-spacing: 3px; }
-        .evo-box { background: #050505; border: 1px solid #222; padding: 8px; margin: 4px 0; color: var(--gold); text-align: center; font-weight: 900; }
 
-        .party { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px; }
-        .slot { background: #0d1421; border: 1px dashed #333; padding: 15px; text-align: center; cursor: pointer; border-radius: 8px; font-size: 10px; }
-        .slot.active { border: 2px solid var(--ring); background: rgba(0,242,255,0.05); }
+        .stat-bar { margin-bottom: 12px; }
+        .stat-label { display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; margin-bottom: 4px; }
+        .bar-bg { height: 10px; background: #000; border-radius: 5px; overflow: hidden; border: 1px solid #222; }
+        .bar-fill { height: 100%; width: 0%; transition: width 1s ease-out; }
 
-        .overlay { position: fixed; inset: 0; background: #000; z-index: 999999; display: flex; align-items: center; justify-content: center; }
-        .legal { max-width: 500px; border: 2px solid var(--warn); padding: 30px; background: #050505; }
-        
-        @keyframes havoc { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(0,0); } }
-        .crash { animation: havoc 0.1s infinite; }
+        .evo-chain { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .evo-node { background: #050505; border: 2px solid var(--gold); padding: 10px 25px; font-weight: 900; border-radius: 4px; color: var(--gold); }
+
+        .crash { animation: havoc 0.08s infinite; border-color: var(--warn) !important; color: var(--warn) !important; }
+        @keyframes havoc { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(0,0); } }
     </style>
 </head>
 <body onload="boot()">
 
 <div id="pop" class="overlay">
-    <div class="legal">
-        <h2 style="color:var(--warn)">NON-AFFILIATION SHIELD</h2>
-        <p style="font-size:12px; color:var(--sub)">This is a <b>Fan-Made Project</b> by <b>Architect Lime</b>. Not affiliated with Nintendo/Game Freak. No copyright infringement intended.</p>
-        <button onclick="document.getElementById('pop').style.display='none'" style="width:100%; background:var(--gold); padding:10px; font-weight:900; border:none; cursor:pointer;">AUTHORIZE FOUNDRY</button>
+    <div class="legal-card">
+        <h2 style="color:var(--warn); margin:0; letter-spacing:2px;">NON-AFFILIATION DISCLOSURE</h2>
+        <p style="font-size:13px; color:var(--sub); line-height:1.6; margin:20px 0;">
+            <b>PokeBreed Pro</b> is an independent simulation by <b>Architect Lime</b>. It is NOT affiliated with, nor endorsed by <b>Nintendo, Game Freak, or TPC</b>.
+            <br><br>
+            All Pokémon-related data is used under fair use for educational simulation. By entering, you indemnify Architect Lime from all legal inquiries.
+        </p>
+        <button onclick="document.getElementById('pop').style.display='none'" style="background:var(--gold); padding:15px; width:100%; border:none; font-weight:900; cursor:pointer;">AUTHORIZE LIME-FOUNDRY ACCESS</button>
     </div>
 </div>
 
 <div class="faculty-grid">
     <div class="prof-card" id="card-oak">
-        <div class="p-status">Kanto Intelligence</div>
         <div class="p-avatar">O</div>
-        <div class="p-name" style="font-weight:900; color:var(--ring)">PROF. OAK</div>
-        <div class="p-rant" id="rant-oak">"Ready for genetic analysis, Lime."</div>
+        <div class="p-name">PROF. OAK</div>
+        <div class="p-rant" id="rant-oak">"Standing by for Kanto Genetic Logs. Ready when you are, Lime."</div>
     </div>
     <div class="prof-card" id="card-elm">
-        <div class="p-status">Johto Breeding</div>
         <div class="p-avatar">E</div>
-        <div class="p-name" style="font-weight:900; color:var(--ring)">PROF. ELM</div>
-        <div class="p-rant" id="rant-elm">"Monitoring Egg Cycles..."</div>
+        <div class="p-name">PROF. ELM</div>
+        <div class="p-rant" id="rant-elm">"Monitoring Egg Cycle stability. Don't forget the Everstone."</div>
     </div>
     <div class="prof-card" id="card-birch">
-        <div class="p-status">Hoenn Field Data</div>
         <div class="p-avatar">B</div>
-        <div class="p-name" style="font-weight:900; color:var(--ring)">PROF. BIRCH</div>
-        <div class="p-rant" id="rant-birch">"Field report: All clear."</div>
+        <div class="p-name">PROF. BIRCH</div>
+        <div class="p-rant" id="rant-birch">"Field report looks clear. Hoenn data is synchronized."</div>
     </div>
     <div class="prof-card" id="card-rowan">
-        <div class="p-status">Sinnoh Evolution</div>
         <div class="p-avatar">R</div>
-        <div class="p-name" style="font-weight:900; color:var(--ring)">PROF. ROWAN</div>
-        <div class="p-rant" id="rant-rowan">"Observation sequence active."</div>
+        <div class="p-name">PROF. ROWAN</div>
+        <div class="p-rant" id="rant-rowan">"Observation sequence active. Evolution is the absolute truth."</div>
     </div>
 </div>
 
 <div class="party" id="party"></div>
-
-<div class="search-zone">
-    <input type="text" id="target" placeholder="SCAN SPECIES" onkeypress="if(event.key==='Enter') scan()">
-    <select id="gameFilter">
-        <option value="all">ALL GAMES</option>
-        <option value="red">RED / BLUE</option>
-        <option value="gold">GOLD / SILVER</option>
-        <option value="ruby">RUBY / SAPPHIRE</option>
-        <option value="diamond">DIAMOND / PEARL</option>
-        <option value="sword">SWORD / SHIELD</option>
-        <option value="scarlet">SCARLET / VIOLET</option>
+<div class="search-bar-wrap">
+    <input type="text" id="target" placeholder="INITIATE GENETIC SCAN" onkeypress="if(event.key==='Enter') scan()">
+    <select id="gameSelect">
+        <option value="all">ALL REGIONS</option>
+        <option value="red">KANTO (RED/BLUE)</option>
+        <option value="gold">JOHTO (GOLD/SILV)</option>
+        <option value="ruby">HOENN (RUBY/SAPH)</option>
+        <option value="diamond">SINNOH (DIAM/PEARL)</option>
+        <option value="sword">GALAR (SW/SH)</option>
+        <option value="scarlet">PALDEA (SC/VI)</option>
     </select>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-    <div class="panel"><span class="tag">EVOLUTIONARY FAMILY</span><div id="d1">--</div></div>
-    <div class="panel"><span class="tag">DNA STAT BARS</span><div id="d2">--</div></div>
-    <div class="panel" style="grid-column: span 2;"><span class="tag">REGIONAL ENCOUNTERS (BY GAME)</span><div id="d3" style="max-height: 200px; overflow-y: auto;">--</div></div>
+<div class="grid">
+    <div class="panel"><span class="tag">I. EVOLUTIONARY LINEAGE</span><div id="d1" class="evo-chain">--</div></div>
+    <div class="panel"><span class="tag">II. DNA STAT BARS</span><div id="d2">--</div></div>
+    <div class="panel" style="grid-column: span 2;"><span class="tag">III. REGIONAL LOCATIONS (FILTERED)</span><div id="d3" style="max-height:250px; overflow-y:auto;">--</div></div>
 </div>
 
-<footer style="text-align:center; padding:40px; color:var(--sub); font-size:10px; letter-spacing:5px;">
-    ARCHITECT: LIME | INDEPENDENT FOUNDRY | NOT NINTENDO
+<footer style="text-align:center; padding:60px; color:var(--sub); font-size:11px; letter-spacing:10px;">
+    ARCHITECT: LIME | INDEPENDENT FAN PROJECT | NOT NINTENDO
 </footer>
 
 <script>
     let active = 0;
-    const STAT_MAP = { hp: '#4ade80', attack: '#facc15', defense: '#fb923c', 'special-attack': '#60a5fa', 'special-defense': '#a78bfa', speed: '#f472b6' };
+    const STAT_COLORS = { hp: '#4ade80', attack: '#facc15', defense: '#fb923c', 'special-attack': '#60a5fa', 'special-defense': '#a78bfa', speed: '#f472b6' };
+    
     const RANTS = {
-        oak: "DITTO CANNOT BREED DITTO! You're creating a genetic loop that will collapse the Kanto servers, Lime!",
-        elm: "THE EVERSTONE! You forgot to lock the Nature! Now the baby is randomized! My research is ruined!",
-        birch: "0-SPEED?! In the wild?! A Poochyena is going to eat this specimen before it even hatches!",
-        rowan: "Mewtwo does not have an Egg Group. This is a scientific impossibility. Leave the Foundry at once."
+        oak: "DITTO CANNOT BREED DITTO! I've spent fifty years studying biology and you think you can just double-up on the Pink Blob? You're tearing the very fabric of Kanto apart, Lime!",
+        elm: "THE EVERSTONE! You forgot to lock the Nature! Now the baby is randomized and my Johto research is in shambles! Who authorized this hatch?!",
+        birch: "0-SPEED?! In the wild?! A Poochyena is going to have this specimen for lunch before it even gains a level! Think of the Hoenn ecology, Architect!",
+        rowan: "Mewtwo does not have an Egg Group. This is a scientific impossibility. Evolution has its limits, Lime, and you are currently stomping all over them."
     };
 
     function boot() {
         let p = document.getElementById('party');
         for(let i=0; i<6; i++) p.innerHTML += `<div class="slot ${i==0?'active':''}" id="s${i}" onclick="setS(${i})">⚪ SLOT ${i+1}</div>`;
+        setInterval(idleChatter, 12000);
+    }
+
+    function idleChatter() {
+        const chat = [
+            ["oak", "Elm, stop worrying about the eggs. Focus on the data."],
+            ["elm", "I can't help it! Breeding is a delicate art!"],
+            ["rowan", "The Architect is searching again. Brace for impact."],
+            ["birch", "I just found a new habitat signature in the logs!"]
+        ];
+        const line = chat[Math.floor(Math.random()*chat.length)];
+        document.getElementById(`rant-${line[0]}`).innerText = line[1];
     }
 
     function setS(i) { active=i; document.querySelectorAll('.slot').forEach((s,x)=>s.classList.toggle('active', x==i)); }
 
-    function crash(who) {
+    function crashout(who) {
         const card = document.getElementById(`card-${who}`);
         const rant = document.getElementById(`rant-${who}`);
-        card.classList.add('active-talk', 'crash');
-        rant.innerText = RANTS[who];
-        setTimeout(() => { card.classList.remove('active-talk', 'crash'); rant.innerText = "Standing by..."; }, 6000);
+        card.classList.add('crash');
+        rant.innerHTML = `<span style="color:var(--warn)">${RANTS[who]}</span>`;
+        setTimeout(() => { 
+            card.classList.remove('crash'); 
+            rant.innerText = "System Stabilized. Standing by..."; 
+        }, 8000);
     }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
-        const game = document.getElementById('gameFilter').value;
-        if(q.includes("ditto ditto")) return crash('oak');
-        if(q.includes("mewtwo")) return crash('rowan');
-        if(q.includes("speed")) return crash('birch');
-        if(q.includes("everstone")) return crash('elm');
+        const gameFilter = document.getElementById('gameSelect').value;
+
+        if(q.includes("ditto ditto")) return crashout('oak');
+        if(q.includes("mewtwo") || q.includes("legendary")) return crashout('rowan');
+        if(q.includes("everstone") || q.includes("why")) return crashout('elm');
+        if(q.includes("wild") || q.includes("speed")) return crashout('birch');
 
         const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${q}`).then(r=>r.json()).catch(()=>null);
         if(!res) return;
@@ -142,23 +162,24 @@
         const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
         const loc = await fetch(res.location_area_encounters).then(r=>r.json());
 
-        // Evolution
+        // 1. FULL EVOLUTION LINEAGE
         let line = []; let curr = evo.chain;
         while(curr) { line.push(curr.species.name.toUpperCase()); curr = curr.evolves_to[0]; }
-        document.getElementById('d1').innerHTML = line.map(n => `<div class="evo-box">${n}</div>`).join('↓');
+        document.getElementById('d1').innerHTML = line.map(n => `<div class="evo-node">${n}</div>`).join('↓');
 
-        // Stats
+        // 2. DNA STAT BARS (COLORED)
         document.getElementById('d2').innerHTML = res.stats.map(s => `
-            <div class="stat-bar-container">
-                <div class="stat-label"><span>${s.stat.name}</span><span>${s.base_stat}</span></div>
-                <div class="bar-bg"><div class="bar-fill" style="width:${(s.base_stat/255)*100}%; background:${STAT_MAP[s.stat.name]}"></div></div>
+            <div class="stat-bar">
+                <div class="stat-label"><span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span></div>
+                <div class="bar-bg"><div class="bar-fill" style="width:${(s.base_stat/255)*100}%; background:${STAT_COLORS[s.stat.name] || '#fff'}"></div></div>
             </div>
         `).join('');
 
-        // Locations by Game
-        let filteredLocs = loc.filter(l => game === 'all' || l.version_details.some(v => v.version.name.includes(game)));
-        document.getElementById('d3').innerHTML = filteredLocs.length ? 
-            filteredLocs.map(l => `• ${l.location_area.name.replace(/-/g,' ')}`).join('<br>') : "No data for this game version.";
+        // 3. REGIONAL LOCATIONS (BY GAME)
+        let locData = loc.filter(l => gameFilter === 'all' || l.version_details.some(v => v.version.name.includes(gameFilter)));
+        document.getElementById('d3').innerHTML = locData.length ? 
+            locData.map(l => `<div style="padding:5px; border-bottom:1px solid #1a2333;">• ${l.location_area.name.replace(/-/g,' ').toUpperCase()}</div>`).join('') 
+            : `<div style="color:var(--sub)">No regional data found for "${gameFilter}" filter.</div>`;
         
         document.getElementById(`s${active}`).innerHTML = `🔴<br><b>${res.name.toUpperCase()}</b>`;
     }
