@@ -6,129 +6,124 @@
     <title>PokeBreed Pro | Rowan's Lab</title>
     <style>
         :root { --bg: #0c0d10; --card: #16181d; --primary: #00e5ff; --text: #f0f0f0; --sub-text: #a0a8b5; --border: #2d333f; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
-        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.6); margin-top: 40px; height: fit-content; }
-        h1 { color: var(--primary); text-align: center; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 4px; font-weight: 900; }
-        .subtitle { text-align: center; color: var(--sub-text); margin-bottom: 35px; font-size: 0.85em; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.6); margin-top: 40px; transition: opacity 0.5s; }
+        h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 4px; font-weight: 900; }
         .input-group { display: flex; gap: 12px; margin-bottom: 30px; }
         input { flex: 1; padding: 18px; background: #1a1c23; border: 2px solid var(--border); border-radius: 12px; color: white; font-size: 1.1em; outline: none; }
         button { padding: 18px 30px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
         
-        /* ROWAN POPUP */
+        /* THE ROWAN BOX */
         #rowanPopup {
             display: none; position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 650px; background: #fdfdfd; border: 6px double #333;
             padding: 30px; z-index: 9999; color: #222; font-family: 'Courier New', monospace;
             box-shadow: 0 0 0 5000px rgba(0,0,0,0.8);
-            animation: shake 0.4s ease-in-out;
         }
-        .rowan-header { font-weight: 900; color: #b00; border-bottom: 3px solid #333; margin-bottom: 15px; font-size: 1.3em; display: inline-block; }
+        .rowan-header { font-weight: 900; color: #b00; border-bottom: 3px solid #333; margin-bottom: 15px; font-size: 1.3em; }
         .rowan-btn { background: #333; color: white; border: none; padding: 10px 25px; float: right; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        .suggestion-link { color: #0066cc; cursor: pointer; text-decoration: underline; font-weight: bold; }
 
-        @keyframes shake { 0%, 100% { transform: translateX(-50%); } 20% { transform: translateX(-52%); } 40% { transform: translateX(-48%); } }
+        /* ANIMATIONS */
+        @keyframes shake { 0%, 100% { transform: translateX(-50%); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-52%); } 20%, 40%, 60%, 80% { transform: translateX(-48%); } }
+        @keyframes ultra-shake { 0% { transform: translate(-50%, 0); } 25% { transform: translate(-51%, 2%); } 50% { transform: translate(-49%, -2%); } 75% { transform: translate(-52%, 1%); } 100% { transform: translate(-50%, 0); } }
+        .crash-out { background: #600 !important; color: white !important; border-color: #f00 !important; animation: ultra-shake 0.1s infinite !important; }
         
         #output { display: none; }
-        .section-title { color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-top: 35px; text-transform: uppercase; font-size: 0.85em; font-weight: 800; }
-        .step { padding: 18px; background: rgba(255,255,255,0.02); border-left: 5px solid var(--primary); margin-top: 12px; border-radius: 0 10px 10px 0; border: 1px solid var(--border); border-left-width: 5px; }
         .move-pill { display: inline-block; padding: 5px 12px; background: var(--bg); border: 1px solid var(--border); margin: 4px; border-radius: 6px; font-size: 0.8em; color: var(--primary); text-transform: capitalize; }
-        .ref-btn { flex: 1; padding: 12px; text-align: center; text-decoration: none; color: white; border-radius: 10px; font-weight: 800; font-size: 0.85em; display: block; margin-top: 10px; }
+        .suggestion-link { color: #0066cc; cursor: pointer; text-decoration: underline; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="rowanPopup">
-    <div class="rowan-header">PROF. ROWAN</div><br>
-    <div id="rowanText">Hmm! I've been researching Pokémon for 60 years, and I've never heard of a species spelled that way! Are you quite finished wasting my time?</div>
-    <div id="rowanSuggestions" style="margin-top: 15px; font-size: 0.9em; display: none; background: #eee; padding: 10px; border: 1px dashed #333;">
-        Did your pen slip? Did you mean: <span id="suggestionList"></span>?
+    <div id="rowanHeader" class="rowan-header">PROF. ROWAN</div><br>
+    <div id="rowanText">Hmm! Be precise!</div>
+    <div id="rowanSuggestions" style="margin-top: 10px; font-size: 0.85em; display:none;">
+        Did your pen slip? <span id="suggestionList"></span>?
     </div>
-    <button class="rowan-btn" onclick="closeRowan()">SORRY, PROFESSOR...</button>
+    <button id="rowanBtn" class="rowan-btn" onclick="closeRowan()">SORRY...</button>
 </div>
 
-<div class="container">
+<div class="container" id="mainApp">
     <h1>⚡ PokeBreed Pro</h1>
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="e.g. 'Gyarados SV'" onkeypress="if(event.key === 'Enter') generateGuide()">
+        <input type="text" id="userInput" placeholder="e.g. 'Glibe SV'" onkeypress="if(event.key === 'Enter') generateGuide()">
         <button onclick="generateGuide()">Analyze</button>
     </div>
-
     <div id="output">
-        <h2 id="pokeHeader" style="text-transform: capitalize; font-size: 2.5em; color: var(--primary); margin: 0;"></h2>
-        <div id="stepsList"></div>
-        <div class="section-title">⚔️ Inherited Egg Moves</div>
-        <div id="eggMovepool"></div>
-        <div class="section-title">📖 Standard Moves</div>
-        <div id="standardMovepool"></div>
-        <a id="linkSerebii" class="ref-btn" style="background: #0e7a3a;" target="_blank">View Detailed Serebii Entry</a>
+        <h2 id="pokeHeader" style="text-transform: capitalize; font-size: 2em; color: var(--primary);"></h2>
+        <div id="eggMoves" style="margin-top:20px;"></div>
     </div>
 </div>
 
 <script>
-    let failedAttempts = 0;
-    let pokemonList = [];
-
-    // Fetch full list of names once for suggestions
+    let failedCount = 0;
+    let pokemonNames = [];
+    
     fetch('https://pokeapi.co/api/v2/pokemon?limit=2000').then(res => res.json()).then(data => {
-        pokemonList = data.results.map(p => p.name);
+        pokemonNames = data.results.map(p => p.name);
     });
 
-    // Simple string similarity (Levenshtein distance lite)
-    function getSuggestions(target) {
-        return pokemonList
-            .filter(name => name.includes(target) || (target.length > 3 && name.startsWith(target.substring(0,3))))
-            .slice(0, 3);
+    function getDistance(a, b) {
+        const m = Array.from({length: a.length+1}, (_, i) => [i]);
+        for(let j=0; j<=b.length; j++) m[0][j] = j;
+        for(let i=1; i<=a.length; i++) {
+            for(let j=1; j<=b.length; j++) {
+                const cost = a[i-1] === b[j-1] ? 0 : 1;
+                m[i][j] = Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+cost);
+            }
+        }
+        return m[a.length][b.length];
     }
 
     function closeRowan() { document.getElementById('rowanPopup').style.display = 'none'; }
 
     async function generateGuide() {
         const input = document.getElementById('userInput').value.toLowerCase().trim();
-        if(!input) return;
-
-        const noise = ["get", "find", "breed", "iv", "5iv", "shiny", "jolly", "adamant", "timid", "modest", "sv", "swsh", "bdsp"];
-        const pokemonName = input.split(/\s+/).find(w => w.length > 2 && !noise.includes(w));
+        const pokemonName = input.split(/\s+/).find(w => w.length > 2 && !["sv","iv","shiny"].includes(w));
 
         try {
             const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
             if(!res.ok) throw new Error();
             const data = await res.json();
             
-            failedAttempts = 0; // Reset patience
+            failedCount = 0; // Reset
             document.getElementById('output').style.display = 'block';
             document.getElementById('pokeHeader').innerText = data.name;
-
-            // Strategy & Moves Logic
-            const eggMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg'));
-            const stdMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'level-up' || v.move_learn_method.name === 'machine'));
-
-            document.getElementById('eggMovepool').innerHTML = eggMoves.slice(0, 8).map(m => `<span class="move-pill" style="border-color:#ff00ff; color:#ff00ff;">${m.move.name.replace(/-/g, ' ')}</span>`).join('');
-            document.getElementById('standardMovepool').innerHTML = stdMoves.slice(0, 10).map(m => `<span class="move-pill">${m.move.name.replace(/-/g, ' ')}</span>`).join('');
-
-            let steps = [`<strong>EVs:</strong> ${data.stats.filter(s => s.effort > 0).map(s => s.effort + " " + s.stat.name).join(', ')}` ];
-            if(input.includes("iv")) steps.push("📊 Use <strong>Destiny Knot</strong> to transfer 5 IVs.");
-            document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('');
-
-            document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${data.name.split('-')[0]}/`;
-
         } catch (e) {
-            failedAttempts++;
+            failedCount++;
             const popup = document.getElementById('rowanPopup');
             const text = document.getElementById('rowanText');
-            const suggestionsDiv = document.getElementById('rowanSuggestions');
+            const app = document.getElementById('mainApp');
             
             popup.style.display = 'block';
-            
-            if (failedAttempts >= 3) {
-                text.innerText = "...Grah! Your handwriting is nearly illegible! Are you even trying? If you can't be precise, at least look at these species and tell me if one matches!";
-                const suggestions = getSuggestions(pokemonName || "");
-                if (suggestions.length > 0) {
-                    suggestionsDiv.style.display = 'block';
-                    document.getElementById('suggestionList').innerHTML = suggestions.map(s => `<span class="suggestion-link" onclick="document.getElementById('userInput').value='${s}'; generateGuide(); closeRowan();">${s}</span>`).join(', ');
-                }
+            popup.style.animation = "shake 0.4s ease-in-out";
+
+            if (failedCount >= 10) {
+                // CRASH OUT PHASE
+                popup.classList.add('crash-out');
+                text.innerHTML = "GRAAAAAH!!! ENOUGH! I HAVE RESEARCH TO CONDUCT AND YOU ARE WASTING EVERY SECOND OF IT! GET OUT OF MY LAB! NOW!!";
+                document.getElementById('rowanBtn').style.display = 'none';
+                app.style.opacity = '0'; // Kick out
+                
+                setTimeout(() => {
+                    // COOLDOWN PHASE
+                    popup.classList.remove('crash-out');
+                    popup.style.animation = "none";
+                    text.innerHTML = "...*huff*... *puff*... My apologies. I lost my composure. Let us start over from the beginning. Please... be more careful.";
+                    document.getElementById('rowanBtn').style.display = 'block';
+                    document.getElementById('rowanBtn').innerText = "YES, PROFESSOR.";
+                    failedCount = 0;
+                    app.style.opacity = '1';
+                    document.getElementById('userInput').value = "";
+                }, 5000);
             } else {
-                text.innerText = "Hmm! I've been researching Pokémon for 60 years, and I've never heard of a species spelled that way! Be precise!";
-                suggestionsDiv.style.display = 'none';
+                text.innerText = `Attempt ${failedCount}/10: "${pokemonName}" is NOT a Pokémon. Do you even have a Pokédex?!`;
+                const suggestions = pokemonNames.map(n => ({n, d: getDistance(pokemonName, n)})).filter(x => x.d <= 2).sort((a,b)=>a.d-b.d).slice(0,3);
+                if(suggestions.length > 0) {
+                    document.getElementById('rowanSuggestions').style.display = "block";
+                    document.getElementById('suggestionList').innerHTML = suggestions.map(s => `<span class="suggestion-link" onclick="document.getElementById('userInput').value='${s.n}'; generateGuide(); closeRowan();">${s.n}</span>`).join(', ');
+                }
             }
         }
     }
