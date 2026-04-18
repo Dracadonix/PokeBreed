@@ -3,123 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | The Rowan Laboratory</title>
+    <title>PokeBreed Pro | Specialist Suite</title>
     <style>
         :root { 
             --bg: #050608; --card: #101218; --primary: #00e5ff; --accent: #ff00ff; 
             --text: #e2e8f0; --sub-text: #64748b; --border: #1e293b; --rowan-red: #b91c1c;
+            --step-bg: #1a1d26;
         }
         body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
 
-        /* LEGAL INITIALIZATION */
-        #initOverlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .init-box { max-width: 500px; padding: 40px; border: 1px solid #333; background: #0a0a0a; border-radius: 8px; }
-        .init-btn { width: 100%; padding: 15px; background: transparent; border: 1px solid var(--primary); color: var(--primary); cursor: pointer; font-weight: bold; margin-top: 20px; text-transform: uppercase; }
-
+        /* THE CONTAINER */
         .container { max-width: 1100px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.8); transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); margin-top: 20px; }
         
-        /* HEADER & INPUT */
-        .lab-header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-        .input-row { display: flex; gap: 15px; margin-bottom: 30px; }
+        /* INPUT SYSTEM */
+        .input-row { display: flex; gap: 15px; margin-bottom: 25px; }
         input { flex: 1; padding: 20px; background: #07080a; border: 2px solid var(--border); border-radius: 12px; color: white; font-size: 1.1rem; }
-        input:focus { border-color: var(--primary); outline: none; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 15px rgba(0,229,255,0.1); }
         .btn-main { padding: 0 40px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; }
 
-        /* ROWAN'S OVERRIDE */
+        /* ROWAN BOX (HIDDEN RAGE) */
         #rowanBox {
             display: none; position: fixed; bottom: 8%; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 800px; background: #fff; border: 6px double #000;
             padding: 30px; z-index: 9999; color: #000; font-family: 'Courier New', monospace;
-            box-shadow: 0 40px 150px rgba(0,0,0,1);
         }
         .rowan-shaking { animation: r-shake 0.05s infinite; }
         .rowan-critical { background: #700 !important; color: #fff !important; }
         @keyframes r-shake { 0% { transform: translate(-50%, 0); } 25% { transform: translate(-52%, 2%); } 75% { transform: translate(-48%, -2%); } }
 
-        /* DATA GRID */
-        #output { display: none; }
-        .grid { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+        /* ROADMAP STYLING */
+        #output { display: none; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .grid { display: grid; grid-template-columns: 1fr 380px; gap: 30px; }
         .card { background: #161a22; border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
         .h-label { font-size: 0.7rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; font-weight: 800; }
         
+        .step { background: var(--step-bg); border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 15px; border-radius: 0 8px 8px 0; font-size: 0.95rem; }
+        .step-num { font-weight: 900; color: var(--primary); margin-right: 10px; }
+        .highlight { color: var(--accent); font-weight: bold; }
+        
         .pill { display: inline-block; padding: 6px 12px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; margin: 4px; font-size: 0.85rem; }
-        .pill-ha { border-color: var(--accent); color: var(--accent); }
-        .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e293b; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-<div id="initOverlay">
-    <div class="init-box">
-        <h2 style="color:var(--primary); font-size: 1.5rem;">SINNOH GENETIC LOGISTICS</h2>
-        <p style="color:#888; font-size:0.8rem;">V5.0 NATIONAL DEX SYSTEM. PLEASE INPUT SPECIES DATA WITH HIGH PRECISION.</p>
-        <button class="init-btn" onclick="document.getElementById('initOverlay').style.display='none'">BOOT SYSTEM</button>
-    </div>
-</div>
-
 <div id="rowanBox">
-    <div style="font-weight:900; color:var(--rowan-red); border-bottom:2px solid #000; margin-bottom:15px; font-size:1.2rem;">PROF. ROWAN</div>
+    <div style="font-weight:900; color:var(--rowan-red); border-bottom:2px solid #000; margin-bottom:15px;">PROF. ROWAN</div>
     <div id="rowanMsg">...</div>
-    <div id="rowanTips" style="margin-top:20px; padding:15px; background:#f1f5f9; border-radius:4px; display:none;">
-        <span style="font-weight:bold; font-size:0.7rem;">DID YOUR PEN SLIP?</span><br>
-        <div id="tipContainer" style="margin-top:5px;"></div>
-    </div>
     <button id="rowanClose" style="float:right; margin-top:20px; padding:10px 20px; background:#000; color:#fff; cursor:pointer;" onclick="document.getElementById('rowanBox').style.display='none'">ACKNOWLEDGE</button>
 </div>
 
 <div class="container" id="mainUI">
-    <div class="lab-header">
-        <h1 style="margin:0; font-size:2.5rem; letter-spacing:-1px;">POKEBREED <span style="color:var(--primary)">PRO</span></h1>
-        <p style="color:var(--sub-text); margin:5px 0;">Advanced Heredity, IV, & Ability Mapping Engine</p>
+    <div style="text-align:center; margin-bottom:40px;">
+        <h1 style="margin:0; font-size:2.5rem; letter-spacing:-1px;">POKEBREED <span style="color:var(--primary)">CONSULTANT</span></h1>
+        <p style="color:var(--sub-text);">Sinnoh Laboratory v6.0 // National Dex Logistics</p>
     </div>
 
     <div class="input-row">
-        <input type="text" id="userInput" placeholder="Search Species (e.g., Alolan Vulpix, Jolly Garchomp, Shiny Ditto)" onkeypress="if(event.key === 'Enter') startSearch()">
-        <button class="btn-main" onclick="startSearch()">ANALYZE</button>
+        <input type="text" id="userInput" placeholder="e.g. 5iv jolly weavile with ice shard" onkeypress="if(event.key === 'Enter') generateRoadmap()">
+        <button class="btn-main" onclick="generateRoadmap()">CONSULT</button>
     </div>
 
     <div id="output">
         <div class="grid">
             <div class="left-col">
                 <div class="card">
-                    <span class="h-label">Specimen Identification</span>
-                    <h2 id="pName" style="text-transform:capitalize; font-size:3rem; margin:0; color:var(--primary);"></h2>
+                    <span class="h-label">Specimen Target</span>
+                    <h2 id="pName" style="text-transform:capitalize; font-size:2.8rem; margin:0; color:var(--primary);"></h2>
                     <div id="pTypes" style="margin-top:10px;"></div>
                 </div>
 
-                <div class="card">
-                    <span class="h-label">Ability Inheritance Logic</span>
-                    <div id="pAbilities"></div>
-                    <p style="font-size:0.75rem; color:var(--sub-text); margin-top:15px;">*Hidden Abilities have a 60% pass rate when breeding with a female carrier or Ditto.</p>
-                </div>
-
-                <div class="card">
-                    <span class="h-label">Regional & Evolution Notes</span>
-                    <div id="pEvo" style="font-size:0.95rem; line-height:1.6;"></div>
+                <div class="card" id="roadmapSection">
+                    <span class="h-label">Breeding & Growth Roadmap</span>
+                    <div id="roadmapContent"></div>
                 </div>
             </div>
 
             <div class="right-col">
                 <div class="card">
-                    <span class="h-label">Competitive Breeding Stats</span>
-                    <div class="stat-row"><span>Gender Rate:</span> <span id="pGender" style="font-weight:bold;"></span></div>
-                    <div class="stat-row"><span>Hatch Cycles:</span> <span id="pHatch" style="font-weight:bold;"></span></div>
-                    <div class="stat-row"><span>Base Friendship:</span> <span id="pFriend" style="font-weight:bold;"></span></div>
-                </div>
-
-                <div class="card">
-                    <span class="h-label">Shiny Masuda Odds</span>
-                    <div class="stat-row"><span>Standard:</span> <span>1/4096</span></div>
-                    <div class="stat-row"><span>Masuda + Charm:</span> <span style="color:var(--accent)">1/512</span></div>
-                </div>
-
-                <div class="card">
-                    <span class="h-label">Essential Held Items</span>
-                    <div style="font-size:0.8rem;">
-                        <strong>Everstone:</strong> Locks Nature / Regional Form.<br>
-                        <strong>Destiny Knot:</strong> Passes 5 IVs from parents.<br>
-                        <strong>Power Items:</strong> Forced IV inheritance.
+                    <span class="h-label">Required Genetics</span>
+                    <div id="pEggMoves" style="margin-bottom:15px;"></div>
+                    <div style="font-size:0.8rem; border-top:1px solid #1e293b; padding-top:15px;">
+                        <span class="highlight">HA Inheritance:</span> 60% chance via Mother.<br>
+                        <span class="highlight">Everstone:</span> Locks Nature.
                     </div>
+                </div>
+
+                <div class="card">
+                    <span class="h-label">Hatch Logistics</span>
+                    <div id="pLogistics"></div>
                 </div>
             </div>
         </div>
@@ -129,99 +101,79 @@
 <script>
     let dex = [];
     let _f = 0; 
-    let _lim = Math.floor(Math.random() * 10) + 6;
-
-    const _rowanDial = {
-        m1: ["Precision! A researcher's foundation is accuracy.", "I don't recognize that name. Re-verify your entry.", "Double-check your field notes before logging data."],
-        m2: ["Your focus is wavering. I've never seen such a creature.", "I am a busy man. Use the correct nomenclature!", "Is your equipment malfunctioning, or are you?"],
-        m3: ["GRAH! I have more important things to do than fix your typos!", "Look at the suggestions! They are right in front of you!", "I am close to losing my composure. Correct this at once!"],
-        m4: ["GRAAAAAAH!!! GET OUT OF MY LABORATORY!!", "THAT'S IT! I'M RETIRING!! I CAN'T TEACH THIS LEVEL OF SLOPPINESS!!", "THE RESEARCH IS RUINED! LEAVE!!"]
-    };
+    let _lim = Math.floor(Math.random() * 8) + 5;
 
     fetch('https://pokeapi.co/api/v2/pokemon?limit=2000').then(r => r.json()).then(d => dex = d.results.map(p => p.name));
 
-    function _ld(a, b) {
-        const m = Array.from({length: a.length+1}, (_, i) => [i]);
-        for(let j=0; j<=b.length; j++) m[0][j] = j;
-        for(let i=1; i<=a.length; i++) {
-            for(let j=1; j<=b.length; j++) {
-                const c = a[i-1] === b[j-1] ? 0 : 1;
-                m[i][j] = Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+c);
-            }
-        }
-        return m[a.length][b.length];
-    }
-
-    async function startSearch() {
+    async function generateRoadmap() {
         const val = document.getElementById('userInput').value.toLowerCase().trim();
-        const query = val.split(/\s+/).find(w => w.length > 2 && !["sv","iv","shiny"].includes(w));
+        const words = val.split(/\s+/);
+        const target = words.find(w => dex.includes(w)) || words.find(w => w.length > 3 && !["with", "jolly", "5iv", "ice", "shard"].includes(w));
 
         try {
-            const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
+            const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${target}`);
             if(!r.ok) throw new Error();
             const d = await r.json();
             
             _f = 0; 
             document.getElementById('output').style.display = 'block';
             document.getElementById('pName').innerText = d.name;
-            document.getElementById('pTypes').innerHTML = d.types.map(t => `<span class="pill" style="border-color:var(--primary)">${t.type.name.toUpperCase()}</span>`).join('');
+            document.getElementById('pTypes').innerHTML = d.types.map(t => `<span class="pill">${t.type.name.toUpperCase()}</span>`).join('');
 
-            // Abilities
-            document.getElementById('pAbilities').innerHTML = d.abilities.map(a => `
-                <div class="stat-row">
-                    <span>${a.ability.name.replace(/-/g, ' ')} ${a.is_hidden ? '<span class="pill-ha" style="font-size:0.6rem; margin-left:10px;">HIDDEN</span>' : ''}</span>
-                    <span style="font-size:0.7rem; color:var(--sub-text)">${a.is_hidden ? 'Patch' : 'Capsule'} OK</span>
-                </div>
-            `).join('');
-
-            // Species Logic
             const sR = await fetch(d.species.url);
             const sD = await sR.json();
-            document.getElementById('pGender').innerText = sD.gender_rate === -1 ? "Genderless" : (sD.gender_rate * 12.5) + "% Female";
-            document.getElementById('pHatch').innerText = `${sD.hatch_counter} Cycles (~${sD.hatch_counter * 255} steps)`;
-            document.getElementById('pFriend').innerText = sD.base_happiness;
+            const baseName = sD.name; // This finds 'Sneasel' if target was 'Weavile'
 
-            // Evo/Regional Logic
-            let eMsg = "Standard evolutionary path detected. Ensure correct level-up conditions.";
-            if(d.name.includes('-alola') || d.name.includes('-galar')) eMsg = "<strong>REGIONAL VARIANT:</strong> Must hold Everstone to hatch this form in other regions.";
-            if(sD.is_baby) eMsg = "<strong>BABY POKEMON:</strong> Cannot breed in this form. Must evolve first.";
-            document.getElementById('pEvo').innerHTML = eMsg;
+            // --- ROADMAP GENERATOR ---
+            let steps = [];
+            
+            // Step 1: Breeding
+            steps.push(`<div class="step"><span class="step-num">01</span>Begin by breeding for a <span class="highlight">${baseName.toUpperCase()}</span>. To pass down 5-IVs, ensure the parents hold a <strong>Destiny Knot</strong>.</div>`);
+            
+            // Step 2: Moves
+            if(val.includes("ice") || val.includes("shard") || val.includes("egg")) {
+                steps.push(`<div class="step"><span class="step-num">02</span><strong>GENETIC MOVE ALERT:</strong> To obtain <strong>Ice Shard</strong>, your ${baseName} must hatch with it. Breed a female ${baseName} with a compatible male (e.g., Lapras or Dewgong) that already knows the move.</div>`);
+            } else {
+                steps.push(`<div class="step"><span class="step-num">02</span>Focus on <span class="highlight">Nature Alignment</span>. Use an Everstone on a parent with the desired Nature to lock it in.</div>`);
+            }
+
+            // Step 3: Evolution
+            if (sD.evolution_chain) {
+                steps.push(`<div class="step"><span class="step-num">03</span><strong>EVOLUTION TRIGGER:</strong> Once your ${baseName} is perfect, evolve it into ${d.name.toUpperCase()}. Check for special conditions (e.g., Leveling at night while holding a Razor Claw).</div>`);
+            }
+
+            document.getElementById('roadmapContent').innerHTML = steps.join('');
+
+            // Sidebar Details
+            document.getElementById('pLogistics').innerHTML = `
+                <div style="font-size:0.9rem;">
+                    <strong>Hatch Cycles:</strong> ${sD.hatch_counter}<br>
+                    <strong>Female Ratio:</strong> ${sD.gender_rate === -1 ? 'None' : (sD.gender_rate * 12.5) + '%'}<br>
+                    <strong>Growth Rate:</strong> ${sD.growth_rate.name.replace(/-/g, ' ')}
+                </div>
+            `;
 
         } catch (e) {
             _f++;
             const b = document.getElementById('rowanBox');
             const m = document.getElementById('rowanMsg');
             const ui = document.getElementById('mainUI');
-            const t = document.getElementById('rowanTips');
             
             b.style.display = 'block';
-            b.classList.remove('rowan-shaking', 'rowan-critical');
-
             if (_f >= _lim) {
                 b.classList.add('rowan-critical', 'rowan-shaking');
-                m.innerHTML = _rowanDial.m4[Math.floor(Math.random() * _rowanDial.m4.length)];
+                m.innerText = "GRAAAAAH!!! I CANNOT READ YOUR NOTES! GET OUT OF MY LABORATORY!!";
                 document.getElementById('rowanClose').style.display = 'none';
                 ui.style.opacity = '0';
-                ui.style.transform = "scale(0.7) translateY(-100px) rotate(-10deg)";
-
-                setTimeout(() => b.classList.remove('rowan-shaking'), 3000); 
-
+                ui.style.transform = "scale(0.8) rotate(10deg)";
                 setTimeout(() => {
-                    b.classList.remove('rowan-critical');
-                    m.innerHTML = "...*huff*... Let us try this again. My blood pressure... please be more careful.";
+                    b.classList.remove('rowan-critical', 'rowan-shaking');
+                    m.innerText = "...My apologies. Let us try to be professional.";
                     document.getElementById('rowanClose').style.display = 'block';
-                    _f = 0; _lim = Math.floor(Math.random() * 10) + 6;
-                    ui.style.opacity = '1'; ui.style.transform = "scale(1) rotate(0deg)";
-                }, 8000); 
+                    _f = 0; ui.style.opacity = '1'; ui.style.transform = "scale(1)";
+                }, 7000);
             } else {
-                let mood = _f > (_lim * 0.7) ? 'm3' : (_f > (_lim * 0.3) ? 'm2' : 'm1');
-                m.innerText = `[LOG ENTRY ${_f}] ` + _rowanDial[mood][Math.floor(Math.random() * _rowanDial[mood].length)];
-                
-                const s = dex.map(n => ({n, d: _ld(query || "", n)})).filter(x => x.d <= 2).sort((a,b)=>a.d-b.d).slice(0,3);
-                if(s.length > 0) {
-                    t.style.display = "block";
-                    document.getElementById('tipContainer').innerHTML = s.map(x => `<span style="color:blue; cursor:pointer; text-decoration:underline; font-size:0.9rem; margin-right:10px;" onclick="document.getElementById('userInput').value='${x.n}'; startSearch(); document.getElementById('rowanBox').style.display='none';">${x.n}</span>`).join('');
-                } else { t.style.display = "none"; }
+                m.innerText = `[LOG ${_f}] I cannot identify the specimen in your sentence. Be precise!`;
             }
         }
     }
