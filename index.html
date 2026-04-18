@@ -3,101 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Field Researcher Suite</title>
+    <title>PokeBreed Pro | Apex Architect</title>
     <style>
         :root { 
-            --bg: #010204; --card: #0d1117; --primary: #00e5ff; --accent: #ff00ff; 
-            --text: #f0f4f8; --sub-text: #64748b; --border: #30363d; --rowan: #ff0000;
+            --bg: #05070a; --card: #0f172a; --primary: #0ea5e9; --accent: #d946ef; 
+            --text: #f8fafc; --sub-text: #94a3b8; --border: #1e293b; --success: #22c55e;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; line-height: 1.5; }
 
-        .container { max-width: 1400px; width: 100%; margin-top: 10px; }
-        .header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        
-        /* SEARCH ENGINE */
-        .input-wrap { display: flex; gap: 10px; background: #000; padding: 10px; border: 2px solid var(--primary); border-radius: 12px; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
-        input { flex: 1; background: transparent; border: none; padding: 15px; color: #fff; font-size: 1.1rem; outline: none; }
-        .btn-run { background: var(--primary); color: #000; border: none; padding: 0 35px; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .container { max-width: 1200px; width: 100%; animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* DATA ARCHITECTURE */
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; letter-spacing: -1px; margin-bottom: 5px; }
+        .header p { color: var(--sub-text); font-weight: 500; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; }
+
+        /* PROFESSIONAL SEARCH BAR */
+        .search-area { position: sticky; top: 10px; z-index: 100; margin-bottom: 30px; }
+        .input-group { display: flex; background: #000; border: 1px solid var(--border); border-radius: 12px; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        input { flex: 1; background: transparent; border: none; padding: 12px 20px; color: #fff; font-size: 1rem; outline: none; }
+        .btn-execute { background: var(--primary); color: #fff; border: none; padding: 0 30px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-execute:hover { background: #0284c7; transform: translateY(-1px); }
+
+        /* GRID SYSTEM */
         #output { display: none; }
-        .layout { display: grid; grid-template-columns: 1fr 450px; gap: 25px; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; position: relative; }
-        .h-tag { color: var(--primary); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
+        .main-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        
+        .section-label { color: var(--primary); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; display: block; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 
         /* EVOLUTION TREE */
-        .tree-container { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-        .tree-node { background: #161b22; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.8rem; text-transform: capitalize; }
-        .tree-arrow { color: var(--sub-text); font-weight: bold; }
-        .current-node { border-color: var(--primary); color: var(--primary); font-weight: bold; box-shadow: 0 0 10px rgba(0, 229, 255, 0.1); }
+        .evo-path { display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+        .evo-node { background: #1e293b; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; border: 1px solid transparent; }
+        .evo-node.current { border-color: var(--primary); background: rgba(14, 165, 233, 0.1); color: var(--primary); }
+        .arrow { color: var(--sub-text); font-size: 0.8rem; }
 
-        /* STAT BARS */
-        .stat-container { margin-bottom: 10px; }
-        .stat-label { font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .stat-bar-bg { width: 100%; height: 6px; background: #161b22; border-radius: 3px; overflow: hidden; }
-        .stat-bar-fill { height: 100%; background: var(--primary); transition: width 1s ease-in-out; }
+        /* TACTICAL MOVESET */
+        .move-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .move-card { background: #1e293b; padding: 14px; border-radius: 10px; border-left: 3px solid var(--accent); position: relative; }
+        .move-title { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+        .move-detail { font-size: 0.7rem; color: var(--sub-text); font-family: 'Courier New', monospace; }
+        .stab-tag { position: absolute; top: 8px; right: 8px; font-size: 0.6rem; background: var(--success); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 800; }
 
-        .location-box { background: #1a1f26; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent); margin-top: 10px; font-size: 0.9rem; }
+        /* STATS */
+        .stat-row { margin-bottom: 12px; }
+        .stat-info { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px; }
+        .bar-outer { width: 100%; height: 6px; background: #334155; border-radius: 10px; }
+        .bar-inner { height: 100%; border-radius: 10px; background: var(--primary); transition: width 1s ease-out; }
 
-        /* ROWAN'S TEMPER */
-        #rowanBox {
-            display: none; position: fixed; bottom: 5%; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 750px; background: #fff; color: #000; padding: 30px;
-            border: 10px double #000; z-index: 10000; font-family: 'Courier New', monospace;
-        }
-        .shaking { animation: rumble 0.1s infinite; }
-        @keyframes rumble { 0% { transform: translate(-50.5%, 0.5%); } 50% { transform: translate(-49.5%, -0.5%); } 100% { transform: translate(-50%, 0); } }
+        /* ERROR MODAL */
+        #rowanModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: #fff; color: #000; padding: 40px; border-radius: 4px; max-width: 500px; border: 10px solid #000; font-family: 'Courier New', monospace; }
+
+        .location-text { font-size: 0.9rem; color: var(--accent); font-weight: 600; line-height: 1.6; }
     </style>
 </head>
 <body>
 
-<div id="rowanBox">
-    <div style="font-weight:900; color:red; border-bottom:2px solid #000; margin-bottom:10px;">PROF. ROWAN: FIELD REPORT AUDIT</div>
-    <div id="rowanMsg">...</div>
-    <button style="float:right; margin-top:15px; padding:10px 20px; background: #000; color:#fff;" onclick="document.getElementById('rowanBox').style.display='none'">ACKNOWLEDGE</button>
+<div id="rowanModal">
+    <div class="modal-content">
+        <h3 style="color:red; margin-top:0;">PROFESSOR ROWAN</h3>
+        <p id="rowanMsg">I've spent years researching Pokémon... and you bring me this? Check your spelling immediately!</p>
+        <button onclick="document.getElementById('rowanModal').style.display='none'" style="background:#000; color:#fff; border:none; padding:10px 20px; cursor:pointer; font-weight:bold;">ACKNOWLEDGED</button>
+    </div>
 </div>
 
 <div class="container">
     <div class="header">
-        <h1>POKEBREED <span style="color:var(--primary)">FIELD ARCHITECT</span></h1>
-        <p style="color:var(--sub-text);">V13.0 // Distribution, Genealogy, & Statistical Analysis</p>
+        <h1>PokéBreed <span style="color:var(--primary)">Apex Architect</span></h1>
+        <p>Advanced Competitive Heredity & Tactical Logistics Engine</p>
     </div>
 
-    <div class="input-wrap">
-        <input type="text" id="userInput" placeholder="Search: 'Jolly Weavile'" onkeypress="if(event.key === 'Enter') architectFinal()">
-        <button class="btn-run" onclick="architectFinal()">Analyze Field Data</button>
+    <div class="search-area">
+        <div class="input-group">
+            <input type="text" id="userInput" placeholder="Search: 'Jolly Weavile with Ice Shard'" onkeypress="if(event.key === 'Enter') executeApx()">
+            <button class="btn-execute" onclick="executeApx()">Analyze</button>
+        </div>
     </div>
 
     <div id="output">
-        <div class="layout">
+        <div class="main-grid">
             <div class="col-left">
                 <div class="card">
-                    <span class="h-tag">Evolutionary Genealogy</span>
-                    <div id="evoTree" class="tree-container"></div>
+                    <span class="section-label">Evolutionary Genealogy</span>
+                    <div id="evoTree" class="evo-path"></div>
                 </div>
 
                 <div class="card">
-                    <span class="h-tag">Subject Identification & Best Moves</span>
-                    <h2 id="pName" style="text-transform:capitalize; font-size:2.8rem; margin:0; color:var(--primary)"></h2>
-                    <div id="pTypes" style="margin-top:5px; margin-bottom:20px;"></div>
-                    <div id="bestKit"></div>
+                    <span class="section-label">Founder Field Location</span>
+                    <div id="locationData" class="location-text"></div>
                 </div>
-                
+
                 <div class="card">
-                    <span class="h-tag">Wild Habitat (Base Form)</span>
-                    <div id="locationData" class="location-box">Scanning Biotope Data...</div>
+                    <span class="section-label">Optimal 4-Move Tactical Kit (BiS)</span>
+                    <div id="moveGrid" class="move-grid"></div>
                 </div>
             </div>
 
             <div class="col-right">
                 <div class="card">
-                    <span class="h-tag">Base Stat Analytics</span>
-                    <div id="statBars"></div>
+                    <span class="section-label">Base Stat Distribution</span>
+                    <div id="statPanel"></div>
                 </div>
 
                 <div class="card">
-                    <span class="h-tag">Breeding Growth Curve</span>
-                    <div id="roadmap" style="font-size:0.85rem; line-height: 1.8;"></div>
+                    <span class="section-label">Breeding Growth Roadmap</span>
+                    <div id="roadmap" style="font-size: 0.85rem; line-height: 2;"></div>
                 </div>
             </div>
         </div>
@@ -105,82 +116,85 @@
 </div>
 
 <script>
-    let pLib = [];
-    fetch('https://pokeapi.co/api/v2/pokemon?limit=2000').then(r => r.json()).then(d => pLib = d.results.map(p => p.name));
+    const toTitleCase = (str) => str.replace(/\b\w/g, l => l.toUpperCase()).replace(/-/g, ' ');
 
-    async function architectFinal() {
-        const raw = document.getElementById('userInput').value.toLowerCase();
-        const target = pLib.find(name => raw.includes(name)) || "weavile";
+    async function executeApx() {
+        const query = document.getElementById('userInput').value.toLowerCase();
+        const pListRaw = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000').then(r => r.json());
+        const target = pListRaw.results.find(p => query.includes(p.name))?.name;
+
+        if (!target) {
+            document.getElementById('rowanModal').style.display = 'flex';
+            return;
+        }
 
         try {
-            const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${target}`);
-            const d = await r.json();
-            const sR = await fetch(d.species.url);
-            const sD = await sR.json();
+            const [p, s] = await Promise.all([
+                fetch(`https://pokeapi.co/api/v2/pokemon/${target}`).then(r => r.json()),
+                fetch(`https://pokeapi.co/api/v2/pokemon-species/${target}`).then(r => r.json())
+            ]);
 
             document.getElementById('output').style.display = 'block';
-            document.getElementById('pName').innerText = d.name;
-            document.getElementById('pTypes').innerHTML = d.types.map(t => `<span style="color:var(--primary); font-weight:800; margin-right:15px;">${t.type.name.toUpperCase()}</span>`).join('');
 
-            // --- 1. EVOLUTION TREE ---
-            const eR = await fetch(sD.evolution_chain.url);
-            const eD = await eR.json();
-            let tree = [];
-            let curr = eD.chain;
+            // 1. GENEALOGY
+            const eR = await fetch(s.evolution_chain.url).then(r => r.json());
+            let chain = [];
+            let curr = eD = eR.chain;
             while(curr) {
-                tree.push(curr.species.name);
+                chain.push(curr.species.name);
                 curr = curr.evolves_to[0];
             }
-            document.getElementById('evoTree').innerHTML = tree.map(name => 
-                `<span class="tree-node ${name === d.name || name === sD.name ? 'current-node' : ''}">${name}</span>`
-            ).join('<span class="tree-arrow">→</span>');
+            document.getElementById('evoTree').innerHTML = chain.map(name => 
+                `<span class="evo-node ${name === target ? 'current' : ''}">${toTitleCase(name)}</span>`
+            ).join('<span class="arrow">→</span>');
 
-            // --- 2. LOCATION DATA (BASE FORM) ---
-            const baseFormName = tree[0];
-            const locR = await fetch(`https://pokeapi.co/api/v2/pokemon/${baseFormName}/encounters`);
-            const locD = await locR.json();
-            let locHTML = `<strong>Founder Location (${baseFormName.toUpperCase()}):</strong><br>`;
-            if(locD.length > 0) {
-                locHTML += locD.slice(0, 2).map(l => l.location_area.name.replace(/-/g, ' ')).join(', ');
-            } else {
-                locHTML += "Common in snowy/temperate peaks or via Breeding.";
-            }
-            document.getElementById('locationData').innerHTML = locHTML;
+            // 2. LOCATION (Founder)
+            const founder = chain[0];
+            const locData = await fetch(`https://pokeapi.co/api/v2/pokemon/${founder}/encounters`).then(r => r.json());
+            const locName = locData.length > 0 ? toTitleCase(locData[0].location_area.name) : "Breeding/Gift Only";
+            document.getElementById('locationData').innerText = `Base Form (${toTitleCase(founder)}) Habitat: ${locName}`;
 
-            // --- 3. STAT BARS ---
-            document.getElementById('statBars').innerHTML = d.stats.map(s => {
-                const percent = (s.base_stat / 255) * 100;
-                return `
-                <div class="stat-container">
-                    <div class="stat-label"><span>${s.stat.name.replace('-', ' ')}</span><span>${s.base_stat}</span></div>
-                    <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${percent}%"></div></div>
-                </div>`;
-            }).join('');
+            // 3. STATS
+            document.getElementById('statPanel').innerHTML = p.stats.map(st => `
+                <div class="stat-row">
+                    <div class="stat-info"><span>${toTitleCase(st.stat.name)}</span><span>${st.base_stat}</span></div>
+                    <div class="bar-outer"><div class="bar-inner" style="width: ${(st.base_stat/255)*100}%"></div></div>
+                </div>
+            `).join('');
 
-            // --- 4. TACTICAL KIT ---
-            const movePromises = d.moves.slice(0, 15).map(m => fetch(m.move.url).then(res => res.json()));
-            const moveDetails = await Promise.all(movePromises);
-            let kitHTML = "";
-            moveDetails.filter(m => m.power).sort((a,b) => b.power - a.power).slice(0, 3).forEach(m => {
-                kitHTML += `<div style="background:#161b22; padding:10px; border-radius:8px; margin-bottom:5px; font-size:0.8rem;">
-                    <strong>${m.name.replace(/-/g, ' ')}</strong> | ${m.power} BP | ${m.damage_class.name.toUpperCase()}
-                </div>`;
-            });
-            document.getElementById('bestKit').innerHTML = kitHTML;
+            // 4. MOVESET (Tactical BiS Logic)
+            const moveUrls = p.moves.slice(0, 40).map(m => m.move.url);
+            const moveDetails = await Promise.all(moveUrls.map(u => fetch(u).then(r => r.json())));
+            const myTypes = p.types.map(t => t.type.name);
+            
+            let scored = moveDetails.filter(m => m.power).map(m => {
+                let score = m.power;
+                let isStab = myTypes.includes(m.type.name);
+                if (isStab) score *= 1.5;
+                // Favor physical for Jolly/Adamant
+                if ((query.includes('jolly') || query.includes('adamant')) && m.damage_class.name !== 'physical') score *= 0.5;
+                return { name: m.name, power: m.power, type: m.type.name, score, isStab, cat: m.damage_class.name };
+            }).sort((a,b) => b.score - a.score);
 
-            // --- 5. GROWTH ROADMAP ---
+            let finalFour = scored.slice(0, 4);
+            document.getElementById('moveGrid').innerHTML = finalFour.map(m => `
+                <div class="move-card">
+                    <span class="move-title">${toTitleCase(m.name)}</span>
+                    <span class="move-detail">${m.power} BP | ${m.cat.toUpperCase()}</span>
+                    ${m.isStab ? '<span class="stab-tag">STAB</span>' : ''}
+                </div>
+            `).join('');
+
+            // 5. ROADMAP
             document.getElementById('roadmap').innerHTML = `
-                • <strong>Hatch Cycles:</strong> ${sD.hatch_counter}<br>
-                • <strong>Base Form:</strong> ${baseFormName.toUpperCase()}<br>
-                • <strong>Requirement:</strong> Everstone + Destiny Knot.
+                • <strong>Breeding Source:</strong> Obtain ${toTitleCase(founder)} at ${locName}.<br>
+                • <strong>Nature Constraint:</strong> Use Everstone to lock desired traits.<br>
+                • <strong>IV Management:</strong> Use Destiny Knot to pass 5 genetic values.<br>
+                • <strong>Hatch Time:</strong> Approximately ${s.hatch_counter * 255} steps per egg.
             `;
 
-        } catch (e) {
-            const rb = document.getElementById('rowanBox');
-            rb.style.display = 'block';
-            rb.classList.add('shaking');
-            document.getElementById('rowanMsg').innerText = "DATA CORRUPTION! I cannot locate a species with that designation. Consult your Pokédex immediately!!";
-            setTimeout(() => rb.classList.remove('shaking'), 3000);
+        } catch (err) {
+            console.error(err);
         }
     }
 </script>
