@@ -3,81 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Apex Architect</title>
+    <title>PokéBreed Pro | Pivot Engine</title>
     <style>
         :root { 
-            --bg: #05070a; --card: #0f172a; --primary: #0ea5e9; --accent: #d946ef; 
-            --text: #f8fafc; --sub-text: #94a3b8; --border: #1e293b; --success: #22c55e;
+            --bg: #030712; --card: #111827; --primary: #38bdf8; --accent: #818cf8; 
+            --text: #f1f5f9; --sub-text: #94a3b8; --border: #1f2937; --highlight: #fbbf24;
         }
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; line-height: 1.5; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 1200px; width: 100%; animation: slideIn 0.6s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .container { max-width: 1200px; width: 100%; animation: fadeIn 0.8s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+        /* HEADER */
         .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-size: 2.5rem; letter-spacing: -1px; margin-bottom: 5px; }
-        .header p { color: var(--sub-text); font-weight: 500; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; }
+        .header h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.05em; margin: 0; }
+        .header p { color: var(--sub-text); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.2em; margin-top: 5px; }
 
-        /* PROFESSIONAL SEARCH BAR */
-        .search-area { position: sticky; top: 10px; z-index: 100; margin-bottom: 30px; }
-        .input-group { display: flex; background: #000; border: 1px solid var(--border); border-radius: 12px; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        input { flex: 1; background: transparent; border: none; padding: 12px 20px; color: #fff; font-size: 1rem; outline: none; }
-        .btn-execute { background: var(--primary); color: #fff; border: none; padding: 0 30px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .btn-execute:hover { background: #0284c7; transform: translateY(-1px); }
+        /* SEARCH INTERFACE */
+        .search-wrap { position: sticky; top: 20px; z-index: 1000; margin-bottom: 40px; }
+        .input-box { display: flex; background: #000; border: 1px solid var(--border); border-radius: 14px; padding: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+        input { flex: 1; background: transparent; border: none; padding: 12px 20px; color: #fff; font-size: 1.05rem; outline: none; }
+        .btn-pivot { background: var(--primary); color: #000; border: none; padding: 0 32px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-pivot:hover { background: #7dd3fc; transform: scale(1.02); }
 
-        /* GRID SYSTEM */
+        /* GRID LAYOUT */
         #output { display: none; }
-        .main-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .main-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px; margin-bottom: 24px; }
+        .label { color: var(--primary); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 20px; display: block; }
+
+        /* PIVOT MOVESET */
+        .move-list { display: grid; gap: 12px; }
+        .move-item { background: #1f2937; padding: 16px; border-radius: 12px; border-left: 4px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
+        .move-item.pinned { border-left-color: var(--highlight); background: rgba(251, 191, 36, 0.05); }
+        .move-name { font-weight: 700; font-size: 1rem; }
+        .move-meta { font-size: 0.75rem; color: var(--sub-text); font-family: monospace; }
+        .tag-pinned { font-size: 0.6rem; background: var(--highlight); color: #000; padding: 2px 6px; border-radius: 4px; font-weight: 800; margin-left: 8px; }
+
+        /* STATS & GENEALOGY */
+        .tree { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .node { background: #1e293b; padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; }
+        .node.active { background: var(--primary); color: #000; }
         
-        .section-label { color: var(--primary); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; display: block; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .stat-bar { margin-bottom: 14px; }
+        .stat-header { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; }
+        .bar-bg { height: 8px; background: #334155; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--primary); border-radius: 10px; transition: width 1s ease-out; }
 
-        /* EVOLUTION TREE */
-        .evo-path { display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
-        .evo-node { background: #1e293b; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; border: 1px solid transparent; }
-        .evo-node.current { border-color: var(--primary); background: rgba(14, 165, 233, 0.1); color: var(--primary); }
-        .arrow { color: var(--sub-text); font-size: 0.8rem; }
-
-        /* TACTICAL MOVESET */
-        .move-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .move-card { background: #1e293b; padding: 14px; border-radius: 10px; border-left: 3px solid var(--accent); position: relative; }
-        .move-title { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
-        .move-detail { font-size: 0.7rem; color: var(--sub-text); font-family: 'Courier New', monospace; }
-        .stab-tag { position: absolute; top: 8px; right: 8px; font-size: 0.6rem; background: var(--success); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 800; }
-
-        /* STATS */
-        .stat-row { margin-bottom: 12px; }
-        .stat-info { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px; }
-        .bar-outer { width: 100%; height: 6px; background: #334155; border-radius: 10px; }
-        .bar-inner { height: 100%; border-radius: 10px; background: var(--primary); transition: width 1s ease-out; }
-
-        /* ERROR MODAL */
-        #rowanModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: #fff; color: #000; padding: 40px; border-radius: 4px; max-width: 500px; border: 10px solid #000; font-family: 'Courier New', monospace; }
-
-        .location-text { font-size: 0.9rem; color: var(--accent); font-weight: 600; line-height: 1.6; }
+        /* MODAL */
+        #errorOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        .modal { background: #fff; color: #000; padding: 40px; border: 8px solid #000; max-width: 500px; font-family: 'Courier New', monospace; }
     </style>
 </head>
 <body>
 
-<div id="rowanModal">
-    <div class="modal-content">
-        <h3 style="color:red; margin-top:0;">PROFESSOR ROWAN</h3>
-        <p id="rowanMsg">I've spent years researching Pokémon... and you bring me this? Check your spelling immediately!</p>
-        <button onclick="document.getElementById('rowanModal').style.display='none'" style="background:#000; color:#fff; border:none; padding:10px 20px; cursor:pointer; font-weight:bold;">ACKNOWLEDGED</button>
+<div id="errorOverlay">
+    <div class="modal">
+        <h2 style="color:red; margin-top:0;">FIELD DATA ERROR</h2>
+        <p id="errorMsg">Species or Move data is unrecognized. The National Dex remains unchanged by your errors. Correct them!</p>
+        <button onclick="document.getElementById('errorOverlay').style.display='none'" style="background:#000; color:#fff; border:none; padding:12px 24px; cursor:pointer; font-weight:bold;">ACKNOWLEDGE</button>
     </div>
 </div>
 
 <div class="container">
     <div class="header">
-        <h1>PokéBreed <span style="color:var(--primary)">Apex Architect</span></h1>
-        <p>Advanced Competitive Heredity & Tactical Logistics Engine</p>
+        <h1>PokéBreed <span style="color:var(--primary)">Pivot Architect</span></h1>
+        <p>Dynamic Move-Centric Strategic Engineering</p>
     </div>
 
-    <div class="search-area">
-        <div class="input-group">
-            <input type="text" id="userInput" placeholder="Search: 'Jolly Weavile with Ice Shard'" onkeypress="if(event.key === 'Enter') executeApx()">
-            <button class="btn-execute" onclick="executeApx()">Analyze</button>
+    <div class="search-wrap">
+        <div class="input-box">
+            <input type="text" id="queryInput" placeholder="Enter Directive: 'Jolly Weavile with Ice Shard'" onkeypress="if(event.key === 'Enter') startPivot()">
+            <button class="btn-pivot" onclick="startPivot()">Pivot Data</button>
         </div>
     </div>
 
@@ -85,118 +81,10 @@
         <div class="main-grid">
             <div class="col-left">
                 <div class="card">
-                    <span class="section-label">Evolutionary Genealogy</span>
-                    <div id="evoTree" class="evo-path"></div>
+                    <span class="label">Evolutionary Genealogy</span>
+                    <div id="evoDisplay" class="tree"></div>
+                    <div id="founderOrigin" style="font-size: 0.9rem; color: var(--accent); font-weight: 600;"></div>
                 </div>
 
                 <div class="card">
-                    <span class="section-label">Founder Field Location</span>
-                    <div id="locationData" class="location-text"></div>
-                </div>
-
-                <div class="card">
-                    <span class="section-label">Optimal 4-Move Tactical Kit (BiS)</span>
-                    <div id="moveGrid" class="move-grid"></div>
-                </div>
-            </div>
-
-            <div class="col-right">
-                <div class="card">
-                    <span class="section-label">Base Stat Distribution</span>
-                    <div id="statPanel"></div>
-                </div>
-
-                <div class="card">
-                    <span class="section-label">Breeding Growth Roadmap</span>
-                    <div id="roadmap" style="font-size: 0.85rem; line-height: 2;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    const toTitleCase = (str) => str.replace(/\b\w/g, l => l.toUpperCase()).replace(/-/g, ' ');
-
-    async function executeApx() {
-        const query = document.getElementById('userInput').value.toLowerCase();
-        const pListRaw = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000').then(r => r.json());
-        const target = pListRaw.results.find(p => query.includes(p.name))?.name;
-
-        if (!target) {
-            document.getElementById('rowanModal').style.display = 'flex';
-            return;
-        }
-
-        try {
-            const [p, s] = await Promise.all([
-                fetch(`https://pokeapi.co/api/v2/pokemon/${target}`).then(r => r.json()),
-                fetch(`https://pokeapi.co/api/v2/pokemon-species/${target}`).then(r => r.json())
-            ]);
-
-            document.getElementById('output').style.display = 'block';
-
-            // 1. GENEALOGY
-            const eR = await fetch(s.evolution_chain.url).then(r => r.json());
-            let chain = [];
-            let curr = eD = eR.chain;
-            while(curr) {
-                chain.push(curr.species.name);
-                curr = curr.evolves_to[0];
-            }
-            document.getElementById('evoTree').innerHTML = chain.map(name => 
-                `<span class="evo-node ${name === target ? 'current' : ''}">${toTitleCase(name)}</span>`
-            ).join('<span class="arrow">→</span>');
-
-            // 2. LOCATION (Founder)
-            const founder = chain[0];
-            const locData = await fetch(`https://pokeapi.co/api/v2/pokemon/${founder}/encounters`).then(r => r.json());
-            const locName = locData.length > 0 ? toTitleCase(locData[0].location_area.name) : "Breeding/Gift Only";
-            document.getElementById('locationData').innerText = `Base Form (${toTitleCase(founder)}) Habitat: ${locName}`;
-
-            // 3. STATS
-            document.getElementById('statPanel').innerHTML = p.stats.map(st => `
-                <div class="stat-row">
-                    <div class="stat-info"><span>${toTitleCase(st.stat.name)}</span><span>${st.base_stat}</span></div>
-                    <div class="bar-outer"><div class="bar-inner" style="width: ${(st.base_stat/255)*100}%"></div></div>
-                </div>
-            `).join('');
-
-            // 4. MOVESET (Tactical BiS Logic)
-            const moveUrls = p.moves.slice(0, 40).map(m => m.move.url);
-            const moveDetails = await Promise.all(moveUrls.map(u => fetch(u).then(r => r.json())));
-            const myTypes = p.types.map(t => t.type.name);
-            
-            let scored = moveDetails.filter(m => m.power).map(m => {
-                let score = m.power;
-                let isStab = myTypes.includes(m.type.name);
-                if (isStab) score *= 1.5;
-                // Favor physical for Jolly/Adamant
-                if ((query.includes('jolly') || query.includes('adamant')) && m.damage_class.name !== 'physical') score *= 0.5;
-                return { name: m.name, power: m.power, type: m.type.name, score, isStab, cat: m.damage_class.name };
-            }).sort((a,b) => b.score - a.score);
-
-            let finalFour = scored.slice(0, 4);
-            document.getElementById('moveGrid').innerHTML = finalFour.map(m => `
-                <div class="move-card">
-                    <span class="move-title">${toTitleCase(m.name)}</span>
-                    <span class="move-detail">${m.power} BP | ${m.cat.toUpperCase()}</span>
-                    ${m.isStab ? '<span class="stab-tag">STAB</span>' : ''}
-                </div>
-            `).join('');
-
-            // 5. ROADMAP
-            document.getElementById('roadmap').innerHTML = `
-                • <strong>Breeding Source:</strong> Obtain ${toTitleCase(founder)} at ${locName}.<br>
-                • <strong>Nature Constraint:</strong> Use Everstone to lock desired traits.<br>
-                • <strong>IV Management:</strong> Use Destiny Knot to pass 5 genetic values.<br>
-                • <strong>Hatch Time:</strong> Approximately ${s.hatch_counter * 255} steps per egg.
-            `;
-
-        } catch (err) {
-            console.error(err);
-        }
-    }
-</script>
-</body>
-</html>
+                    <span class="label">Pivoted 4
