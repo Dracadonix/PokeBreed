@@ -3,67 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Master | Encyclopedia Edition</title>
+    <title>PokeBreed Pro | Ultimate Edition</title>
     <style>
-        :root { --primary: #ff1c1c; --secondary: #3b4cca; --bg: #0a0a0c; --card: #1e1e26; --text: #f0f0f0; --accent: #ffd700; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #333; }
-        h1 { color: var(--primary); text-align: center; font-size: 2.2em; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
-        .input-group { display: flex; gap: 10px; margin: 30px 0; }
-        input { flex: 1; padding: 15px; background: #2d2d3a; border: 2px solid #3d3d4d; border-radius: 10px; color: white; outline: none; font-size: 1.1em; }
-        button { padding: 15px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        #output { display: none; animation: fadeIn 0.4s ease; }
-        .badge { display: inline-block; background: var(--secondary); color: white; padding: 4px 12px; border-radius: 6px; font-size: 0.8em; margin-right: 8px; margin-bottom: 5px; }
-        .step { margin-bottom: 15px; padding: 15px; background: #262630; border-left: 5px solid var(--primary); border-radius: 0 10px 10px 0; }
-        .location-box { background: #16161d; border: 1px dashed #555; padding: 15px; border-radius: 10px; margin: 20px 0; }
-        .ref-links { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .ref-btn { flex: 1; padding: 8px; text-align: center; border-radius: 5px; font-size: 0.8em; text-decoration: none; color: white; font-weight: bold; transition: 0.2s; }
-        .serebii { background: #08632d; } .bulbapedia { background: #612a8a; } .pokemondb { background: #cf4a10; }
-        .ref-btn:hover { opacity: 0.8; transform: translateY(-2px); }
-        .move-pill { display: inline-block; background: #3d3d4d; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; margin: 2px; border-bottom: 2px solid var(--primary); }
+        :root { --primary: #ff1c1c; --secondary: #3b4cca; --bg: #0f1014; --card: #1c1d24; --text: #f0f0f0; --accent: #ffd700; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.6); border: 1px solid #333; }
+        h1 { color: var(--primary); text-align: center; font-size: 2.5em; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; font-weight: 800; }
+        .subtitle { text-align: center; opacity: 0.6; margin-bottom: 30px; font-size: 0.9em; }
+        .input-group { display: flex; gap: 12px; margin-bottom: 30px; }
+        input { flex: 1; padding: 16px; background: #2a2b36; border: 2px solid #3d3d4d; border-radius: 12px; color: white; outline: none; font-size: 1.1em; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(255,28,28,0.2); }
+        button { padding: 16px 28px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
+        button:hover { background: #d11515; transform: translateY(-2px); }
+        #output { display: none; animation: slideUp 0.5s ease; }
+        .section-title { font-size: 0.85em; text-transform: uppercase; letter-spacing: 1.5px; color: var(--secondary); margin: 25px 0 10px; font-weight: 700; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .badge { display: inline-block; background: var(--secondary); color: white; padding: 5px 14px; border-radius: 8px; font-size: 0.75em; font-weight: bold; margin: 0 8px 8px 0; text-transform: capitalize; }
+        .step { margin-bottom: 12px; padding: 18px; background: #25262f; border-left: 6px solid var(--primary); border-radius: 0 12px 12px 0; line-height: 1.6; }
+        .location-box { background: #12131a; border: 1px solid #333; padding: 20px; border-radius: 15px; margin: 20px 0; }
+        .ref-links { display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
+        .ref-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 0.8em; text-decoration: none; color: white; font-weight: bold; transition: 0.2s; min-width: 100px; }
+        .serebii { background: #0e7a3a; } .bulbapedia { background: #70379b; } .pokemondb { background: #e05210; }
+        .ref-btn:hover { opacity: 0.85; filter: brightness(1.2); }
+        .move-pill { display: inline-block; background: #343541; padding: 4px 10px; border-radius: 6px; font-size: 0.8em; margin: 3px; border: 1px solid #444; text-transform: capitalize; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>⚡ PokeBreed Master</h1>
-    <p style="text-align:center; opacity: 0.6;">Locations cross-referenced from Serebii, Bulbapedia, & PokemonDB.</p>
+    <h1>⚡ PokeBreed Pro</h1>
+    <p class="subtitle">Ultimate Breeding Intelligence Engine</p>
     
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="e.g. 'How to get Gible in BDSP'">
-        <button onclick="generateGuide()">Locate & Analyze</button>
+        <input type="text" id="userInput" placeholder="Try: 'Jolly 5IV HA Garchomp with Outrage in SV'">
+        <button onclick="generateGuide()">Analyze</button>
     </div>
 
     <div id="output">
-        <h2 id="pokeHeader" style="margin-bottom:10px; color:var(--primary);"></h2>
+        <h2 id="pokeHeader" style="margin-bottom:5px; color:var(--primary); font-size: 2em;"></h2>
         <div id="metaInfo"></div>
         
+        <div class="section-title">📍 Wild Locations & References</div>
         <div id="locationData" class="location-box">
-            <strong>📍 Found In (Current Game):</strong>
-            <div id="locationList" style="font-size: 0.9em; margin-top: 5px; color: #bbb;">Fetching game data...</div>
+            <div id="locationList" style="font-size: 0.95em; margin-bottom: 15px; color: #ccc;"></div>
             <div class="ref-links">
-                <a id="linkSerebii" class="ref-btn serebii" target="_blank">Serebii</a>
+                <a id="linkSerebii" class="ref-btn serebii" target="_blank">Serebii Dex</a>
                 <a id="linkBulba" class="ref-btn bulbapedia" target="_blank">Bulbapedia</a>
                 <a id="linkDB" class="ref-btn pokemondb" target="_blank">PokemonDB</a>
             </div>
         </div>
 
+        <div class="section-title">🛠️ Breeding Instructions</div>
         <div id="stepsList"></div>
-        <div id="movepoolSection" class="niche-box" style="margin-top:20px;"></div>
+
+        <div class="section-title">🥚 Inheritable Movepool</div>
+        <div id="movepoolSection"></div>
     </div>
 </div>
 
 <script>
+    // Helper function to capitalize words properly
+    function cap(str) {
+        return str.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+
     async function generateGuide() {
         const input = document.getElementById('userInput').value.toLowerCase();
         const words = input.replace(/[?!.]/g, "").split(' ');
         
-        // 1. Version Mapping
-        const gameMap = { "bdsp": "brilliant-diamond-and-shining-pearl", "sv": "scarlet-violet", "swsh": "sword-shield", "sword": "sword", "shield": "shield" };
+        const gameMap = { "bdsp": "BDSP", "sv": "Scarlet/Violet", "swsh": "Sword/Shield", "sword": "Sword", "shield": "Shield" };
         const activeKey = Object.keys(gameMap).find(k => input.includes(k)) || "default";
 
-        // 2. Identify Pokemon
-        const excluded = ["how", "to", "get", "find", "where", "is", "breed", "in", "the", "a", "an", ...Object.keys(gameMap)];
+        const excluded = ["how", "to", "get", "find", "where", "is", "breed", "in", "the", "a", "an", "with", "of", ...Object.keys(gameMap)];
         const potentialNames = words.filter(w => !excluded.includes(w) && w.length > 2);
 
         let data = null;
@@ -74,44 +85,62 @@
             } catch (e) { continue; }
         }
 
-        if (!data) return alert("Pokemon not identified. Be specific!");
+        if (!data) return alert("Pokémon not identified. Please check your spelling!");
 
+        const sRes = await fetch(data.species.url);
+        const sData = await sRes.json();
+        
         document.getElementById('output').style.display = 'block';
-        document.getElementById('pokeHeader').innerText = data.name.toUpperCase();
+        document.getElementById('pokeHeader').innerText = cap(data.name);
 
-        // 3. CROSS-REFERENCE LINKS
-        // Standardize names for URLs (e.g. 'vulpix-alola' -> 'vulpix')
+        // 1. References
         const baseName = data.name.split('-')[0];
         document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${baseName}/`;
-        document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${baseName}_(Pokémon)`;
+        document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${cap(baseName)}_(Pokémon)`;
         document.getElementById('linkDB').href = `https://pokemondb.net/pokedex/${baseName}`;
 
-        // 4. FETCH LOCATIONS (PokeAPI)
+        // 2. Meta Info
+        const hatchSteps = sData.hatch_counter * 255;
+        document.getElementById('metaInfo').innerHTML = `
+            ${sData.egg_groups.map(g => `<span class="badge">${cap(g.name)}</span>`).join('')}
+            <span class="badge" style="background:#444">~${hatchSteps.toLocaleString()} Steps</span>
+            <span class="badge" style="background:#e0a800; color: #000;">Game: ${gameMap[activeKey] || 'Universal'}</span>
+        `;
+
+        // 3. Location Logic
         const locRes = await fetch(data.location_area_encounters);
         const locData = await locRes.json();
-        
-        let locHtml = "No specific wild spawns found in API for this game version. Check links below:";
+        let locHtml = "Wild encounters not found in standard API data. Cross-reference using buttons below.";
         if (locData.length > 0) {
-            // Filter by game if specified
             const relevant = activeKey !== "default" ? 
                 locData.filter(l => l.version_details.some(v => v.version.name.includes(activeKey))) : 
                 locData.slice(0, 3);
-            
             if (relevant.length > 0) {
-                locHtml = relevant.map(l => `• ${l.location_area.name.replace(/-/g, ' ').toUpperCase()}`).join('<br>');
+                locHtml = "Commonly found in: " + relevant.map(l => `<strong>${cap(l.location_area.name)}</strong>`).join(', ');
             }
         }
         document.getElementById('locationList').innerHTML = locHtml;
 
-        // 5. INSTRUCTIONS & MOVES
+        // 4. Instructions
         let steps = [];
-        const eggMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg')).map(m => m.move.name.replace('-', ' '));
+        if (input.includes("shiny")) steps.push(`✨ <strong>Masuda Method:</strong> Use two parents from different real-world languages to maximize Shiny odds.`);
         
-        steps.push(`<strong>Breeding Note:</strong> Pair with a Ditto or compatible egg group parent.`);
-        if (input.includes("iv")) steps.push(`<strong>Stats:</strong> Use a Destiny Knot to pass 5 IVs.`);
-        
+        const natures = ["jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish"];
+        const natureFound = natures.find(n => input.includes(n));
+        if (natureFound) steps.push(`🧪 <strong>Everstone:</strong> Give to the <strong>${cap(natureFound)}</strong> parent to pass down the Nature.`);
+
+        if (input.includes("iv") || input.includes("perfect")) {
+            steps.push(`📊 <strong>Destiny Knot:</strong> Give to the parent with the best stats. Aim for 5 'Best' IVs.`);
+        }
+
+        const eggMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg')).map(m => m.move.name);
+        const requestedMove = eggMoves.find(m => input.includes(m.replace('-', ' ')));
+        if (requestedMove) {
+            steps.push(`🥚 <strong>Egg Move:</strong> A parent must know <strong>${cap(requestedMove)}</strong>. ${activeKey === 'sv' ? '<em>*Or use Mirror Herb in SV!</em>' : ''}`);
+        }
+
         document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('');
-        document.getElementById('movepoolSection').innerHTML = `<strong>Available Egg Moves:</strong><br>` + eggMoves.slice(0, 10).map(m => `<span class="move-pill">${m}</span>`).join('');
+        document.getElementById('movepoolSection').innerHTML = eggMoves.map(m => `<span class="move-pill">${cap(m)}</span>`).join('');
     }
 </script>
 
