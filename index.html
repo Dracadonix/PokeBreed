@@ -3,40 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Competitive Streamliner</title>
+    <title>PokeBreed Master | Ultimate Breeding Engine</title>
     <style>
-        :root { --primary: #ff1c1c; --secondary: #3b4cca; --bg: #0a0a0c; --card: #1e1e26; --text: #f0f0f0; }
+        :root { --primary: #ff1c1c; --secondary: #3b4cca; --bg: #0a0a0c; --card: #1e1e26; --text: #f0f0f0; --accent: #ffd700; }
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { max-width: 700px; width: 100%; background: var(--card); padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        h1 { color: var(--primary); text-align: center; font-size: 2.5em; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+        .container { max-width: 800px; width: 100%; background: var(--card); padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #333; }
+        h1 { color: var(--primary); text-align: center; font-size: 2.5em; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
         .input-group { display: flex; gap: 10px; margin: 30px 0; }
-        input { flex: 1; padding: 15px; background: #2d2d3a; border: 2px solid #3d3d4d; border-radius: 10px; color: white; outline: none; font-size: 1em; transition: 0.3s; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(255,28,28,0.3); }
-        button { padding: 15px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
-        button:hover { background: #d11515; transform: translateY(-2px); }
-        #output { display: none; animation: fadeIn 0.5s ease; }
-        .badge { display: inline-block; background: var(--secondary); color: white; padding: 4px 12px; border-radius: 6px; font-size: 0.8em; margin-right: 8px; }
-        .step { margin-bottom: 20px; padding: 15px; background: #2d2d3a; border-left: 5px solid var(--primary); border-radius: 0 10px 10px 0; }
-        .niche-box { background: rgba(59, 76, 202, 0.1); border: 1px solid var(--secondary); padding: 15px; border-radius: 10px; margin-top: 20px; }
-        .niche-title { color: var(--secondary); font-weight: bold; font-size: 0.9em; text-transform: uppercase; margin-bottom: 5px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        input { flex: 1; padding: 15px; background: #2d2d3a; border: 2px solid #3d3d4d; border-radius: 10px; color: white; outline: none; font-size: 1.1em; }
+        button { padding: 15px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #d11515; transform: scale(1.05); }
+        #output { display: none; animation: fadeIn 0.4s ease; }
+        .badge { display: inline-block; background: var(--secondary); color: white; padding: 4px 12px; border-radius: 6px; font-size: 0.8em; margin-right: 8px; margin-bottom: 5px; }
+        .step { margin-bottom: 15px; padding: 15px; background: #262630; border-left: 5px solid var(--primary); border-radius: 0 10px 10px 0; }
+        .niche-box { background: rgba(255, 255, 255, 0.03); border: 1px solid #444; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .niche-item { margin-bottom: 12px; font-size: 0.95em; line-height: 1.5; }
+        .gold { color: var(--accent); font-weight: bold; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>⚡ PokeBreed Pro</h1>
-    <p style="text-align:center; opacity: 0.7;">Identify Target Species, Nature, IVs, and Niche Traits.</p>
+    <h1>⚡ PokeBreed Master</h1>
+    <p style="text-align:center; opacity: 0.6;">The ultimate engine for IVs, Shiny Hunting, Regional Forms, & Egg Moves.</p>
     
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="e.g. 'Jolly 6IV HA Garchomp with Outrage'">
+        <input type="text" id="userInput" placeholder="e.g. 'Shiny Moon Ball Alolan Vulpix with Moonblast'">
         <button onclick="generateGuide()">Analyze</button>
     </div>
 
     <div id="output">
-        <h2 id="pokeHeader"></h2>
-        <div id="metaInfo" style="margin-bottom: 20px;"></div>
+        <h2 id="pokeHeader" style="margin-bottom:10px; color:var(--primary);"></h2>
+        <div id="metaInfo"></div>
+        
+        <h3 style="font-size: 1.1em; border-bottom: 1px solid #444; padding-bottom: 5px;">Primary Instructions</h3>
         <div id="stepsList"></div>
+
         <div id="nicheSection" class="niche-box"></div>
     </div>
 </div>
@@ -46,9 +49,86 @@
         const input = document.getElementById('userInput').value.toLowerCase();
         const words = input.replace(/[?!.]/g, "").split(' ');
         
-        // Comprehensive Filter for Detection
-        const filler = ["i", "want", "to", "breed", "a", "an", "with", "get", "perfect", "jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish", "ha", "hidden", "ability", "6iv", "5iv"];
-        const potentialNames = words.filter(w => !filler.includes(w) && w.length > 2);
+        // Advanced Filter
+        const excluded = ["i", "want", "to", "breed", "a", "an", "with", "get", "perfect", "jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish", "ha", "hidden", "ability", "6iv", "5iv", "shiny", "ball", "regional", "form"];
+        const potentialNames = words.filter(w => !excluded.includes(w) && w.length > 2);
 
         let data = null;
-        for (let name of potentialNames)
+        for (let name of potentialNames) {
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+                if (res.ok) { data = await res.json(); break; }
+            } catch (e) { continue; }
+        }
+
+        if (!data) return alert("Pokémon not found! Try being more specific with the species name.");
+
+        const sRes = await fetch(data.species.url);
+        const sData = await sRes.json();
+        
+        document.getElementById('output').style.display = 'block';
+        document.getElementById('pokeHeader').innerText = data.name.toUpperCase();
+        
+        // 1. Meta Data
+        const hatchSteps = sData.hatch_counter * 255;
+        document.getElementById('metaInfo').innerHTML = `
+            ${sData.egg_groups.map(g => `<span class="badge">${g.name}</span>`).join('')}
+            <span class="badge" style="background:#555">~${hatchSteps} steps</span>
+        <br><br>`;
+
+        // 2. Step Generation
+        let steps = [];
+        
+        if (input.includes("shiny")) {
+            steps.push(`✨ <strong>Masuda Method:</strong> Use two parents from different real-world languages (e.g., a Japanese Ditto + your ${data.name}). Odds drop from 1/4096 to 1/683.`);
+        }
+
+        if (input.includes("iv") || input.includes("perfect") || input.includes("6iv")) {
+            steps.push(`📊 <strong>IV Mapping:</strong> Give a <strong>Destiny Knot</strong> to the parent with better stats to pass down 5 IVs.`);
+        }
+
+        const natures = ["jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish"];
+        const natureFound = natures.find(n => input.includes(n));
+        if (natureFound) {
+            steps.push(`🧪 <strong>Nature Lock:</strong> Give an <strong>Everstone</strong> to the <strong>${natureFound.toUpperCase()}</strong> parent.`);
+        }
+
+        document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('');
+
+        // 3. The Niche Engine
+        let niche = `<h3 style="margin-top:0; font-size:1.1em; color:var(--secondary);">Advanced Mechanics</h3>`;
+        
+        // Regional Form Logic
+        if (data.name.includes("-") || input.includes("form") || input.includes("regional")) {
+            niche += `<div class="niche-item">🗺️ <strong>Regional Forms:</strong> To keep a non-local form (like Alolan Vulpix outside of Alola), the parent <strong>MUST</strong> hold an Everstone, or the baby will revert to the local form.</div>`;
+        }
+
+        // Poké Ball Logic
+        if (input.includes("ball")) {
+            niche += `<div class="niche-item">🎾 <strong>Ball Inheritance:</strong> The baby inherits the Mother's ball. If breeding two of the same species, it's a 50/50 split between parents. Ditto never passes its ball.</div>`;
+        }
+
+        // Egg Move / Mirror Herb
+        const eggMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg')).map(m => m.move.name.replace('-', ' '));
+        const requestedMove = eggMoves.find(m => input.includes(m));
+        if (requestedMove) {
+            niche += `<div class="niche-item">🥚 <strong>Egg Move:</strong> Standard method requires a male parent knowing <strong>${requestedMove.toUpperCase()}</strong>. <span class="gold">*In Gen 9 (S/V), use a Mirror Herb at a picnic instead!</span></div>`;
+        }
+
+        // HA Logic
+        if (input.includes("ha") || input.includes("hidden")) {
+            niche += `<div class="niche-item">🧬 <strong>Hidden Ability:</strong> Only the female (or a male with Ditto) can pass HA. It is a 60% success rate.</div>`;
+        }
+
+        // Baby/Incense Logic
+        const incenseNeeded = { "munchlax": "Full Incense", "azurill": "Sea Incense", "wynaut": "Lax Incense", "happiny": "Luck Incense" };
+        if (incenseNeeded[data.name.toLowerCase()]) {
+            niche += `<div class="niche-item">🕯️ <strong>Incense Required:</strong> To get this baby form, a parent must hold the <strong>${incenseNeeded[data.name.toLowerCase()]}</strong>.</div>`;
+        }
+
+        document.getElementById('nicheSection').innerHTML = niche;
+    }
+</script>
+
+</body>
+</html>
