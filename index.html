@@ -2,232 +2,145 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | ULTIMA ∞</title>
+    <title>PokeBreed Pro | OMNI-SINGULARITY</title>
     <style>
-        :root { 
-            --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
-            --surface: rgba(10, 15, 25, 0.98); --gold: #ffd700; --research: #55ff77;
-            --hp: #ff0055; --atk: #f5ac78; --def: #fae078; --spa: #9db7f5; --spd: #a7db8d; --spe: #fa92b2;
-        }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.15s cubic-bezier(0.1, 0.9, 0.2, 1); }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: clamp(10px, 3vw, 30px); min-height: 100vh; overflow-x: hidden; }
-
-        /* --- THE BIBLE & CHAMPION HALL --- */
-        #bible, #hall { position: fixed; top: 0; right: -100%; width: 100%; max-width: 750px; height: 100%; background: var(--surface); border-left: 4px solid var(--ring); z-index: 99999; padding: 40px; overflow-y: auto; box-shadow: -40px 0 100px #000; }
-        #hall { left: -100%; right: auto; border-left: none; border-right: 4px solid var(--gold); max-width: 1200px; width: 95%; }
-        .open-right { right: 0 !important; } .open-left { left: 0 !important; }
-
-        .bible-sect { margin-bottom: 35px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 20px; }
-        .bible-sect h3 { color: var(--ring); text-transform: uppercase; font-size: 18px; margin-bottom: 12px; border-left: 4px solid var(--ring); padding-left: 10px; }
-        .bible-sect p, .bible-sect li { font-size: 13px; line-height: 1.7; color: #ddd; }
-        .bible-sect b { color: var(--gold); }
-
-        /* --- PROFESSOR CRASHOUT HUB --- */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 25px; background: var(--surface); border-left: 6px solid var(--ring); }
-        .prof-avatar { width: 70px; height: 70px; background: #111; border: 3px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 28px; }
-        @keyframes scream { 0% { transform: scale(1.1) rotate(2deg); filter: hue-rotate(90deg); } 50% { transform: scale(1.2) rotate(-2deg); filter: contrast(300%); } 100% { transform: scale(1.1) rotate(2deg); } }
-        .crashout { animation: scream 0.05s infinite !important; border-color: var(--warn) !important; color: var(--warn) !important; }
-
-        /* --- DATA UI --- */
-        #target { width: 100%; background: #0b111e; border: 4px solid var(--ring); padding: 30px; color: var(--ring); text-align: center; font-size: 36px; font-weight: 100; outline: none; margin-bottom: 20px; border-radius: 8px; }
-        .party-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px; }
-        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 11px; }
-        .ball-slot.active { border: 2px solid var(--ring); background: rgba(0, 242, 255, 0.05); }
-
-        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-        .panel { background: var(--surface); padding: 25px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); }
-        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; border-bottom: 1px solid rgba(0,242,255,0.1); }
+        :root { --void: #010204; --ring: #00f2ff; --warn: #ff0055; --surface: #0a0f19; --gold: #ffd700; --sub: #64748b; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.1s; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 15px; overflow-x: hidden; font-size: 13px; }
         
-        .stat-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
-        .stat-bar { height: 6px; background: #111; border-radius: 3px; overflow: hidden; margin-top: 4px; }
-        .stat-fill { height: 100%; transition: width 1s; }
+        /* --- DRAWERS --- */
+        .drawer { position: fixed; top: 0; width: 100%; max-width: 850px; height: 100%; background: var(--surface); z-index: 9999; padding: 30px; overflow-y: auto; border-left: 5px solid var(--ring); right: -100%; box-shadow: -20px 0 50px #000; }
+        #hall { left: -100%; right: auto; border-left: none; border-right: 5px solid var(--gold); }
+        .open-r { right: 0 !important; } .open-l { left: 0 !important; }
 
-        .btn-core { padding: 15px 25px; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; border-radius: 4px; }
-        .btn-gold { background: var(--gold); color: #000; }
-        .btn-reset { background: var(--warn); color: #fff; width: 100%; margin-bottom: 20px; }
+        /* --- UI ELEMENTS --- */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #0d1421; border-left: 10px solid var(--ring); margin-bottom: 15px; }
+        .prof-avatar { width: 70px; height: 70px; border: 4px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 28px; background: #000; }
+        .crashout { animation: shake 0.05s infinite; border-color: var(--warn) !important; color: var(--warn); }
+        @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0,0); } }
+
+        input { width: 100%; background: #000; border: 4px solid var(--ring); padding: 25px; color: var(--ring); font-size: 30px; text-align: center; outline: none; margin-bottom: 15px; }
+        .party { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 15px; }
+        .slot { background: #0d1421; border: 1px dashed #444; padding: 15px; text-align: center; cursor: pointer; border-radius: 6px; font-size: 10px; }
+        .slot.active { border: 2px solid var(--ring); background: rgba(0, 242, 255, 0.05); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .panel { background: #0d1421; padding: 20px; border: 1px solid #1a2333; border-radius: 8px; }
+        .tag { font-size: 9px; color: var(--ring); letter-spacing: 2px; font-weight: 900; border-bottom: 1px solid #333; display: block; margin-bottom: 10px; text-transform: uppercase; }
+
+        .overlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .btn { padding: 12px 24px; font-weight: 900; cursor: pointer; text-transform: uppercase; border: none; border-radius: 4px; }
     </style>
 </head>
-<body onload="init()">
+<body onload="boot()">
 
-<div id="hall">
-    <button onclick="toggleHall()" class="btn-core" style="background:var(--warn); margin-bottom:30px;">EXIT STRATEGIC MATRIX</button>
-    <h1 style="color:var(--gold)">CHAMPION HALL | COMPETITIVE PROTOCOL</h1>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:40px;">
-        <div class="panel">
-            <span class="tag">I. Teambuilding & Speed Control</span>
-            <p>• <b>Core Synergy:</b> Fire/Water/Grass or Dragon/Fairy/Steel.<br>
-            • <b>Speed Control:</b> Trick Room (0 Spe), Tailwind, Icy Wind, or Choice Scarf logic.</p>
-        </div>
-        <div class="panel">
-            <span class="tag">II. Advanced Mechanics</span>
-            <p>• <b>Tera:</b> Defensive typing shifts or STAB amplification.<br>
-            • <b>Mega/Z-Moves:</b> High-power legacy multipliers (Requires held item).</p>
-        </div>
-        <div class="panel">
-            <span class="tag">III. EV/IV Optimization</span>
-            <p>• <b>IVs:</b> 31 in all stats (except 0 Atk/Spe).<br>
-            • <b>EVs:</b> 252/252/4 split. Use Vitamins or Power Items for precision.</p>
-        </div>
-        <div class="panel">
-            <span class="tag">IV. Team Damage Calc</span>
-            <div id="hall-calc">Awaiting Team Data...</div>
-        </div>
+<div id="pop" class="overlay">
+    <div style="max-width: 500px; border: 2px solid var(--warn); padding: 30px; background: #050505;">
+        <h2 style="color:var(--warn); margin:0 0 15px 0;">SYSTEM LIABILITY WAIVER</h2>
+        <p style="font-size:12px; color:var(--sub);">You are entering the Absolute Singularity. The Architect is not liable for: 1. Habitual breeding of 0-IV failures. 2. Emotional damage from Prof. Oak's outbursts. 3. Loss of save data due to obsessive resets.</p>
+        <button class="btn" style="background:var(--gold)" onclick="document.getElementById('pop').style.display='none'">I AGREE</button>
     </div>
 </div>
 
-<div id="bible">
-    <button onclick="toggleBible()" class="btn-core" style="background:var(--warn); width:100%; margin-bottom:30px;">CLOSE HOLY CANON</button>
-    
-    <div class="bible-sect">
-        <h3>Phase 1: The Setup</h3>
-        <p>Catch your target. Check <b>Egg Groups</b>. If using a Male, you <b>MUST</b> use <b>Ditto</b>. Equip <b>Everstone</b> on the parent with the desired Nature. Equip <b>Destiny Knot</b> on the other for 5-IV inheritance.</p>
+<div id="bible" class="drawer">
+    <button onclick="toggleB()" class="btn" style="background:var(--warn); width:100%">CLOSE CANON</button>
+    <div id="b-data">
+        <h2 style="color:var(--ring)">THE BREEDING BIBLE</h2>
+        <h3 style="color:var(--gold)">1. The Pre-Flight Check</h3>
+        <p>Grab a <b>Flame Body</b> Pokémon (Magmar/Talonflame) and put it in Slot 1. This halves your steps.</p>
+        <h3 style="color:var(--gold)">2. The Genetic Lock</h3>
+        <p>Give the <b>Everstone</b> to the parent with the Nature you want (100% pass). Give the <b>Destiny Knot</b> to the other parent to ensure 5 IVs are passed down instead of 3.</p>
+        <h3 style="color:var(--gold)">3. The Incense Checklist</h3>
+        <p>Hold these items or the baby won't hatch correctly: <b>Sea</b> (Azurill), <b>Full</b> (Munchlax), <b>Lax</b> (Wynaut), <b>Rose</b> (Budew), <b>Wave</b> (Mantyke), <b>Rock</b> (Bonsly), <b>Odd</b> (Mime Jr).</p>
+        <h3 style="color:var(--gold)">4. Hidden Ability (HA)</h3>
+        <p>The female parent has a <b>60% chance</b> to pass the HA. Males only pass HA when breeding with <b>Ditto</b>.</p>
+        <h3 style="color:var(--gold)">5. The 0-Stat Meta</h3>
+        <p>Breed for <b>0 Speed</b> for Trick Room teams and <b>0 Attack</b> to take minimal damage from Confusion and Foul Play.</p>
     </div>
+</div>
 
-    <div class="bible-sect">
-        <h3>Phase 2: The Egg Creation</h3>
-        <p>Deposit parents at the Nursery. Cycle outside until the Nursery man shifts position. <br><b>HA Logic:</b> Female passes Hidden Ability at <b>60%</b>.</p>
-    </div>
-
-    <div class="bible-sect">
-        <h3>Phase 3: The Incense Clause</h3>
-        <p><b>Munchlax, Azurill, Wynaut, Budew, Mantyke, Bonsly, Mime Jr.</b> all require their respective <b>Incenses</b> held by the parent or you will get the evolved form instead.</p>
-    </div>
-
-    <div class="bible-sect">
-        <h3>Phase 4: Hatching & Leveling</h3>
-        <p>Keep a Pokemon with <b>Flame Body</b> in slot 1 to halve Egg Cycles. Once hatched, use <b>Rare Candies</b> or <b>EXP Candy</b>. Check evolution levels below to avoid missing <b>Evolution-Only Moves</b>.</p>
-    </div>
-
-    <div class="bible-sect">
-        <h3>Phase 5: 0-Stat Logistics</h3>
-        <p><b>0 Atk:</b> Minimizes Foul Play damage.<br><b>0 Spe:</b> Guarantees first move in Trick Room.</p>
+<div id="hall" class="drawer">
+    <button onclick="toggleH()" class="btn" style="background:var(--warn)">EXIT HALL</button>
+    <div id="h-data">
+        <h2 style="color:var(--gold)">CHAMPION HALL: COMPETITIVE STRATAGEM</h2>
+        <h3>I. Speed Control</h3>
+        <p>Speed is the most important stat. Use <b>Tailwind</b>, <b>Trick Room</b>, or <b>Choice Scarf</b> to manipulate turn order. 0 Speed IVs are mandatory for Trick Room.</p>
+        <h3>II. Defensive Utility</h3>
+        <p><b>Tera Types:</b> Shift your type to surprise an opponent or shed a 4x weakness. <b>Mega Evolution:</b> Use the legacy stones for massive base-stat boosts.</p>
+        <h3>III. EV Training</h3>
+        <p>252 in two main stats, 4 in a third. Use Vitamins or Power Items. Never leave a Pokémon at Lv. 100 without 510 EVs.</p>
     </div>
 </div>
 
 <div class="header">
     <div style="display:flex; align-items:center; gap:20px;">
-        <div class="prof-avatar" id="pAvatar">O</div>
+        <div id="pAv" class="prof-avatar">O</div>
         <div>
-            <div id="pN" style="font-size:10px; font-weight:900; color:var(--ring);">PROF. OAK</div>
-            <div id="pQ" style="font-style:italic; font-size:13px; color:#fff; max-width:450px;">"The Laboratory is at 100% capacity. No data left behind."</div>
+            <div id="pN" style="font-weight:900; color:var(--ring); font-size:10px;">PROF. OAK</div>
+            <div id="pQ" style="font-style:italic; font-size:13px; color:#fff;">"The internal buffer is optimized. Proceed with the scan."</div>
         </div>
     </div>
     <div style="display:flex; gap:10px;">
-        <button onclick="toggleHall()" class="btn-core btn-gold">CHAMPION HALL</button>
-        <button onclick="toggleBible()" class="btn-core" style="background:none; border:1px solid var(--ring); color:var(--ring);">BIBLE</button>
+        <button onclick="toggleH()" class="btn" style="background:var(--gold)">HALL</button>
+        <button onclick="toggleB()" class="btn" style="background:none; border:2px solid var(--ring); color:var(--ring)">BIBLE</button>
     </div>
 </div>
 
-<div class="party-bar" id="party">
-    <div class="ball-slot active" onclick="setSlot(0)" id="s0">⚪ SLOT 1</div>
-    <div class="ball-slot" onclick="setSlot(1)" id="s1">⚪ SLOT 2</div>
-    <div class="ball-slot" onclick="setSlot(2)" id="s2">⚪ SLOT 3</div>
-    <div class="ball-slot" onclick="setSlot(3)" id="s3">⚪ SLOT 4</div>
-    <div class="ball-slot" onclick="setSlot(4)" id="s4">⚪ SLOT 5</div>
-    <div class="ball-slot" onclick="setSlot(5)" id="s5">⚪ SLOT 6</div>
+<div class="party" id="party"></div>
+<input type="text" id="target" placeholder="INPUT GENETIC SCAN" onkeypress="if(event.key==='Enter') scan()">
+<button onclick="location.reload()" class="btn" style="background:var(--warn); width:100%; margin-bottom:15px;">PURGE LAB</button>
+
+<div class="grid">
+    <div class="panel"><span class="tag">Evolution & Hatching</span><div id="d1">--</div></div>
+    <div class="panel"><span class="tag">Base Stat Spread</span><div id="d2">--</div></div>
+    <div class="panel"><span class="tag">Encounter Locations</span><div id="d3">--</div></div>
+    <div class="panel" style="grid-column: span 2;"><span class="tag">Movepool & Evolution Cutoffs</span><div id="d4" style="height:250px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:8px;"></div></div>
 </div>
-
-<input type="text" id="target" placeholder="SCAN POKEMON (e.g. Garchomp)" onkeypress="if(event.key==='Enter') scan()">
-
-<button onclick="resetLab()" class="btn-core btn-reset">PURGE SYSTEM DATA</button>
-
-<div class="main-grid">
-    <div class="panel">
-        <span class="tag">I. Species Origin & Evo</span>
-        <div id="evo-data" style="font-size:12px; line-height:2;">--</div>
-    </div>
-    <div class="panel">
-        <span class="tag">II. Base Stat Spread</span>
-        <div id="stats"></div>
-    </div>
-    <div class="panel">
-        <span class="tag">III. Game Locations</span>
-        <div id="loc-data" style="font-size:11px; max-height:150px; overflow-y:auto;">--</div>
-    </div>
-    <div class="panel" style="grid-column: span 2;">
-        <span class="tag">IV. Level-Up & Legacy Movepool</span>
-        <div id="moves" style="height:250px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:5px;"></div>
-    </div>
-</div>
-
-<footer style="text-align:center; padding:40px; color:var(--sub); font-size:10px; letter-spacing:10px;">ARCHITECT: LIME | SINGULARITY ∞</footer>
 
 <script>
-    let activeSlot = 0; let team = Array(6).fill(null);
-    const profs = [
-        { n: "PROF. OAK", i: "O", c: "DITTO CANNOT BREED WITH DITTO! I WILL PERSONALLY DELETE YOUR SAVE FILE!" },
-        { n: "PROF. ELM", i: "E", c: "YOU'RE IGNORING THE INCENSE! AZURILL DOES NOT EXIST WITHOUT SEA INCENSE!" },
-        { n: "PROF. ROWAN", i: "R", c: "Mewtwo is a clone, not a breeder! Evolution is sacred, you savage!" }
+    let active = 0;
+    const PROFS = [
+        ["O", "PROF. OAK", "DITTO CANNOT BREED DITTO! I'VE TOLD YOU FOR 30 YEARS!"],
+        ["E", "PROF. ELM", "THE INCENSE! YOU FORGOT THE INCENSE! THAT'S NOT A BABY!"],
+        ["R", "PROF. ROWAN", "Legendaries don't have eggs! Stop wasting my laboratory's time!"]
     ];
 
-    function toggleBible() { document.getElementById('bible').classList.toggle('open-right'); }
-    function toggleHall() { document.getElementById('hall').classList.toggle('open-left'); calculateHall(); }
-    function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
+    function boot() {
+        let p = document.getElementById('party');
+        for(let i=0; i<6; i++) p.innerHTML += `<div class="slot ${i==0?'active':''}" id="s${i}" onclick="setS(${i})">⚪ SLOT ${i+1}</div>`;
+    }
 
-    function resetLab() { if(confirm("TOTAL WIPE?")) location.reload(); }
+    function toggleB() { document.getElementById('bible').classList.toggle('open-r'); }
+    function toggleH() { document.getElementById('hall').classList.toggle('open-l'); }
+    function setS(i) { active=i; document.querySelectorAll('.slot').forEach((s,x)=>s.classList.toggle('active', x==i)); }
 
-    function crashout() {
-        const v = profs[Math.floor(Math.random()*3)];
-        const avatar = document.getElementById('pAvatar');
-        const name = document.getElementById('pN');
-        const quote = document.getElementById('pQ');
-        avatar.classList.add('crashout');
-        avatar.innerText = v.i;
-        name.innerText = `${v.n} (BREAKDOWN)`;
-        name.style.color = "var(--warn)";
-        quote.innerHTML = `<span style="color:var(--warn); font-size:18px;">${v.c}</span><br><br><b style="color:var(--gold)">[THE OTHERS ARE PINNING HIM DOWN]</b>`;
-        setTimeout(() => { avatar.classList.remove('crashout'); name.innerText = "PROF. OAK"; name.style.color="var(--ring)"; quote.innerText='"He is sedated. Proceed."'; }, 6000);
+    function crash() {
+        const v = PROFS[Math.floor(Math.random()*3)];
+        const av = document.getElementById('pAv');
+        av.classList.add('crashout'); av.innerText = v[0];
+        document.getElementById('pN').innerText = v[1];
+        document.getElementById('pQ').innerHTML = `<span style="color:var(--warn)">${v[2]}</span>`;
+        setTimeout(() => { av.classList.remove('crashout'); av.innerText="O"; document.getElementById('pN').innerText="PROF. OAK"; document.getElementById('pQ').innerText='"Stabilized. Proceed."'; }, 5000);
     }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
-        if(q.includes("ditto ditto") || q.includes("mewtwo breed")) { crashout(); return; }
-
+        if(q.includes("ditto ditto") || q.includes("mewtwo") || q.includes("why")) { crash(); return; }
+        
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = res.results.find(p => q.includes(p.name))?.name;
         if(!t) return;
 
-        const [p, sp] = await Promise.all([
-            fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
-            fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
-        ]);
+        const [p, sp] = await Promise.all([fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()), fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())]);
         const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
         const loc = await fetch(p.location_area_encounters).then(r=>r.json());
 
-        team[activeSlot] = { name: t, types: p.types };
-        document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
-        
-        // Stats
-        document.getElementById('stats').innerHTML = p.stats.map(s => `
-            <div class="stat-row"><span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span></div>
-            <div class="stat-bar"><div class="stat-fill" style="width:${(s.base_stat/255)*100}%; background:var(--ring)"></div></div>
-        `).join('');
-
-        // Evo & Genesis
-        document.getElementById('evo-data').innerHTML = `
-            <b>Genesis:</b> ${evo.chain.species.name.toUpperCase()}<br>
-            <b>Egg Cycles:</b> ${sp.hatch_counter} (${sp.hatch_counter * 257} steps)<br>
-            <b>Base Happiness:</b> ${sp.base_happiness}
-        `;
-
-        // Locations
-        document.getElementById('loc-data').innerHTML = loc.slice(0, 10).map(l => `• ${l.location_area.name.replace(/-/g,' ')}`).join('<br>') || "Hatch Only / Event";
-
-        // Moves
-        document.getElementById('moves').innerHTML = p.moves.slice(0, 40).map(m => `
-            <div style="background:#111; padding:8px; font-size:11px; border:1px solid #222;">
-                ${m.move.name.toUpperCase()} <span style="float:right; color:var(--sub)">LV.${m.version_group_details[0].level_learned_at}</span>
-            </div>
-        `).join('');
+        document.getElementById(`s${active}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
+        document.getElementById('d1').innerHTML = `<b>Origin:</b> ${evo.chain.species.name}<br><b>Hatch:</b> ${sp.hatch_counter} cycles (${sp.hatch_counter*257} steps)`;
+        document.getElementById('d2').innerHTML = p.stats.map(s => `<div style="font-size:10px;">${s.stat.name.toUpperCase()}: ${s.base_stat}</div>`).join('');
+        document.getElementById('d3').innerHTML = loc.slice(0, 10).map(l => `• ${l.location_area.name}`).join('<br>') || "Breeding Only";
+        document.getElementById('d4').innerHTML = p.moves.slice(0, 80).map(m => `<div style="background:#000; padding:8px; border:1px solid #222; font-size:10px;">${m.move.name.toUpperCase()} (LV.${m.version_group_details[0].level_learned_at})</div>`).join('');
     }
-
-    function calculateHall() {
-        const active = team.filter(t => t);
-        document.getElementById('hall-calc').innerHTML = active.map(p => `• <b>${p.name.toUpperCase()}</b>: Offensive Coverage Analysis Active.`).join('<br>');
-    }
-
-    function init() { setSlot(0); }
 </script>
 </body>
 </html>
