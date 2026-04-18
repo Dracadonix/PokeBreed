@@ -3,79 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | v8.0 Compliance</title>
+    <title>PokeBreed Pro | v8.0 Unified</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
             --surface: rgba(10, 15, 25, 0.98); --gold: #ffd700; --research: #55ff77;
         }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s ease; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh; overflow-x: hidden; }
 
-        /* MANDATORY POP-UP SYSTEM */
-        #gatekeeper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .gate-card { background: #05080f; border: 1px solid var(--ring); max-width: 600px; width: 100%; padding: 40px; box-shadow: 0 0 50px rgba(0, 242, 255, 0.1); border-radius: 8px; text-align: center; display: none; }
-        .gate-card.active { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* BOOT SEQUENCE POP-UPS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 50000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal { background: #000; border: 1px solid var(--ring); padding: 40px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 0 50px rgba(0,242,255,0.2); }
+        .modal h2 { color: var(--ring); letter-spacing: 5px; margin-top: 0; }
+        .modal p { font-size: 14px; line-height: 1.6; color: #ccc; }
+        .btn-next { background: var(--ring); color: #000; border: none; padding: 12px 30px; font-weight: 900; cursor: pointer; margin-top: 20px; letter-spacing: 2px; }
 
-        .gate-title { color: var(--ring); letter-spacing: 5px; text-transform: uppercase; font-weight: 900; margin-bottom: 20px; }
-        .gate-text { font-size: 14px; line-height: 1.6; color: var(--sub); margin-bottom: 30px; text-align: left; }
-        .gate-btn { background: var(--ring); color: #000; border: none; padding: 15px 40px; font-weight: 900; cursor: pointer; letter-spacing: 2px; width: 100%; border-radius: 4px; }
+        /* THE BIG BOX */
+        #target { 
+            width: 100%; background: #0b111e; border: 3px solid var(--ring); 
+            padding: 40px; color: var(--ring); text-align: center; font-size: clamp(24px, 5vw, 36px); 
+            font-weight: 200; outline: none; margin-bottom: 25px; border-radius: 8px;
+        }
 
-        /* MAIN UI */
-        #target { width: 100%; background: #0b111e; border: 3px solid var(--ring); padding: 40px; color: var(--ring); text-align: center; font-size: 36px; outline: none; margin-bottom: 25px; border-radius: 8px; }
+        /* HEADER & BIBLE */
+        .prof-hub { background: var(--surface); border-left: 5px solid var(--ring); padding: 25px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; }
+        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 450px; height: 100%; background: var(--surface); border-left: 2px solid var(--ring); z-index: 20000; padding: 40px; overflow-y: auto; }
+        #bible.open { right: 0; }
+
+        /* INTERFACE ELEMENTS */
         .party-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
         @media (min-width: 768px) { .party-bar { grid-template-columns: repeat(6, 1fr); } }
-        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 20px; text-align: center; cursor: pointer; border-radius: 4px; }
-        .ball-slot.active { border: 2px solid var(--ring); }
-        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 4px; }
-        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; }
+        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 20px; border-radius: 6px; text-align: center; cursor: pointer; }
+        .ball-slot.active { border: 2px solid var(--ring); background: rgba(0,242,255,0.05); }
+
+        .btn-main { width: 100%; padding: 20px; font-weight: 900; letter-spacing: 2px; cursor: pointer; border: none; border-radius: 4px; margin-bottom: 10px; font-size: 18px; }
+        .btn-gold { background: linear-gradient(45deg, var(--gold), #b8860b); color: #000; }
+
         .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .main-grid { grid-template-columns: repeat(5, 1fr); } }
+        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 4px; }
+        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; border-bottom: 1px solid rgba(0, 242, 255, 0.1); }
     </style>
 </head>
 <body onload="init()">
 
-<div id="gatekeeper">
-    <div class="gate-card active" id="stage1">
-        <div class="gate-title">System Identity</div>
-        <div class="gate-text">
-            <b>PokeBreed Pro v8.0</b> is a high-fidelity <b>Competitive Breeding & Synergy Simulator</b>. 
-            <br><br>
-            This tool is designed for professional trainers to:
-            <ul>
-                <li>Simulate Genetic Inheritance (IVs & Natures).</li>
-                <li>Calculate Team-Wide Defensive Coverage.</li>
-                <li>Analyze Movepool Synergy against the Competitive Meta.</li>
-            </ul>
-        </div>
-        <button class="gate-btn" onclick="nextStage(2)">PROCEED TO LEGAL</button>
+<div id="boot1" class="overlay">
+    <div class="modal">
+        <h2>IDENTIFICATION</h2>
+        <p>This is <b>PokeBreed Pro</b>, a genetic simulation and tactical analysis tool designed for competitive Pokémon breeding and team synergy planning.</p>
+        <p style="color:var(--sub)">Created by <b>Lime</b>.</p>
+        <button class="btn-next" onclick="nextBoot(1)">PROCEED</button>
     </div>
+</div>
 
-    <div class="gate-card" id="stage2">
-        <div class="gate-title">Legal Disclaimer</div>
-        <div class="gate-text" style="color: var(--warn);">
-            <b>NON-AFFILIATION NOTICE:</b> This tool is a fan-made project. It is NOT affiliated with, endorsed by, or associated with Nintendo, Game Freak, or The Pokémon Company.
-            <br><br>
-            All Pokémon names, images, and data are trademarks of their respective owners. This application is for educational and strategic simulation purposes only.
-        </div>
-        <button class="gate-btn" onclick="nextStage(3)">ACKNOWLEDGE & CREDIT</button>
+<div id="boot2" class="overlay" style="display:none;">
+    <div class="modal">
+        <h2>LEGAL DISCLAIMER</h2>
+        <p>This tool is a fan-made project. Pokémon and Pokémon character names are trademarks of Nintendo, Creatures Inc., and Game Freak. This tool is not affiliated with or endorsed by any of the aforementioned parties.</p>
+        <button class="btn-next" onclick="nextBoot(2)">I UNDERSTAND</button>
     </div>
+</div>
 
-    <div class="gate-card" id="stage3">
-        <div class="gate-title">Protocol Glossary</div>
-        <div class="gate-text">
-            <b>CREDITS:</b> Data powered by the PokeAPI project. Built by The Genetic Singularity.
-            <br><br>
-            <b>CORE CONCEPTS:</b>
-            <ul>
-                <li><b>Genesis Law:</b> Eggs hatch into the lowest evolution.</li>
-                <li><b>Nexus Tree:</b> Cross-reference breeding compatibility between team members.</li>
-                <li><b>Logistics:</b> The mandatory use of items like the Everstone to lock genetic traits.</li>
-            </ul>
+<div id="boot3" class="overlay" style="display:none;">
+    <div class="modal" style="max-width:600px;">
+        <h2>TERMINOLOGY</h2>
+        <div style="text-align:left; font-size:12px; color:var(--sub);">
+            <p><b style="color:var(--ring)">IVs:</b> Genetic potential (0-31). Use the Terminal to plan 0-Atk or 0-Spe sets.</p>
+            <p><b style="color:var(--ring)">Natures:</b> Stat multipliers (10%). Planned via Everstone logistics.</p>
+            <p><b style="color:var(--ring)">Egg Groups:</b> Breeding compatibility logic. If two slots share a group, the Nexus Tree will flare.</p>
+            <p><b style="color:var(--ring)">Synergy Matrix:</b> Analyzes your 6 slots for elemental vulnerabilities and coverage gaps.</p>
         </div>
-        <button class="gate-btn" onclick="unlockLab()">INITIATE LAB TERMINAL</button>
+        <button class="btn-next" onclick="nextBoot(3)">INITIALIZE LAB</button>
     </div>
+</div>
+
+<div id="bible">
+    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:15px; width:100%; cursor:pointer;">CLOSE BIBLE</button>
+    <h2 style="color:var(--ring);">GENETIC BIBLE</h2>
+    <p>Credit: <b>Lime</b></p>
+    <div style="font-size:13px; color:var(--sub); line-height:1.7;">
+        <p><b>HA Inheritance:</b> 60% chance from Female. Males require Ditto.</p>
+        <p><b>Nexus Tree:</b> Dynamically highlights breeding pairs in your active party slots.</p>
+    </div>
+</div>
+
+<div class="prof-hub">
+    <div>
+        <span style="font-size:10px; font-weight:900; color:var(--ring); letter-spacing:5px;">OMNI-LAB V8.0</span>
+        <div style="font-style:italic; font-size:14px;">"Welcome to the Unified Lab. All systems operational."</div>
+    </div>
+    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:10px; cursor:pointer;">BIBLE</button>
 </div>
 
 <div class="party-bar">
@@ -87,30 +105,26 @@
     <div class="ball-slot" onclick="setSlot(5)" id="s5">⚪<b>SLOT 6</b></div>
 </div>
 
-<input type="text" id="target" placeholder="0 Atk Timid Gengar" onkeypress="if(event.key==='Enter') scan()">
+<input type="text" id="target" placeholder="TYPE DIRECTIVE" onkeypress="if(event.key==='Enter') scan()">
 
-<div class="main-grid" id="researchView">
+<button id="actionBtn" class="btn-main btn-gold" onclick="handleAction()">CHALLENGE THE LEAGUE</button>
+
+<div id="researchView" class="main-grid">
     <div class="panel"><span class="tag">Logistics</span><div id="gear"></div></div>
-    <div class="panel"><span class="tag">Genesis Stage</span><div id="gen" style="text-align:center; font-size:24px; color:var(--ring);">---</div></div>
+    <div class="panel"><span class="tag">Genesis Law</span><div id="gen" style="text-align:center; font-size:24px; color:var(--ring);">---</div></div>
     <div class="panel"><span class="tag">Nexus (Breedable)</span><div id="nexus"></div></div>
     <div class="panel"><span class="tag">Biometrics</span><div id="stats"></div></div>
-    <div class="panel"><span class="tag">Moves</span><div id="moves" style="height:350px; overflow-y:auto; font-size:12px;"></div></div>
+    <div class="panel"><span class="tag">Movepool</span><div id="moves" style="height:350px; overflow-y:auto; font-size:12px;"></div></div>
 </div>
 
 <script>
     let activeSlot = 0;
-    let team = Array(6).fill(null).map(() => ({ name: '', eggGroups: [] }));
-
-    function nextStage(stage) {
-        document.querySelectorAll('.gate-card').forEach(c => c.classList.remove('active'));
-        document.getElementById('stage' + stage).classList.add('active');
+    function nextBoot(num) {
+        document.getElementById(`boot${num}`).style.display = 'none';
+        if(num < 3) document.getElementById(`boot${num+1}`).style.display = 'flex';
     }
 
-    function unlockLab() {
-        document.getElementById('gatekeeper').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
+    function toggleBible() { document.getElementById('bible').classList.toggle('open'); }
     function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
 
     async function scan() {
@@ -118,11 +132,7 @@
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = res.results.find(p => q.includes(p.name))?.name;
         if(!t) return;
-        const [p, sp] = await Promise.all([
-            fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
-            fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
-        ]);
-        team[activeSlot] = { name: t, eggGroups: sp.egg_groups.map(g => g.name) };
+        const p = await fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json());
         document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
         document.getElementById('gen').innerText = t.toUpperCase();
         document.getElementById('stats').innerHTML = p.stats.map(s => `<div>${s.stat.name.toUpperCase()}: ${s.base_stat}</div>`).join('');
