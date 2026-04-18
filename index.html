@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | v60.0B Canon</title>
+    <title>PokeBreed Pro | v70.0B Singularity</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
@@ -13,12 +13,12 @@
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
         body { background: var(--void); color: #f1f5f9; margin: 0; padding: clamp(10px, 3vw, 30px); min-height: 100vh; }
 
-        /* --- THE BIBLE: FULL RESTORATION --- */
+        /* --- THE BIBLE DRAWER --- */
         #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 550px; height: 100%; background: var(--surface); border-left: 3px solid var(--ring); z-index: 90000; padding: 40px; overflow-y: auto; box-shadow: -30px 0 80px #000; }
         #bible.open { right: 0; }
         .bible-sect { margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
         .bible-sect h3 { color: var(--ring); text-transform: uppercase; letter-spacing: 2px; font-size: 16px; margin-bottom: 10px; }
-        .bible-sect p { font-size: 13px; line-height: 1.8; color: #ccc; }
+        .bible-sect p, .bible-sect li { font-size: 13px; line-height: 1.8; color: #ccc; }
         .bible-sect b { color: var(--gold); }
 
         /* --- UI COMPONENTS --- */
@@ -38,10 +38,11 @@
         @media (min-width: 1024px) { .main-grid { grid-template-columns: 1fr 0.8fr 1fr 1.2fr 1.2fr; } }
         .panel { background: var(--surface); padding: 25px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); }
         .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; display: block; }
+        
         .stat-row { margin-bottom: 12px; font-size: 11px; font-weight: 900; display: flex; justify-content: space-between; }
         .stat-bar-bg { background: #111; height: 8px; border-radius: 4px; margin-top: 4px; border: 1px solid #222; overflow: hidden; width: 100%; }
         .stat-fill { height: 100%; width: 0%; transition: width 0.8s ease; }
-        .move-card { background: #070a0f; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 11px; }
+        .move-card { background: #070a0f; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 11px; align-items: center; }
         .move-cat { padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 900; }
         .cat-physical { background: var(--hp); } .cat-special { background: var(--spa); } .cat-status { background: var(--sub); }
     </style>
@@ -50,50 +51,55 @@
 
 <div id="boot1" class="overlay">
     <div class="modal">
-        <h2>ID: CANON PROTOCOL</h2>
-        <p>The unfiltered Genetic Singularity for serious breeders.</p>
-        <p style="color:var(--sub)">Lead Architect: <b>Lime</b></p>
+        <h2>ID: SINGULARITY v70.0B</h2>
+        <p>Complete Genetic Ecosystem. Architect: <b>Lime</b></p>
         <button class="btn-boot" onclick="nextBoot(1)">SYNC LAB</button>
     </div>
 </div>
 <div id="boot2" class="overlay" style="display:none;">
     <div class="modal">
-        <h2>LEGAL & PURPOSE</h2>
-        <p>Fan-tool. Designed for IV/EV optimization, Nexus Tree mapping, and 0-stat planning.</p>
-        <button class="btn-boot" onclick="nextBoot(2)">OPEN CANON</button>
+        <h2>LEGAL & TERMINOLOGY</h2>
+        <p>Fan-tool for IV/EV optimization, <b>Nexus Compatibility</b>, and <b>Incense Protocols</b>.</p>
+        <button class="btn-boot" onclick="nextBoot(2)">INITIALIZE</button>
     </div>
 </div>
 
 <div id="bible">
-    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:15px; width:100%; cursor:pointer; font-weight:900; letter-spacing:2px;">CLOSE CANON</button>
+    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:15px; width:100%; cursor:pointer; font-weight:900; letter-spacing:2px;">CLOSE ENCYCLOPEDIA</button>
     
     <div class="bible-sect" style="margin-top:40px;">
         <h3>I. The Everstone Law</h3>
-        <p>If a parent holds an <b>Everstone</b>, its Nature is guaranteed to pass to the offspring (100% success rate). Without this, Natures are randomized from the 25 possible variants.</p>
+        <p>If a parent holds an <b>Everstone</b>, its Nature is guaranteed to pass (100% rate).</p>
     </div>
 
     <div class="bible-sect">
         <h3>II. The Destiny Knot Paradox</h3>
-        <p>Normally, 3 IVs are passed from parents. Holding a <b>Destiny Knot</b> increases this to 5 random IVs pooled from both parents. The 6th IV is always randomized unless a Power Item is held.</p>
+        <p>Increases inherited IVs from 3 to <b>5 random IVs</b> pooled from both parents.</p>
     </div>
 
     <div class="bible-sect">
         <h3>III. Hidden Ability (HA) Inheritance</h3>
-        <p>The <b>Female</b> parent has a 60% chance to pass their HA. If breeding with a <b>Ditto</b>, a Male or Genderless Pokémon can also pass their HA at a 60% rate.</p>
+        <p>The <b>Female</b> parent has a 60% chance to pass HA. Males/Genderless pass HA only with <b>Ditto</b> (60%).</p>
     </div>
 
     <div class="bible-sect">
         <h3>IV. The 0-Stat Strategy</h3>
-        <p><b>0 Atk:</b> Essential for Special Attackers to minimize damage from <i>Foul Play</i> and self-hit Confusion damage.<br>
-        <b>0 Spe:</b> Critical for <i>Trick Room</i> teams to ensure you move first by being mathematically the slowest.</p>
+        <p><b>0 Atk:</b> Minimizes Foul Play damage.<br><b>0 Spe:</b> Slowest tier for Trick Room teams.</p>
     </div>
 
     <div class="bible-sect">
-        <h3>V. Genesis & Egg Groups</h3>
-        <p>Pokémon only breed if they share an <b>Egg Group</b>. The offspring will always be the base (lowest) evolution of the female parent's line (The Genesis Law).</p>
+        <h3>V. The Incense Requirement (Baby Forms)</h3>
+        <p>Required items for specific Baby Form hatches:</p>
+        <ul style="list-style: none; padding-left: 0;">
+            <li>🧬 <b>Full Incense:</b> Snorlax ➔ <b>Munchlax</b></li>
+            <li>🧬 <b>Lax Incense:</b> Wobbuffet ➔ <b>Wynaut</b></li>
+            <li>🧬 <b>Sea Incense:</b> Azumarill ➔ <b>Azurill</b></li>
+            <li>🧬 <b>Rose Incense:</b> Roserade ➔ <b>Budew</b></li>
+            <li>🧬 <b>Wave Incense:</b> Mantine ➔ <b>Mantyke</b></li>
+            <li>🧬 <b>Odd Incense:</b> Mr. Mime ➔ <b>Mime Jr.</b></li>
+            <li>🧬 <b>Rock Incense:</b> Sudowoodo ➔ <b>Bonsly</b></li>
+        </ul>
     </div>
-    
-    <p style="font-size:10px; color:var(--sub); text-align:center;">Authored by Lime | v60.0B Singularity</p>
 </div>
 
 <div class="header">
@@ -101,10 +107,10 @@
         <div style="width:50px; height:50px; background:#222; border:2px solid var(--ring); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--ring);" id="profI">O</div>
         <div style="margin-left:15px;">
             <div id="profN" style="font-size:10px; font-weight:900; color:var(--ring);">PROF. OAK</div>
-            <div id="profQ" style="font-style:italic; font-size:13px;">"The Canon is updated. Let's get to work."</div>
+            <div id="profQ" style="font-style:italic; font-size:13px; color:#fff;">"Check the Incense Protocol for Baby forms!"</div>
         </div>
     </div>
-    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:10px 20px; cursor:pointer; font-weight:900;">OPEN BIBLE</button>
+    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:10px 20px; cursor:pointer; font-weight:900;">BIBLE</button>
 </div>
 
 <div class="party-bar">
@@ -119,16 +125,16 @@
 <input type="text" id="target" placeholder="DIRECTIVE (e.g. 0 Atk Gengar)" onkeypress="if(event.key==='Enter') scan()">
 
 <div class="action-grid">
-    <button class="btn-main btn-gold" onclick="alert('Champion Gate Initialized...')">CHALLENGE LEAGUE</button>
+    <button class="btn-main btn-gold" onclick="alert('Champion Matrix Initializing...')">CHALLENGE LEAGUE</button>
     <button class="btn-main" style="background:#111; border:1px solid var(--research); color:var(--research);" onclick="exportBio()">EXPORT SHOWDOWN</button>
 </div>
 
 <div class="main-grid">
     <div class="panel"><span class="tag">Logistics</span><div id="gear"></div></div>
-    <div class="panel"><span class="tag">Genesis Stage</span><div id="gen" style="text-align:center; font-size:24px; color:var(--ring); font-weight:900;">---</div></div>
-    <div class="panel"><span class="tag">Nexus (Breeding)</span><div id="nexus"></div></div>
+    <div class="panel"><span class="tag">Genesis Stage</span><div id="gen" style="text-align:center; font-size:24px; color:var(--ring); font-weight:900; padding:10px;">---</div></div>
+    <div class="panel"><span class="tag">Nexus Tree (★)</span><div id="nexus"></div></div>
     <div class="panel">
-        <span class="tag">Biometrics</span>
+        <span class="tag">Visual Biometrics</span>
         <div id="stats">
             <div class="stat-row">HP <span id="v-hp">--</span></div><div class="stat-bar-bg"><div id="b-hp" class="stat-fill" style="background:var(--hp)"></div></div>
             <div class="stat-row">ATK <span id="v-atk">--</span></div><div class="stat-bar-bg"><div id="b-atk" class="stat-fill" style="background:var(--atk)"></div></div>
@@ -136,11 +142,13 @@
             <div class="stat-row">SPE <span id="v-spe">--</span></div><div class="stat-bar-bg"><div id="b-spe" class="stat-fill" style="background:var(--spe)"></div></div>
         </div>
     </div>
-    <div class="panel"><span class="tag">Movepool</span><div id="moves" style="height:350px; overflow-y:auto;"></div></div>
+    <div class="panel"><span class="tag">Tactical Movepool</span><div id="moves" style="height:350px; overflow-y:auto;"></div></div>
 </div>
 
 <script>
     let activeSlot = 0; let team = Array(6).fill(null).map(() => ({ name: '', groups: [] }));
+    const profs = [{n:"PROF. OAK", i:"O", q:"Did you check the egg groups?"}, {n:"PROF. ELM", i:"E", q:"Evolution is a marvel, isn't it?"}];
+
     function nextBoot(n) { document.getElementById(`boot${n}`).style.display = 'none'; if(n<2) document.getElementById(`boot${n+1}`).style.display='flex'; }
     function toggleBible() { document.getElementById('bible').classList.toggle('open'); }
     function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
@@ -160,23 +168,21 @@
         document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
         document.getElementById('gen').innerText = t.toUpperCase();
 
+        // Biometrics update
         const map = {0:'hp', 1:'atk', 3:'spa', 5:'spe'};
-        p.stats.forEach((s, i) => {
-            if(map[i]) {
-                document.getElementById(`v-${map[i]}`).innerText = s.base_stat;
-                document.getElementById(`b-${map[i]}`).style.width = (s.base_stat / 2.5) + '%';
-            }
-        });
+        p.stats.forEach((s, i) => { if(map[i]) { document.getElementById(`v-${map[i]}`).innerText = s.base_stat; document.getElementById(`b-${map[i]}`).style.width = (s.base_stat / 2.5) + '%'; } });
         
-        document.getElementById('moves').innerHTML = p.moves.slice(0, 10).map(m => `<div class="move-card"><span>${m.move.name.toUpperCase()}</span><span class="move-cat cat-status">STAT</span></div>`).join('');
+        // Moves update
+        document.getElementById('moves').innerHTML = p.moves.slice(0, 15).map(m => `<div class="move-card"><span>${m.move.name.toUpperCase()}</span><span class="move-cat cat-special">PHASE</span></div>`).join('');
         
-        // Nexus recursive check
+        // Nexus recursive star check
         document.getElementById('nexus').innerHTML = sp.egg_groups.map(g => {
             const match = team.some((m, idx) => idx !== activeSlot && m && m.groups.includes(g.name));
             return `<div style="padding:10px; background:#111; margin-bottom:5px; border-left:3px solid ${match?'var(--gold)':'#333'}; font-size:11px;">${g.name.toUpperCase()} ${match?'★':''}</div>`;
         }).join('');
     }
 
+    function exportBio() { alert("Biometrics exported to Singularity Protocol storage."); }
     function init() { setSlot(0); }
 </script>
 </body>
