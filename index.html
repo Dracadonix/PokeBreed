@@ -3,126 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Advanced Genetics Lab</title>
+    <title>PokeBreed Pro | Genetic Research Suite</title>
     <style>
         :root { 
             --bg: #0a0b0e; --card: #12141a; --primary: #00e5ff; --accent: #ff00ff; 
-            --text: #f0f0f0; --sub-text: #94a3b8; --border: #1e293b; --success: #22c55e;
+            --text: #f0f0f0; --sub-text: #94a3b8; --border: #1e293b; --error-red: #ff4444;
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
 
-        /* INITIALIZATION OVERLAY */
+        /* INTRO MODAL */
         #initOverlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .init-box { max-width: 500px; background: #111; padding: 40px; border: 1px solid #333; border-radius: 8px; font-family: 'Courier New', monospace; }
-        .init-btn { background: none; border: 1px solid var(--primary); color: var(--primary); padding: 12px; cursor: pointer; width: 100%; margin-top: 20px; font-weight: bold; }
+        .init-box { max-width: 500px; background: #111; padding: 40px; border: 1px solid #333; border-radius: 12px; font-family: 'Courier New', monospace; box-shadow: 0 0 30px rgba(0,229,255,0.1); }
+        .init-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 12px; cursor: pointer; width: 100%; margin-top: 20px; font-weight: bold; letter-spacing: 2px; }
+        .init-btn:hover { background: var(--primary); color: #000; }
 
-        .container { max-width: 1000px; width: 100%; background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.5); transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
+        .container { max-width: 950px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.5); transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); }
         
-        .grid-layout { display: grid; grid-template-columns: 1fr 300px; gap: 25px; margin-top: 30px; }
-        
-        /* INPUT AREA */
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        input { flex: 1; padding: 16px; background: #08090c; border: 1px solid var(--border); border-radius: 8px; color: white; outline: none; }
-        .analyze-btn { padding: 16px 30px; background: var(--primary); color: #000; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; }
+        /* UI ELEMENTS */
+        .input-group { display: flex; gap: 10px; margin-bottom: 25px; }
+        input { flex: 1; padding: 18px; background: #08090c; border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; font-size: 1rem; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,229,255,0.2); }
+        .analyze-btn { padding: 18px 35px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
 
-        /* RESEARCH CARDS */
-        #output { display: none; }
-        .lab-card { background: #161920; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .tag { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 0.75em; font-weight: 800; text-transform: uppercase; margin-right: 5px; }
-        .tag-ha { background: var(--accent); color: white; }
-        .tag-loc { background: #334155; color: white; }
-        
-        /* PROMPT SYSTEM (HIDDEN RAGE) */
+        /* ROWAN'S TERMINAL */
         #promptBox {
-            display: none; position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 700px; background: #fff; border: 4px solid #000;
-            padding: 25px; z-index: 9999; color: #000; font-family: 'Courier New', monospace;
-            box-shadow: 0 30px 100px rgba(0,0,0,1);
+            display: none; position: fixed; bottom: 12%; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 750px; background: #fff; border: 5px solid #000;
+            padding: 30px; z-index: 9999; color: #000; font-family: 'Courier New', monospace;
+            box-shadow: 0 40px 120px rgba(0,0,0,1);
         }
-        .s-intense { animation: v-crash 0.05s infinite !important; }
-        .s-critical { background: #900 !important; color: #fff !important; }
-        @keyframes v-crash { 0% { transform: translate(-50%, 0); } 20% { transform: translate(-53%, 2%); } 40% { transform: translate(-47%, -2%); } 100% { transform: translate(-50%, 0); } }
+        .prompt-header { font-weight: 900; color: #b91c1c; border-bottom: 2px solid #000; margin-bottom: 15px; font-size: 1.2rem; }
+        .s-intense { animation: rowan-rage 0.05s infinite !important; }
+        .s-critical { background: #800 !important; color: #fff !important; border-color: #f00 !important; }
+        
+        @keyframes rowan-rage { 0% { transform: translate(-50%, 0); } 20% { transform: translate(-52%, 2%); } 40% { transform: translate(-48%, -2%); } 100% { transform: translate(-50%, 0); } }
 
-        /* NEW UTILITY STYLES */
-        .iv-box { display: flex; justify-content: space-between; font-size: 0.8em; color: var(--sub-text); margin-top: 10px; }
-        .ability-row { border-bottom: 1px solid #2d333f; padding: 10px 0; display: flex; justify-content: space-between; }
-        .warning-box { border-left: 4px solid #eab308; background: rgba(234, 179, 8, 0.1); padding: 10px; font-size: 0.85em; margin-top: 10px; }
+        #output { display: none; }
+        .lab-card { background: #161920; border: 1px solid var(--border); border-radius: 14px; padding: 25px; margin-bottom: 20px; }
+        .suggestion-link { color: #2563eb; cursor: pointer; text-decoration: underline; font-weight: bold; margin: 0 5px; }
     </style>
 </head>
 <body>
 
 <div id="initOverlay">
     <div class="init-box">
-        <h2>GENETIC DATABASE INITIALIZED</h2>
-        <p>Welcome to the National Dex Suite v4.5. This fan-project provides advanced Ability tracking, IV probability, and Chain Breeding logic. Accuracy is paramount.</p>
-        <button class="init-btn" onclick="document.getElementById('initOverlay').style.display='none'">ACCESS LABORATORY</button>
+        <h2 style="color:var(--primary); margin:0;">SYNK-OS INITIALIZED</h2>
+        <p style="color:#666; font-size:0.8rem; margin:15px 0;">FAN-MADE INTERFACE. NO NINTENDO AFFILIATION DETECTED. ALL GENETIC MODELS ARE SIMULATED.</p>
+        <button class="init-btn" onclick="document.getElementById('initOverlay').style.display='none'">BOOT RESEARCH SUITE</button>
     </div>
 </div>
 
 <div id="promptBox">
-    <div style="font-weight:900; color:#900; border-bottom:2px solid #000; margin-bottom:10px;">PROFESSOR ROWAN</div>
-    <div id="promptContent"></div>
-    <div id="promptTips" style="margin-top:10px; font-size:0.8em; display:none; background:#eee; padding:10px; color:#333;">
-        SUGGESTED ENTRIES: <span id="tipList"></span>
+    <div class="prompt-header">PROFESSOR ROWAN // LAB LOG</div>
+    <div id="promptContent" style="font-size: 1.1rem; line-height: 1.5;"></div>
+    <div id="promptTips" style="margin-top:20px; font-size:0.85rem; display:none; background:#eee; padding:15px; border:1px dashed #444; color:#333;">
+        [!] DID YOU MEAN: <span id="tipList"></span>
     </div>
-    <button id="promptBtn" style="background:#000; color:#fff; border:none; padding:10px 20px; float:right; cursor:pointer; margin-top:10px;" onclick="document.getElementById('promptBox').style.display='none'">ACKNOWLEDGE</button>
+    <button id="promptBtn" style="background:#000; color:#fff; border:none; padding:12px 25px; float:right; cursor:pointer; margin-top:15px; font-weight:bold;" onclick="document.getElementById('promptBox').style.display='none'">ACKNOWLEDGE</button>
 </div>
 
 <div class="container" id="appUI">
-    <h1 style="text-align:center">POKEBREED PRO <span style="color:var(--primary)">EXPERIMENTAL</span></h1>
-    <p style="text-align:center; color:var(--sub-text); font-size:0.8em; letter-spacing:2px; margin-bottom:30px;">GENETIC MAPPING & ABILITY SYNERGY LAB</p>
+    <h1 style="text-align:center">POKEBREED <span style="color:var(--primary)">PRO</span></h1>
+    <p style="text-align:center; color:var(--sub-text); font-size:0.75rem; letter-spacing:3px; margin-bottom:40px;">NATIONAL GENETIC DATABASE // SINNOH BRANCH</p>
     
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="Search Species (e.g., Alolan Vulpix, Garchomp SV)" onkeypress="if(event.key === 'Enter') runLabAnalysis()">
-        <button class="analyze-btn" onclick="runLabAnalysis()">RUN ANALYSIS</button>
+        <input type="text" id="userInput" placeholder="Search (e.g. Jolly Garchomp)" onkeypress="if(event.key === 'Enter') processRequest()">
+        <button class="analyze-btn" onclick="processRequest()">Run Analysis</button>
     </div>
 
     <div id="output">
-        <div class="grid-layout">
-            <div class="main-col">
-                <h2 id="pName" style="text-transform: capitalize; font-size: 2.5em; margin: 0; color:var(--primary)"></h2>
-                
-                <div class="lab-card">
-                    <h3 style="margin-top:0; font-size:0.9em; color:var(--primary)">🧬 GENETIC ABILITIES</h3>
-                    <div id="abilityList"></div>
-                    <div class="warning-box" id="haNote">
-                        <strong>HA Inheritance:</strong> 60% chance to pass Hidden Ability if the female parent has it. 0% if only the male has it (unless breeding with Ditto).
-                    </div>
-                </div>
-
-                <div class="lab-card">
-                    <h3 style="margin-top:0; font-size:0.9em; color:var(--primary)">📍 REGIONAL FORM LOGIC</h3>
-                    <div id="formLogic" style="font-size: 0.9em; line-height: 1.6;"></div>
-                </div>
-            </div>
-
-            <div class="sidebar">
-                <div class="lab-card">
-                    <h3 style="margin-top:0; font-size:0.8em; color:var(--primary)">📊 IV PROBABILITY</h3>
-                    <div class="iv-box"><span>5-IV Hatch:</span> <span style="color:var(--success)">1 in 31</span></div>
-                    <div class="iv-box"><span>6-IV Hatch:</span> <span style="color:var(--accent)">1 in 1024</span></div>
-                    <p style="font-size:0.7em; margin-top:10px;">*Calculated assuming 2 perfect parents + Destiny Knot.</p>
-                </div>
-
-                <div class="lab-card">
-                    <h3 style="margin-top:0; font-size:0.8em; color:var(--primary)">⚖️ GENDER RATIO</h3>
-                    <div id="genderRatio" style="font-size:0.9em; font-weight:bold;"></div>
-                </div>
-            </div>
-        </div>
+        <h2 id="pName" style="text-transform: capitalize; font-size: 2.5rem; margin: 0; color:var(--primary)"></h2>
+        <div class="lab-card" id="mainData">...Searching genetic history...</div>
     </div>
 </div>
 
 <script>
     let dex = [];
-    let _v = 0; 
-    let _t = Math.floor(Math.random() * 8) + 5; 
+    let _fails = 0; 
+    let _limit = Math.floor(Math.random() * 12) + 6; // 6 to 18 attempts
 
-    const _msg = {
-        a: ["Precision, student! I don't recognize that name.", "Data error. Re-check your spelling."],
-        b: ["Is your Pokedex a toy? Focus on the correct nomenclature!", "60 years of work and I've never heard of that species."],
-        c: ["Grah! My patience is wearing thin! Look at the suggestions!", "Correct your entry before I lose my composure entirely!"],
-        d: ["GRAAAAAAH!!! I CANNOT TAKE ANOTHER SECOND OF THIS!!", "OUT!! GET OUT OF MY LABORATORY!! YOUR STUPIDITY IS CONTAMINATING THE SAMPLES!!"]
+    const _responses = {
+        m1: [ // Low Frustration
+            "Be precise. A researcher's greatest tool is accuracy.",
+            "I don't recognize that species. Check your spelling.",
+            "That data entry doesn't exist in my logs.",
+            "Are you sure? I've never seen that name in 60 years of work.",
+            "Double-check your notes. Precision is key."
+        ],
+        m2: [ // Mid Frustration
+            "Your handwriting is abysmal. Focus on the nomenclature!",
+            "I am a busy man. Do not waste my time with sloppy input.",
+            "Is your Pokedex broken, or are you just not using it?",
+            "Again? Your attention to detail is severely lacking, student.",
+            "I expect better from someone in my laboratory.",
+            "My patience for typos is not infinite."
+        ],
+        m3: [ // High Frustration
+            "GRAH! Look at the suggestions! They are right there!",
+            "You are making a mockery of the scientific process!",
+            "I am close to losing my composure. Spell it correctly!",
+            "Do you even know what a Pokemon is?! Focus!",
+            "I have more important things to do than correct your spelling!",
+            "This is basic research! How are you failing this?!"
+        ],
+        m4: [ // CRASH OUT
+            "GRAAAAAAH!!! I HAVE HAD ENOUGH!!",
+            "OUT!! GET OUT OF MY LAB AT ONCE!!",
+            "I AM RETIRING!! I CAN'T TEACH SOMEONE SO INCOMPETENT!!",
+            "THAT'S IT!! I'M CALLING BARRY TO DRAG YOU OUT OF HERE!!",
+            "I CAN'T TAKE ANOTHER SECOND OF THIS STUPIDITY!! LEAVE!!",
+            "THE RESEARCH IS RUINED! RUINED BY YOUR SLOPPINESS!!"
+        ]
     };
 
     fetch('https://pokeapi.co/api/v2/pokemon?limit=2000').then(r => r.json()).then(d => dex = d.results.map(p => p.name));
@@ -139,74 +130,55 @@
         return m[a.length][b.length];
     }
 
-    async function runLabAnalysis() {
+    async function processRequest() {
         const val = document.getElementById('userInput').value.toLowerCase().trim();
-        const key = val.split(/\s+/).find(w => w.length > 2 && !["sv","iv"].includes(w));
+        const key = val.split(/\s+/).find(w => w.length > 2 && !["sv","iv","jolly"].includes(w));
 
         try {
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${key}`);
             if(!r.ok) throw new Error();
             const d = await r.json();
             
-            _v = 0; // Reset
+            _fails = 0; 
             document.getElementById('output').style.display = 'block';
             document.getElementById('pName').innerText = d.name;
-
-            // 1. Ability Logic
-            const abHTML = d.abilities.map(a => `
-                <div class="ability-row">
-                    <span>${a.ability.name.replace(/-/g, ' ')} ${a.is_hidden ? '<span class="tag tag-ha">Hidden</span>' : ''}</span>
-                    <span style="font-size:0.7em; color:var(--sub-text)">${a.is_hidden ? 'Patch Only' : 'Capsule OK'}</span>
-                </div>
-            `).join('');
-            document.getElementById('abilityList').innerHTML = abHTML;
-
-            // 2. Gender Logic
-            const sR = await fetch(d.species.url);
-            const sD = await sR.json();
-            const fP = sD.gender_rate === -1 ? "Genderless" : (sD.gender_rate * 12.5) + "% Female";
-            document.getElementById('genderRatio').innerText = fP;
-
-            // 3. Form Logic (Hidden Fun Take)
-            let fL = "Standard Form. No special Everstone requirement.";
-            if(d.name.includes('-alola') || d.name.includes('-galar') || d.name.includes('-hisui')) {
-                fL = `⚠️ <strong>REGIONAL DETECTED:</strong> To hatch this form outside its home region, the parent <strong>MUST</strong> hold an <strong>Everstone</strong>. Otherwise, it will hatch in its Kantonian/Standard form.`;
-            }
-            document.getElementById('formLogic').innerHTML = fL;
+            document.getElementById('mainData').innerHTML = `Genetic sync successful. Breeding nodes unlocked for ${d.name}.`;
 
         } catch (e) {
-            _v++;
+            _fails++;
             const p = document.getElementById('promptBox');
             const c = document.getElementById('promptContent');
             const ui = document.getElementById('appUI');
             const t = document.getElementById('promptTips');
             
             p.style.display = 'block';
-            
-            if (_v >= _t) {
+            p.style.animation = "rowan-rage 0.3s ease-in-out";
+
+            if (_fails >= _limit) {
                 p.classList.add('s-critical', 's-intense');
-                c.innerHTML = _msg.d[Math.floor(Math.random() * _msg.d.length)];
+                c.innerHTML = _responses.m4[Math.floor(Math.random() * _responses.m4.length)];
                 document.getElementById('promptBtn').style.display = 'none';
                 ui.style.opacity = '0';
-                ui.style.transform = "scale(0.8) rotate(5deg)";
+                ui.style.transform = "scale(0.7) rotate(10deg)";
 
                 setTimeout(() => { p.classList.remove('s-intense'); }, 3000); 
 
                 setTimeout(() => {
                     p.classList.remove('s-critical');
-                    c.innerHTML = "...*huff*... I apologize. Let us restart. Please... be accurate.";
+                    c.innerHTML = "...*huff*... I... I apologize. My temper is not what it used to be. Let us try to be professional. Again.";
                     document.getElementById('promptBtn').style.display = 'block';
-                    _v = 0; _t = Math.floor(Math.random() * 8) + 5;
+                    _fails = 0; _limit = Math.floor(Math.random() * 12) + 6;
                     ui.style.opacity = '1'; ui.style.transform = "scale(1) rotate(0deg)";
-                }, 7000); 
+                }, 8000); 
             } else {
-                let tier = _v > (_t * 0.7) ? 'c' : (_v > (_t * 0.3) ? 'b' : 'a');
-                c.innerText = _msg[tier][Math.floor(Math.random() * _msg[tier].length)];
+                let mood = _fails > (_limit * 0.75) ? 'm3' : (_fails > (_limit * 0.4) ? 'm2' : 'm1');
+                c.innerText = `[ATTEMPT ${_fails}] ` + _responses[mood][Math.floor(Math.random() * _responses[mood].length)];
+                
                 const s = dex.map(n => ({n, d: _dist(key || "", n)})).filter(x => x.d <= 2).sort((a,b)=>a.d-b.d).slice(0,3);
                 if(s.length > 0) {
                     t.style.display = "block";
-                    document.getElementById('tipList').innerHTML = s.map(x => `<span style="color:blue; cursor:pointer; text-decoration:underline;" onclick="document.getElementById('userInput').value='${x.n}'; runLabAnalysis();">${x.n}</span>`).join(', ');
-                }
+                    document.getElementById('tipList').innerHTML = s.map(x => `<span class="suggestion-link" onclick="document.getElementById('userInput').value='${x.n}'; processRequest(); document.getElementById('promptBox').style.display='none';">${x.n}</span>`).join(', ');
+                } else { t.style.display = "none"; }
             }
         }
     }
