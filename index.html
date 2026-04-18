@@ -6,120 +6,125 @@
     <style>
         :root { --void: #010204; --ring: #00f2ff; --warn: #ff0055; --gold: #ffd700; --surface: #0a0f19; --sub: #64748b; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.2s; }
-        body { background: var(--void); color: #f1f5f9; margin: 0; display: flex; height: 100vh; overflow: hidden; font-size: 13px; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* --- SIDEBAR: THE ELDER COUNCIL --- */
-        .sidebar { width: 360px; background: #05080f; border-right: 1px solid #1a2333; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .prof-card { background: #0d1421; padding: 15px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid var(--ring); border-bottom: 1px solid #1a2333; }
-        .prof-card b { color: var(--ring); font-size: 11px; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        .grumble { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #333; color: var(--gold); font-size: 10px; font-weight: 700; font-style: italic; }
+        /* --- BIBLE MODAL: THE COMPENDIUM --- */
+        #bibleModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; padding: 40px; }
+        .bible-content { 
+            max-width: 1000px; height: 90vh; margin: 0 auto; background: #0d1421; border: 2px solid var(--gold); 
+            padding: 50px; border-radius: 4px; overflow-y: auto; position: relative; box-shadow: 0 0 100px rgba(255, 215, 0, 0.1); 
+        }
+        .bible-text { font-size: 15px; line-height: 1.8; color: #e2e8f0; font-family: 'Georgia', serif; } /* Academic font for the Bible */
+        .bible-text h1 { color: var(--gold); border-bottom: 3px double var(--gold); padding-bottom: 10px; text-align: center; font-size: 28px; }
+        .bible-text h2 { color: var(--ring); border-bottom: 1px solid #333; margin-top: 40px; font-size: 22px; }
+        .bible-text b { color: var(--gold); }
+        
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #050505; }
+        th, td { border: 1px solid #333; padding: 12px; text-align: left; font-size: 13px; }
+        th { background: #1a2333; color: var(--ring); }
 
-        /* --- THE BIBLE SECTION --- */
-        .bible-box { background: rgba(0, 242, 255, 0.05); border: 1px solid #1a2333; padding: 15px; border-radius: 8px; margin-top: 10px; }
-        .bible-box h4 { margin: 0 0 10px 0; color: var(--ring); font-size: 12px; text-transform: uppercase; }
-        .bible-item { font-size: 11px; margin-bottom: 8px; line-height: 1.4; }
+        .close-btn { position: sticky; top: 0; float: right; background: var(--warn); color: white; border: none; padding: 12px 25px; cursor: pointer; font-weight: 900; z-index: 10; }
 
-        /* --- MAIN HUB --- */
-        .main { flex-grow: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
-        .header-ui { display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-bottom: 25px; }
-        input, select { background: #000; border: 2px solid var(--ring); padding: 20px; color: var(--ring); font-size: 20px; border-radius: 8px; outline: none; }
-        select { color: var(--gold); border-color: var(--gold); font-size: 14px; font-weight: 900; cursor: pointer; }
-
-        /* --- DATA GRID --- */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-grow: 1; }
-        .panel { background: #0d1421; padding: 25px; border-radius: 12px; border: 1px solid #1a2333; display: flex; flex-direction: column; }
+        /* --- MAIN UI --- */
+        .sidebar { width: 340px; background: #05080f; border-right: 1px solid #1a2333; padding: 20px; overflow-y: auto; }
+        .main { flex-grow: 1; padding: 30px; overflow-y: auto; }
+        .header-ui { display: grid; grid-template-columns: 1fr 220px; gap: 15px; margin-bottom: 25px; }
+        input, .bible-btn { background: #000; border: 2px solid var(--ring); padding: 20px; color: var(--ring); font-size: 18px; border-radius: 4px; }
+        .bible-btn { background: var(--gold); color: #000; border: none; font-weight: 900; cursor: pointer; }
+        .panel { background: #0d1421; padding: 25px; border-radius: 8px; border: 1px solid #1a2333; margin-bottom: 20px; }
         .tag { font-size: 10px; color: var(--ring); font-weight: 900; border-bottom: 1px solid #333; display: block; margin-bottom: 15px; letter-spacing: 2px; }
-
-        /* --- MOVE CATEGORIES --- */
-        .move-scroll { flex-grow: 1; overflow-y: auto; max-height: 400px; }
-        .move-row { display: flex; justify-content: space-between; background: #050505; padding: 8px; margin-bottom: 4px; border: 1px solid #222; border-radius: 4px; font-size: 10px; }
-        .m-egg { color: #f472b6; font-weight: 900; } /* Pink for Egg Moves */
-        .m-tm { color: #60a5fa; font-weight: 900; }  /* Blue for TMs */
-
-        .stat-bar { height: 8px; background: #111; border-radius: 4px; overflow: hidden; margin: 4px 0 10px 0; }
-        .bar-fill { height: 100%; transition: 1s ease-out; }
-        .evo-node { background: #000; border: 1px solid var(--gold); padding: 8px; margin: 5px 0; text-align: center; font-size: 11px; font-weight: 900; color: var(--gold); }
-        .warn-box { background: rgba(255, 0, 85, 0.1); border: 1px solid var(--warn); color: var(--warn); padding: 12px; border-radius: 4px; font-size: 11px; font-weight: 900; margin-bottom: 15px; }
-
-        .shield { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .move-row { display: flex; justify-content: space-between; background: #050505; padding: 10px; border-bottom: 1px solid #111; font-size: 11px; }
     </style>
 </head>
-<body onload="boot()">
+<body>
 
-<div id="pop" class="shield">
-    <div style="max-width: 550px; border: 2px solid var(--warn); padding: 40px; background: #050505; text-align:center;">
-        <h2 style="color:var(--warn); letter-spacing: 2px;">THE BREEDING BIBLE</h2>
-        <p style="color:var(--sub)">Non-Affiliated Fan Resource by <b>Architect Lime</b>.<br>IVs, Egg Moves, and Incenses Synchronized.</p>
-        <button onclick="document.getElementById('pop').style.display='none'" style="background:var(--gold); border:none; padding:15px; width:100%; font-weight:900; cursor:pointer; margin-top:20px;">OPEN ARCHIVES</button>
+<div id="bibleModal">
+    <div class="bible-content">
+        <button class="close-btn" onclick="toggleBible()">EXIT ARCHIVE</button>
+        <div class="bible-text">
+            <h1>The Biological and Statistical Foundations of Pokémon Breeding</h1>
+            <p><i>A Comprehensive Professional Compendium | Architect: Lime</i></p>
+
+            <h2>I. The Biological Framework: Compatibility</h2>
+            <p>The fundamental prerequisite for successful breeding is reproductive compatibility. In the modern Paldean era, the <b>Picnic System</b> has replaced the traditional nursery.</p>
+            
+            <table>
+                <tr><th>Egg Group</th><th>Characteristics</th><th>Example</th></tr>
+                <tr><td>Dragon</td><td>Reptilian/Mythical Archetypes</td><td>Gible, Bagon</td></tr>
+                <tr><td>Field</td><td>Terrestrial Mammals</td><td>Eevee, Lucario</td></tr>
+                <tr><td>Human-Like</td><td>Bipedal Organisms</td><td>Abra, Machop</td></tr>
+                <tr><td>Ditto</td><td>Universal Donor</td><td>Ditto</td></tr>
+            </table>
+
+            <h2>II. Statistical Inheritance (IVs & Natures)</h2>
+            <p>Professional breeding involves moving from chance to absolute control. <b>Individual Values (IVs)</b> range from 0 to 31.</p>
+            <ul>
+                <li><b>Destiny Knot:</b> Guarantees 5 out of 12 combined parent IVs are passed down.</li>
+                <li><b>Everstone:</b> Provides a 100% guarantee that the parent's Nature is inherited.</li>
+                <li><b>Tactical Minimalism:</b> Professionals often seek <b>0 Speed</b> for Trick Room or <b>0 Attack</b> to minimize Foul Play damage.</li>
+            </ul>
+
+            <h2>III. The Mirror Herb Revolution</h2>
+            <p>In Paldea, the <b>Mirror Herb</b> allows for immediate Egg Move transfer between any two Pokémon in a party during a Picnic, regardless of species.</p>
+            <ol>
+                <li>Target must have an empty move slot.</li>
+                <li>Target must hold the <b>Mirror Herb</b>.</li>
+                <li>Picnic with a Pokémon that knows the desired move.</li>
+            </ol>
+
+            <h2>IV. Shiny Mathematics: The Masuda Method</h2>
+            <p>By breeding two Pokémon from different language versions, the shiny rate is significantly boosted.</p>
+            <table>
+                <tr><th>Condition</th><th>Median Probability (50%)</th><th>90% Certainty</th></tr>
+                <tr><td>Masuda Only</td><td>~473 Eggs</td><td>~1,571 Eggs</td></tr>
+                <tr><td>Masuda + Charm</td><td>~355 Eggs</td><td>~1,178 Eggs</td></tr>
+            </table>
+
+            <h2>V. Logistical Optimization</h2>
+            <p>The speed of iteration is boosted by <b>Flame Body</b> (halves hatch steps) and <b>Egg Power Level 2/3</b> sandwiches.</p>
+            <p><i>Compendium Note: The removal of Pokérus in Gen IX signals a shift toward a Vitamin-centric training model.</i></p>
+        </div>
     </div>
 </div>
 
 <div class="sidebar">
-    <h3 style="color:var(--gold); letter-spacing:3px; margin-bottom:20px; text-align:center;">ELDER KNOWLEDGE</h3>
-    
-    <div class="prof-card">
-        <b>Prof. Oak</b>
-        <p>"A foreign Ditto increases Shiny odds. That's the Masuda Method."</p>
-        <div class="grumble">OAK: "Back in my day, we didn't have TMs you could use 100 times! You used it once and it was gone!"</div>
+    <h3 style="color:var(--gold); text-align:center;">THE ELDER DESK</h3>
+    <div class="panel" style="border-left: 4px solid var(--ring);">
+        <b>PROF. OAK</b>
+        <p style="font-size:11px;">"Lime, your research compendium is synchronized. The Bible is now live in the system."</p>
     </div>
-
-    <div class="bible-box">
-        <h4>The Breeding Bible</h4>
-        <div class="bible-item">🧬 <b>IV PASSING:</b> Give <b>Destiny Knot</b> to one parent to pass 5 random IVs from the combined pool of both parents.</div>
-        <div class="bible-item">🧠 <b>NATURES:</b> Give <b>Everstone</b> to the parent with the Nature you want (e.g., Jolly/Modest) to lock it in 100%.</div>
-        <div class="bible-item">✨ <b>MIRROR HERB:</b> In Gen 9, have your Pokémon hold this at a Picnic with an empty move slot to learn Egg Moves instantly from others.</div>
-        <div class="bible-item">🌸 <b>INCENSES:</b> Snorlax, Roselia, and others need specific held items to produce Baby forms (Munchlax/Budew).</div>
-    </div>
-
-    <div class="tag" style="margin-top:20px;">DITTO LOCATIONS</div>
-    <div style="font-size:10px; color:var(--sub); line-height:1.6;">
-        <b>Paldea:</b> West Province Area 2 (Disguised)<br>
-        <b>Galar:</b> Lake of Outrage (Wild Area)<br>
-        <b>Alola:</b> Mount Hokulani<br>
-        <b>Classic:</b> Route 34 or Route 13
+    <div class="tag">QUICK STATS</div>
+    <div id="quick-data" style="font-size:10px; color:var(--sub); line-height:1.6;">
+        Hatch Speed: Flame Body<br>
+        IV Lock: Destiny Knot<br>
+        Nature Lock: Everstone<br>
+        Egg Move: Mirror Herb
     </div>
 </div>
 
 <div class="main">
     <div class="header-ui">
-        <input type="text" id="target" placeholder="SEARCH POKEMON (E.G. SNORLAX)..." onkeypress="if(event.key==='Enter') scan()">
-        <select id="gameFilter">
-            <option value="all">ALL REGIONS</option>
-            <option value="scarlet">Scarlet / Violet</option>
-            <option value="sword">Sword / Shield</option>
-            <option value="diamond">BD / SP</option>
-            <option value="red">Red / Blue</option>
-        </select>
+        <input type="text" id="target" placeholder="TYPE POKEMON..." onkeypress="if(event.key==='Enter') scan()">
+        <button class="bible-btn" onclick="toggleBible()">READ THE BIBLE</button>
     </div>
 
-    <div class="grid">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div class="panel">
-            <span class="tag">I. GENETIC LINEAGE</span>
-            <div id="incense-warn"></div>
-            <div id="d1" style="font-size:12px; line-height:1.6;">--</div>
-            <div id="evo-tree" style="margin-top:15px;">--</div>
+            <span class="tag">GENETIC LINEAGE</span>
+            <div id="evo-tree">--</div>
         </div>
-
         <div class="panel">
-            <span class="tag">II. DNA & BREEDING STRATEGY</span>
-            <div id="stats-area">--</div>
-            <div class="tag" style="margin-top:15px;">HOW TO BREED THIS</div>
-            <div id="strategy-guide" style="font-size:11px; line-height:1.4;">Enter a name to generate guide.</div>
-        </div>
-
-        <div class="panel">
-            <span class="tag">III. MOVE AUDIT (EGG & TM SOURCE)</span>
-            <div class="move-scroll" id="move-area">--</div>
+            <span class="tag">MOVE SOURCE AUDIT</span>
+            <div id="move-area" style="max-height: 400px; overflow-y:auto;">--</div>
         </div>
     </div>
 </div>
 
 <script>
-    const STAT_COLORS = { hp: '#4ade80', attack: '#facc15', defense: '#fb923c', 'special-attack': '#60a5fa', 'special-defense': '#a78bfa', speed: '#f472b6' };
-    const INCENSE_MAP = {
-        'snorlax': 'FULL INCENSE', 'roselia': 'ROSE INCENSE', 'roserade': 'ROSE INCENSE', 'marill': 'SEA INCENSE', 
-        'wobbuffet': 'LAX INCENSE', 'mr-mime': 'ODD INCENSE', 'mantine': 'WAVE INCENSE', 'sudowoodo': 'ROCK INCENSE'
-    };
+    function toggleBible() {
+        const m = document.getElementById('bibleModal');
+        m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+    }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
@@ -128,44 +133,15 @@
         const sp = await fetch(res.species.url).then(r=>r.json());
         const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
 
-        // 1. Incense Warning
-        const incense = INCENSE_MAP[res.name] || INCENSE_MAP[q];
-        document.getElementById('incense-warn').innerHTML = incense ? `<div class="warn-box">⚠ MUST HOLD ${incense} TO GET BABY FORM!</div>` : "";
-
-        // 2. Lineage
         let line = []; let curr = evo.chain;
         while(curr) { line.push(curr.species.name.toUpperCase()); curr = curr.evolves_to[0]; }
-        document.getElementById('d1').innerHTML = `<b>Egg Groups:</b> ${sp.egg_groups.map(g=>g.name.toUpperCase()).join(', ')}<br><b>Hatch:</b> ${sp.hatch_counter} Cycles`;
-        document.getElementById('evo-tree').innerHTML = line.map(n => `<div class="evo-node">${n}</div>`).join('');
+        document.getElementById('evo-tree').innerHTML = line.map(n => `<div style="background:#000; border:1px solid var(--gold); padding:8px; margin:5px 0; text-align:center; color:var(--gold); font-weight:900;">${n}</div>`).join('');
 
-        // 3. Stats
-        document.getElementById('stats-area').innerHTML = res.stats.map(s => `
-            <div style="font-size:10px; display:flex; justify-content:space-between;"><span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span></div>
-            <div class="stat-bar"><div class="bar-fill" style="width:${(s.base_stat/255)*100}%; background:${STAT_COLORS[s.stat.name]}"></div></div>
-        `).join('');
-
-        // 4. Strategy
-        document.getElementById('strategy-guide').innerHTML = `
-            • <b>Step 1:</b> Obtain a ${res.name.toUpperCase()} with the right Ability.<br>
-            • <b>Step 2:</b> Breed with a Ditto holding <b>Destiny Knot</b> for IVs.<br>
-            • <b>Step 3:</b> If you want Egg Moves, use the <b>Mirror Herb</b> picnic method (Gen 9) or a compatible Male parent (Gen 1-8).
-        `;
-
-        // 5. MOVE AUDIT (Egg vs TM vs Level)
         document.getElementById('move-area').innerHTML = res.moves.map(m => {
             let method = m.version_group_details[0].move_learn_method.name;
-            let label = "";
-            let css = "";
-            if (method === 'egg') { label = "EGG"; css = "m-egg"; }
-            else if (method === 'machine') { label = "TM"; css = "m-tm"; }
-            else { label = "LVL"; css = "color:var(--sub)"; }
-
-            return `
-                <div class="move-row">
-                    <span style="font-weight:900;">${m.move.name.toUpperCase()}</span>
-                    <span class="${css}">${label}</span>
-                </div>
-            `;
+            let label = (method === 'egg') ? 'EGG' : (method === 'machine') ? 'TM' : 'LVL';
+            let cls = (method === 'egg') ? 'color:#f472b6' : (method === 'machine') ? 'color:#60a5fa' : '';
+            return `<div class="move-row"><span>${m.move.name.toUpperCase()}</span><span style="${cls}">${label}</span></div>`;
         }).join('');
     }
 </script>
