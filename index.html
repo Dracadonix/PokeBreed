@@ -2,106 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PokeBreed Pro | v1B Sentinel</title>
+    <title>PokeBreed Pro | v1B.10 Ultimate</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --ring-glow: rgba(0, 242, 255, 0.4);
             --sub: #64748b; --warn: #ff0055; --surface: rgba(10, 15, 25, 0.98);
         }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; cursor: crosshair; }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; overflow-x: hidden; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh; }
         
-        /* POP-UP SYSTEM */
-        .overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.9); z-index: 1000; display: none; 
-            align-items: center; justify-content: center; backdrop-filter: blur(10px); 
-        }
-        .modal { 
-            background: var(--surface); border: 1px solid var(--ring); 
-            padding: 40px; max-width: 500px; text-align: center; box-shadow: 0 0 30px var(--ring-glow);
-        }
-        .btn-close { 
-            margin-top: 25px; background: var(--ring); border: none; padding: 12px 30px; 
-            font-weight: 900; cursor: pointer; letter-spacing: 2px;
-        }
+        /* ENCYCLOPEDIA SYSTEM */
+        #encyclopedia { position: fixed; top: 0; right: -100%; width: 450px; height: 100%; background: var(--surface); border-left: 1px solid var(--ring); z-index: 2000; transition: 0.5s; padding: 40px; overflow-y: auto; box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+        #encyclopedia.open { right: 0; }
+        .guide-section { margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
+        .guide-section h3 { color: var(--ring); font-size: 14px; letter-spacing: 2px; }
+        .guide-section p, .guide-section li { font-size: 12px; color: var(--sub); line-height: 1.6; }
 
-        /* LAYOUT */
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1.2fr; gap: 15px; display: none; }
+        /* POP-UP SYSTEM */
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 3000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+        .modal { background: var(--surface); border: 1px solid var(--ring); padding: 40px; max-width: 600px; }
+        
+        /* MAIN INTERFACE */
+        .prof-bar { display: flex; align-items: center; gap: 20px; background: var(--surface); padding: 20px; border-left: 4px solid var(--ring); margin-bottom: 20px; }
+        .main-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; display: none; }
         .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 4px; }
         .tag { font-size: 8px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; }
         
-        input { width: 100%; background: #0b111e; border: 1px solid var(--ring); padding: 25px; color: var(--ring); text-align: center; font-size: 26px; outline: none; margin-bottom: 30px; }
+        input { width: 100%; background: #0b111e; border: 1px solid var(--ring); padding: 20px; color: var(--ring); text-align: center; font-size: 22px; outline: none; margin-bottom: 20px; }
+        .item-chip { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.1); padding: 10px; font-size: 11px; margin-bottom: 8px; }
+        .close-btn { position: absolute; top: 20px; left: 20px; background: none; border: 1px solid var(--warn); color: var(--warn); cursor: pointer; padding: 5px 10px; font-size: 10px; }
     </style>
 </head>
-<body onload="showIntro()">
+<body onload="startSequence()">
 
-<div id="introModal" class="overlay" style="display:flex;">
-    <div class="modal">
-        <span class="tag">System Protocol</span>
-        <h2 style="font-weight: 200; letter-spacing: 5px;">GENESIS <span style="color:var(--ring); font-weight: 900;">LAWS</span></h2>
-        <p style="font-size: 13px; color: var(--sub); line-height: 1.8; text-align: left;">
-            1. <b>HATCHING:</b> All eggs hatch at Stage 1 (e.g., Larvitar, not Tyranitar).<br>
-            2. <b>NATURE:</b> Everstone locks the parent's Nature.<br>
-            3. <b>STATS:</b> Destiny Knot passes 5 IVs from parents.<br>
-            4. <b>CATCHES:</b> Some moves require "Chain Breeding" or "Legacy" levels.
-        </p>
-        <button class="btn-close" onclick="closeModal('introModal')">INITIALIZE ARCHIVE</button>
+<div id="encyclopedia">
+    <button class="close-btn" onclick="toggleGuide()">CLOSE [X]</button>
+    <h2 style="color:var(--ring); font-weight: 200; margin-top: 40px;">BREEDING <span style="font-weight:900;">ENCYCLOPEDIA</span></h2>
+    
+    <div class="guide-section">
+        <h3>01. THE GENESIS LAW</h3>
+        <p>All Pokémon eggs hatch into the "Starting Stage" of their line. Even if you breed two Tyranitars, you will receive a <b>Larvitar</b>. Special cases (Babies) often require an Incense held by the parent.</p>
+    </div>
+
+    <div class="guide-section">
+        <h3>02. ESSENTIAL ITEMS</h3>
+        <ul>
+            <li><b>Everstone:</b> Guarantees the holder passes their Nature (e.g., Jolly, Modest) to the offspring.</li>
+            <li><b>Destiny Knot:</b> Randomly selects 5 IVs from <i>both</i> parents to pass down, instead of the usual 3.</li>
+            <li><b>Power Items:</b> (Bracer, Belt, etc.) Guarantees that specific stat is passed. Vital for forcing "0 Speed" or "0 Attack."</li>
+        </ul>
+    </div>
+
+    <div class="guide-section">
+        <h3>03. EGG GROUPS & MOVES</h3>
+        <p>Pokémon can breed with any other species in their <b>Egg Group</b>. Female determines the species; Male determines the <b>Egg Moves</b>. This is how you get Dragon Dance on Tyranitar (Male Lapras + Female Tyranitar).</p>
+    </div>
+
+    <div class="guide-section">
+        <h3>04. THE MASUDA METHOD</h3>
+        <p>Breeding two Pokémon from different real-world languages (e.g., English Ditto + Japanese Charmander) significantly increases Shiny odds.</p>
     </div>
 </div>
 
-<div id="catchModal" class="overlay">
-    <div class="modal" style="border-color: var(--warn); box-shadow: 0 0 30px rgba(255,0,85,0.2);">
-        <span class="tag" style="color:var(--warn);">CRITICAL WARNING</span>
-        <h3 id="catchTitle" style="color:#fff;">BIOLOGICAL CATCH DETECTED</h3>
-        <p id="catchDesc" style="font-size: 13px; color: var(--sub); line-height: 1.6;"></p>
-        <button class="btn-close" style="background:var(--warn);" onclick="closeModal('catchModal')">ACKNOWLEDGED</button>
+<div id="overlay">
+    <div class="modal">
+        <h2 style="color:var(--ring);">LEGAL NOTICE</h2>
+        <p style="color:var(--warn); font-weight:900;">[FAN-MADE CONTENT]</p>
+        <p>This project is an independent research tool. <b>NOT affiliated with Nintendo, Game Freak, or The Pokémon Company.</b></p>
+        <button onclick="document.getElementById('overlay').style.display='none'" style="width:100%; background:var(--ring); border:none; padding:15px; font-weight:900; cursor:pointer;">I UNDERSTAND</button>
     </div>
 </div>
 
 <div class="container">
-    <header style="text-align: center; margin-bottom: 40px;">
-        <span style="font-size: 10px; letter-spacing: 15px; color: var(--sub);">GENESIS SENTINEL v1B.2</span>
-        <h1 style="margin: 10px 0; font-weight: 200; letter-spacing: 20px;">OBSIDIAN <span style="color:var(--ring); font-weight: 900;">CORE</span></h1>
-    </header>
+    <div class="prof-bar">
+        <div id="profIcon" style="width:50px; height:50px; border-radius:50%; border:2px solid var(--ring); display:flex; align-items:center; justify-content:center; font-weight:900;">?</div>
+        <div>
+            <span id="profTitle" style="font-size: 9px; font-weight: 900; color: var(--sub); letter-spacing: 3px;">UPLINK</span>
+            <div id="profTalk" style="font-size: 14px; font-style: italic;">"Accuracy is the researcher's greatest tool."</div>
+        </div>
+        <button onclick="toggleGuide()" style="margin-left: auto; background: var(--ring); color: var(--void); border: none; padding: 10px 20px; font-weight: 900; cursor: pointer; font-size: 11px;">OPEN ENCYCLOPEDIA</button>
+    </div>
 
-    <input type="text" id="target" placeholder="DIRECTIVE (e.g. 'Dragon Dance Tyranitar')" onkeypress="if(event.key==='Enter') execute()">
+    <input type="text" id="target" placeholder="DIRECTIVE (e.g. '0 Spe Quiet Munchlax')" onkeypress="if(event.key==='Enter') execute()">
 
     <div id="ui" class="main-grid">
-        <div class="panel">
-            <span class="tag">01. Genesis Form</span>
-            <div id="genesisForm" style="font-size: 24px; color: var(--ring); text-align: center; border: 1px solid rgba(0,242,255,0.2); padding: 20px; margin-bottom: 15px;">---</div>
-            <div id="gearList"></div>
-        </div>
-        <div class="panel">
-            <span class="tag">02. Relay Logic</span>
-            <div id="relay" style="font-size: 12px; color: var(--sub); line-height: 2;"></div>
-        </div>
-        <div class="panel">
-            <span class="tag">03. Evolution Nexus</span>
-            <div id="nexus" style="display:flex; flex-direction:column; align-items:center; gap:8px;"></div>
-        </div>
-        <div class="panel">
-            <span class="tag">04. Apex Stats</span>
-            <div id="stats"></div>
-        </div>
-        <div class="panel">
-            <span class="tag">05. Timeline</span>
-            <div id="moves" style="height: 400px; overflow-y: auto; font-size: 12px;"></div>
-        </div>
+        <div class="panel"><span class="tag">01. Logistics</span><div id="gear"></div></div>
+        <div class="panel"><span class="tag">02. Genesis Form</span><div id="gen" style="text-align:center; padding:20px; border:1px solid var(--ring);">---</div></div>
+        <div class="panel"><span class="tag">03. Nexus</span><div id="nexus"></div></div>
+        <div class="panel"><span class="tag">04. Biometrics</span><div id="stats"></div></div>
+        <div class="panel"><span class="tag">05. Timeline</span><div id="moves" style="height:350px; overflow-y:auto; font-size:12px;"></div></div>
     </div>
 </div>
 
 <script>
-    const clean = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    function showIntro() { document.getElementById('introModal').style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    const specialRules = {
-        'tyranitar': "DRAGON DANCE: This move is an Egg Move. You MUST breed a female Tyranitar with a male donor (Lapras/Kingdra) that knows the move.",
-        'breloom': "SPORE: Shroomish learns this at Lv. 40. Breloom NEVER learns this. Do not evolve early.",
-        'azumarill': "BELLY DRUM: This is an Egg Move. Breed with a male Poliwhirl donor."
-    };
+    function toggleGuide() { document.getElementById('encyclopedia').classList.toggle('open'); }
 
     async function execute() {
         const q = document.getElementById('target').value.toLowerCase();
@@ -115,31 +109,16 @@
         ]);
         const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
 
-        // TRIGGER CATCH POP-UP
-        if (specialRules[t] || q.includes('dragon dance')) {
-            document.getElementById('catchTitle').innerText = clean(t) + " DETECTED";
-            document.getElementById('catchDesc').innerText = specialRules[t] || "This build involves complex inheritance. Review the Relay Logic carefully.";
-            document.getElementById('catchModal').style.display = 'flex';
-        }
-
         document.getElementById('ui').style.display = 'grid';
-        
         let chain = []; let curr = evo.chain;
         while(curr) { chain.push(curr.species.name); curr = curr.evolves_to[0]; }
-        document.getElementById('genesisForm').innerText = clean(chain[0]);
-
-        document.getElementById('gearList').innerHTML = `<div style="background:rgba(0,242,255,0.05); padding:10px; font-size:11px; margin-bottom:5px;">⛓️ DESTINY KNOT</div><div style="background:rgba(0,242,255,0.05); padding:10px; font-size:11px;">💎 EVERSTONE</div>`;
-
-        document.getElementById('nexus').innerHTML = chain.map(n => `<div style="padding:10px; border:1px solid ${n===t?'var(--ring)':'#222'}; width:100%; text-align:center; font-size:11px;">${clean(n)}</div>`).join('↓');
-
-        document.getElementById('stats').innerHTML = p.stats.map(s => `
-            <div style="margin-bottom:10px; font-size:10px;">
-                <div style="display:flex; justify-content:space-between;"><span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span></div>
-                <div style="height:2px; background:rgba(255,255,255,0.05); margin-top:3px;"><div style="height:100%; background:var(--ring); width:${(s.base_stat/255)*100}%"></div></div>
-            </div>`).join('');
-
+        
+        document.getElementById('gen').innerText = chain[0].toUpperCase();
+        document.getElementById('nexus').innerHTML = chain.map(n => `<div style="padding:10px; border:1px solid ${n===t?'var(--ring)':'#222'}; text-align:center; font-size:10px; margin-bottom:5px;">${n.toUpperCase()}</div>`).join('');
+        document.getElementById('gear').innerHTML = `<div class="item-chip">💎 EVERSTONE</div><div class="item-chip">⛓️ DESTINY KNOT</div>`;
+        document.getElementById('stats').innerHTML = p.stats.map(s => `<div style="margin-bottom:10px; font-size:10px;"><span>${s.stat.name}</span><div style="height:2px; background:#111;"><div style="height:100%; background:var(--ring); width:${(s.base_stat/255)*100}%"></div></div></div>`).join('');
         const moves = p.moves.map(m => ({name: m.move.name, lvl: m.version_group_details[0].level_learned_at})).sort((a,b)=>a.lvl-b.lvl);
-        document.getElementById('moves').innerHTML = moves.map(m => `<div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03);">Lv.${m.lvl} ${clean(m.name)}</div>`).join('');
+        document.getElementById('moves').innerHTML = moves.map(m => `<div style="padding:5px 0; border-bottom:1px solid #111;">Lv.${m.lvl} ${m.name}</div>`).join('');
     }
 </script>
 </body>
