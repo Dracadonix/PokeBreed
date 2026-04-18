@@ -8,122 +8,117 @@
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.2s; }
         body { background: var(--void); color: #f1f5f9; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* --- BIBLE MODAL: THE COMPENDIUM --- */
-        #bibleModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; padding: 40px; }
-        .bible-content { 
-            max-width: 1000px; height: 90vh; margin: 0 auto; background: #0d1421; border: 2px solid var(--gold); 
-            padding: 50px; border-radius: 4px; overflow-y: auto; position: relative; box-shadow: 0 0 100px rgba(255, 215, 0, 0.1); 
-        }
-        .bible-text { font-size: 15px; line-height: 1.8; color: #e2e8f0; font-family: 'Georgia', serif; } /* Academic font for the Bible */
-        .bible-text h1 { color: var(--gold); border-bottom: 3px double var(--gold); padding-bottom: 10px; text-align: center; font-size: 28px; }
-        .bible-text h2 { color: var(--ring); border-bottom: 1px solid #333; margin-top: 40px; font-size: 22px; }
-        .bible-text b { color: var(--gold); }
-        
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #050505; }
-        th, td { border: 1px solid #333; padding: 12px; text-align: left; font-size: 13px; }
-        th { background: #1a2333; color: var(--ring); }
+        /* --- SIDEBAR: THE ELDER COUNCIL RESTORED --- */
+        .sidebar { width: 360px; background: #05080f; border-right: 1px solid #1a2333; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .prof-card { background: #0d1421; padding: 15px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid var(--ring); border-bottom: 1px solid #1a2333; }
+        .prof-card b { color: var(--ring); font-size: 11px; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        .grumble { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #333; color: var(--gold); font-size: 10px; font-weight: 700; font-style: italic; }
 
-        .close-btn { position: sticky; top: 0; float: right; background: var(--warn); color: white; border: none; padding: 12px 25px; cursor: pointer; font-weight: 900; z-index: 10; }
+        /* --- THE VAULT MODAL --- */
+        #vaultModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; padding: 40px; }
+        .vault-content { max-width: 900px; height: 85vh; margin: 0 auto; background: #0d1421; border: 2px solid var(--gold); padding: 50px; overflow-y: auto; box-shadow: 0 0 100px rgba(255, 215, 0, 0.2); }
+        .vault-text { font-size: 15px; line-height: 1.8; color: #cbd5e1; white-space: pre-wrap; font-family: 'Georgia', serif; }
 
-        /* --- MAIN UI --- */
-        .sidebar { width: 340px; background: #05080f; border-right: 1px solid #1a2333; padding: 20px; overflow-y: auto; }
-        .main { flex-grow: 1; padding: 30px; overflow-y: auto; }
-        .header-ui { display: grid; grid-template-columns: 1fr 220px; gap: 15px; margin-bottom: 25px; }
-        input, .bible-btn { background: #000; border: 2px solid var(--ring); padding: 20px; color: var(--ring); font-size: 18px; border-radius: 4px; }
-        .bible-btn { background: var(--gold); color: #000; border: none; font-weight: 900; cursor: pointer; }
-        .panel { background: #0d1421; padding: 25px; border-radius: 8px; border: 1px solid #1a2333; margin-bottom: 20px; }
+        /* --- MAIN HUB & UI --- */
+        .main { flex-grow: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+        .header-ui { display: grid; grid-template-columns: 1fr 200px 200px; gap: 15px; margin-bottom: 25px; }
+        input, select, .vault-btn { background: #000; border: 2px solid var(--ring); padding: 20px; color: var(--ring); font-size: 18px; border-radius: 8px; outline: none; }
+        .vault-btn { background: var(--gold); color: #000; border: none; font-weight: 900; cursor: pointer; }
+
+        /* --- DATA GRID --- */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-grow: 1; }
+        .panel { background: #0d1421; padding: 25px; border-radius: 12px; border: 1px solid #1a2333; display: flex; flex-direction: column; }
         .tag { font-size: 10px; color: var(--ring); font-weight: 900; border-bottom: 1px solid #333; display: block; margin-bottom: 15px; letter-spacing: 2px; }
-        .move-row { display: flex; justify-content: space-between; background: #050505; padding: 10px; border-bottom: 1px solid #111; font-size: 11px; }
+
+        .stat-bar { height: 8px; background: #111; border-radius: 4px; overflow: hidden; margin: 4px 0 10px 0; }
+        .bar-fill { height: 100%; transition: 1s ease-out; }
+        .move-row { display: flex; justify-content: space-between; background: #050505; padding: 8px; margin-bottom: 4px; border: 1px solid #222; font-size: 10px; }
+        .warn-box { background: rgba(255, 0, 85, 0.1); border: 1px solid var(--warn); color: var(--warn); padding: 12px; border-radius: 4px; font-size: 11px; font-weight: 900; margin-bottom: 15px; }
+        .evo-node { background: #000; border: 1px solid var(--gold); padding: 8px; margin: 5px 0; text-align: center; font-size: 11px; font-weight: 900; color: var(--gold); }
     </style>
 </head>
 <body>
 
-<div id="bibleModal">
-    <div class="bible-content">
-        <button class="close-btn" onclick="toggleBible()">EXIT ARCHIVE</button>
-        <div class="bible-text">
-            <h1>The Biological and Statistical Foundations of Pokémon Breeding</h1>
-            <p><i>A Comprehensive Professional Compendium | Architect: Lime</i></p>
-
-            <h2>I. The Biological Framework: Compatibility</h2>
-            <p>The fundamental prerequisite for successful breeding is reproductive compatibility. In the modern Paldean era, the <b>Picnic System</b> has replaced the traditional nursery.</p>
-            
-            <table>
-                <tr><th>Egg Group</th><th>Characteristics</th><th>Example</th></tr>
-                <tr><td>Dragon</td><td>Reptilian/Mythical Archetypes</td><td>Gible, Bagon</td></tr>
-                <tr><td>Field</td><td>Terrestrial Mammals</td><td>Eevee, Lucario</td></tr>
-                <tr><td>Human-Like</td><td>Bipedal Organisms</td><td>Abra, Machop</td></tr>
-                <tr><td>Ditto</td><td>Universal Donor</td><td>Ditto</td></tr>
-            </table>
-
-            <h2>II. Statistical Inheritance (IVs & Natures)</h2>
-            <p>Professional breeding involves moving from chance to absolute control. <b>Individual Values (IVs)</b> range from 0 to 31.</p>
-            <ul>
-                <li><b>Destiny Knot:</b> Guarantees 5 out of 12 combined parent IVs are passed down.</li>
-                <li><b>Everstone:</b> Provides a 100% guarantee that the parent's Nature is inherited.</li>
-                <li><b>Tactical Minimalism:</b> Professionals often seek <b>0 Speed</b> for Trick Room or <b>0 Attack</b> to minimize Foul Play damage.</li>
-            </ul>
-
-            <h2>III. The Mirror Herb Revolution</h2>
-            <p>In Paldea, the <b>Mirror Herb</b> allows for immediate Egg Move transfer between any two Pokémon in a party during a Picnic, regardless of species.</p>
-            <ol>
-                <li>Target must have an empty move slot.</li>
-                <li>Target must hold the <b>Mirror Herb</b>.</li>
-                <li>Picnic with a Pokémon that knows the desired move.</li>
-            </ol>
-
-            <h2>IV. Shiny Mathematics: The Masuda Method</h2>
-            <p>By breeding two Pokémon from different language versions, the shiny rate is significantly boosted.</p>
-            <table>
-                <tr><th>Condition</th><th>Median Probability (50%)</th><th>90% Certainty</th></tr>
-                <tr><td>Masuda Only</td><td>~473 Eggs</td><td>~1,571 Eggs</td></tr>
-                <tr><td>Masuda + Charm</td><td>~355 Eggs</td><td>~1,178 Eggs</td></tr>
-            </table>
-
-            <h2>V. Logistical Optimization</h2>
-            <p>The speed of iteration is boosted by <b>Flame Body</b> (halves hatch steps) and <b>Egg Power Level 2/3</b> sandwiches.</p>
-            <p><i>Compendium Note: The removal of Pokérus in Gen IX signals a shift toward a Vitamin-centric training model.</i></p>
-        </div>
+<div id="vaultModal">
+    <div class="vault-content">
+        <button onclick="toggleVault()" style="float:right; background:var(--warn); color:white; border:none; padding:10px 20px; font-weight:900; cursor:pointer;">CLOSE VAULT [X]</button>
+        <h1 style="color:var(--gold); border-bottom: 2px solid var(--gold); padding-bottom: 10px;">LIME'S RESEARCH COMPENDIUM</h1>
+        <div class="vault-text" id="vault-inject">
+            </div>
     </div>
 </div>
 
 <div class="sidebar">
-    <h3 style="color:var(--gold); text-align:center;">THE ELDER DESK</h3>
-    <div class="panel" style="border-left: 4px solid var(--ring);">
-        <b>PROF. OAK</b>
-        <p style="font-size:11px;">"Lime, your research compendium is synchronized. The Bible is now live in the system."</p>
+    <h3 style="color:var(--gold); text-align:center; letter-spacing:3px;">THE ELDER COUNCIL</h3>
+    
+    <div class="prof-card">
+        <b>Prof. Oak</b>
+        <p>"A foreign Ditto is the key to those rare Shiny eggs, Lime!"</p>
+        <div class="grumble">OAK: "Back in my day, we didn't have vaults! We just remembered everything or we failed!"</div>
     </div>
-    <div class="tag">QUICK STATS</div>
-    <div id="quick-data" style="font-size:10px; color:var(--sub); line-height:1.6;">
-        Hatch Speed: Flame Body<br>
-        IV Lock: Destiny Knot<br>
-        Nature Lock: Everstone<br>
-        Egg Move: Mirror Herb
+
+    <div class="prof-card">
+        <b>Prof. Elm</b>
+        <p>"The Destiny Knot is a marvel of modern genetic inheritance."</p>
+        <div class="grumble">ELM: "I used to walk 10 miles just to see if a Togepi egg was warm!"</div>
+    </div>
+
+    <div class="prof-card">
+        <b>Prof. Birch</b>
+        <p>"Everstones are essential for keeping those Natures in check."</p>
+        <div class="grumble">BIRCH: "I've been chased by more Pokémon than you've bred, kid!"</div>
+    </div>
+
+    <div class="prof-card">
+        <b>Prof. Rowan</b>
+        <p>"Picnics and Mirror Herbs have truly changed the landscape."</p>
+        <div class="grumble">ROWAN: "Mirror Herbs? Lazy! Research the move-tree like a real scientist!"</div>
     </div>
 </div>
 
 <div class="main">
     <div class="header-ui">
-        <input type="text" id="target" placeholder="TYPE POKEMON..." onkeypress="if(event.key==='Enter') scan()">
-        <button class="bible-btn" onclick="toggleBible()">READ THE BIBLE</button>
+        <input type="text" id="target" placeholder="INITIATE GENETIC SCAN..." onkeypress="if(event.key==='Enter') scan()">
+        <select id="gameFilter">
+            <option value="all">ALL REGIONS</option>
+            <option value="scarlet">Scarlet / Violet</option>
+            <option value="sword">Sword / Shield</option>
+        </select>
+        <button class="vault-btn" onclick="toggleVault()">ACCESS RESEARCH VAULT</button>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="grid">
         <div class="panel">
-            <span class="tag">GENETIC LINEAGE</span>
-            <div id="evo-tree">--</div>
+            <span class="tag">I. GENETIC LINEAGE & INCENSE</span>
+            <div id="incense-warn"></div>
+            <div id="d1" style="font-size:12px; line-height:1.6;">--</div>
+            <div id="evo-tree" style="margin-top:15px;">--</div>
         </div>
+
         <div class="panel">
-            <span class="tag">MOVE SOURCE AUDIT</span>
-            <div id="move-area" style="max-height: 400px; overflow-y:auto;">--</div>
+            <span class="tag">II. DNA STAT AUDIT</span>
+            <div id="stats-area">--</div>
+            <div class="tag" style="margin-top:15px;">BREEDING STRATEGY</div>
+            <div id="strat" style="font-size:11px;">Enter a species to generate data.</div>
+        </div>
+
+        <div class="panel">
+            <span class="tag">III. MOVE POOL (EGG / TM / LVL)</span>
+            <div id="move-area" style="overflow-y:auto; max-height:450px;">--</div>
         </div>
     </div>
 </div>
 
 <script>
-    function toggleBible() {
-        const m = document.getElementById('bibleModal');
+    const STAT_COLORS = { hp: '#4ade80', attack: '#facc15', defense: '#fb923c', 'special-attack': '#60a5fa', 'special-defense': '#a78bfa', speed: '#f472b6' };
+    
+    // --- PASTE YOUR FULL 10,000 WORD TEXT INSIDE THESE QUOTES ---
+    const THE_BIBLE_TEXT = `[PASTE THE ENTIRE 10,000 WORD TEXT HERE]`;
+
+    function toggleVault() {
+        const m = document.getElementById('vaultModal');
         m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+        document.getElementById('vault-inject').innerText = THE_BIBLE_TEXT;
     }
 
     async function scan() {
@@ -133,15 +128,31 @@
         const sp = await fetch(res.species.url).then(r=>r.json());
         const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
 
+        // Incense Logic
+        const iMap = {'snorlax':'FULL','roselia':'ROSE','marill':'SEA','wobbuffet':'LAX','mr-mime':'ODD','mantine':'WAVE','sudowoodo':'ROCK'};
+        const inc = iMap[res.name];
+        document.getElementById('incense-warn').innerHTML = inc ? `<div class="warn-box">⚠ HOLD ${inc} INCENSE FOR BABY FORM!</div>` : "";
+
+        // Evo Tree
         let line = []; let curr = evo.chain;
         while(curr) { line.push(curr.species.name.toUpperCase()); curr = curr.evolves_to[0]; }
-        document.getElementById('evo-tree').innerHTML = line.map(n => `<div style="background:#000; border:1px solid var(--gold); padding:8px; margin:5px 0; text-align:center; color:var(--gold); font-weight:900;">${n}</div>`).join('');
+        document.getElementById('d1').innerHTML = `<b>Groups:</b> ${sp.egg_groups.map(g=>g.name.toUpperCase()).join(', ')}<br><b>Hatch:</b> ${sp.hatch_counter} Cycles`;
+        document.getElementById('evo-tree').innerHTML = line.map(n => `<div class="evo-node">${n}</div>`).join('');
 
+        // Stats
+        document.getElementById('stats-area').innerHTML = res.stats.map(s => `
+            <div style="font-size:10px; display:flex; justify-content:space-between;"><span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span></div>
+            <div class="stat-bar"><div class="bar-fill" style="width:${(s.base_stat/255)*100}%; background:${STAT_COLORS[s.stat.name]}"></div></div>
+        `).join('');
+
+        document.getElementById('strat').innerHTML = `Use a 6IV Ditto + Destiny Knot. Check Vault for Mirror Herb Egg Move logic for ${res.name.toUpperCase()}.`;
+
+        // Moves
         document.getElementById('move-area').innerHTML = res.moves.map(m => {
             let method = m.version_group_details[0].move_learn_method.name;
             let label = (method === 'egg') ? 'EGG' : (method === 'machine') ? 'TM' : 'LVL';
-            let cls = (method === 'egg') ? 'color:#f472b6' : (method === 'machine') ? 'color:#60a5fa' : '';
-            return `<div class="move-row"><span>${m.move.name.toUpperCase()}</span><span style="${cls}">${label}</span></div>`;
+            let color = (method === 'egg') ? 'color:#f472b6' : (method === 'machine') ? 'color:#60a5fa' : '';
+            return `<div class="move-row"><span>${m.move.name.toUpperCase()}</span><span style="${color}">${label}</span></div>`;
         }).join('');
     }
 </script>
