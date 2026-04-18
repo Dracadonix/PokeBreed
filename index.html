@@ -3,95 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Specialist Suite</title>
+    <title>PokeBreed Pro | The Master Architect Suite</title>
     <style>
         :root { 
-            --bg: #050608; --card: #101218; --primary: #00e5ff; --accent: #ff00ff; 
-            --text: #e2e8f0; --sub-text: #64748b; --border: #1e293b; --rowan-red: #b91c1c;
-            --step-bg: #1a1d26;
+            --bg: #030406; --card: #0d1117; --primary: #00e5ff; --accent: #ff00ff; 
+            --text: #e2e8f0; --sub-text: #64748b; --border: #1e293b; --step-gold: #fbbf24;
         }
-        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
 
-        /* THE CONTAINER */
-        .container { max-width: 1100px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.8); transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); margin-top: 20px; }
+        .container { max-width: 1200px; width: 100%; background: var(--card); padding: 40px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.9); }
         
-        /* INPUT SYSTEM */
-        .input-row { display: flex; gap: 15px; margin-bottom: 25px; }
-        input { flex: 1; padding: 20px; background: #07080a; border: 2px solid var(--border); border-radius: 12px; color: white; font-size: 1.1rem; }
-        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 15px rgba(0,229,255,0.1); }
-        .btn-main { padding: 0 40px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; }
+        /* HEADER & SEARCH */
+        .lab-header { text-align: center; margin-bottom: 30px; }
+        .input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 22px; background: #000; border: 2px solid var(--border); border-radius: 14px; color: white; font-size: 1.1rem; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 20px rgba(0,229,255,0.15); }
+        .btn-consult { padding: 0 35px; background: var(--primary); color: #000; border: none; border-radius: 14px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
 
-        /* ROWAN BOX (HIDDEN RAGE) */
+        /* DYNAMIC OUTPUT */
+        #output { display: none; animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .grid-main { display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
+        .card { background: #161b22; border: 1px solid var(--border); border-radius: 18px; padding: 25px; margin-bottom: 25px; position: relative; }
+        .h-label { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 20px; display: block; font-weight: 800; border-bottom: 1px solid #2d333f; padding-bottom: 10px;}
+
+        /* ROADMAP & TRAINING */
+        .phase { margin-bottom: 20px; border-left: 3px solid var(--step-gold); padding-left: 15px; }
+        .phase-title { font-weight: 900; color: var(--step-gold); display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.8rem; }
+        .phase-body { font-size: 0.95rem; line-height: 1.6; }
+        .highlight { color: var(--primary); font-weight: bold; }
+        
+        .ev-box { background: #000; border: 1px solid #334155; padding: 15px; border-radius: 10px; margin-top: 15px; }
+        .ev-tag { color: var(--accent); font-weight: bold; }
+
+        /* ROWAN BOX */
         #rowanBox {
-            display: none; position: fixed; bottom: 8%; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 800px; background: #fff; border: 6px double #000;
-            padding: 30px; z-index: 9999; color: #000; font-family: 'Courier New', monospace;
+            display: none; position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
+            width: 80%; max-width: 600px; background: #fff; color: #000; padding: 30px;
+            border: 8px double #000; z-index: 10000; font-family: 'Courier New', monospace;
         }
-        .rowan-shaking { animation: r-shake 0.05s infinite; }
-        .rowan-critical { background: #700 !important; color: #fff !important; }
-        @keyframes r-shake { 0% { transform: translate(-50%, 0); } 25% { transform: translate(-52%, 2%); } 75% { transform: translate(-48%, -2%); } }
-
-        /* ROADMAP STYLING */
-        #output { display: none; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .grid { display: grid; grid-template-columns: 1fr 380px; gap: 30px; }
-        .card { background: #161a22; border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
-        .h-label { font-size: 0.7rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; font-weight: 800; }
-        
-        .step { background: var(--step-bg); border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 15px; border-radius: 0 8px 8px 0; font-size: 0.95rem; }
-        .step-num { font-weight: 900; color: var(--primary); margin-right: 10px; }
-        .highlight { color: var(--accent); font-weight: bold; }
-        
-        .pill { display: inline-block; padding: 6px 12px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; margin: 4px; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
 <div id="rowanBox">
-    <div style="font-weight:900; color:var(--rowan-red); border-bottom:2px solid #000; margin-bottom:15px;">PROF. ROWAN</div>
+    <div style="font-weight:900; color:red; border-bottom:2px solid #000; margin-bottom:15px;">FIELD REPORT ERROR</div>
     <div id="rowanMsg">...</div>
-    <button id="rowanClose" style="float:right; margin-top:20px; padding:10px 20px; background:#000; color:#fff; cursor:pointer;" onclick="document.getElementById('rowanBox').style.display='none'">ACKNOWLEDGE</button>
+    <button style="float:right; margin-top:20px; padding:10px; background:#000; color:#fff;" onclick="document.getElementById('rowanBox').style.display='none'">ACKNOWLEDGE</button>
 </div>
 
-<div class="container" id="mainUI">
-    <div style="text-align:center; margin-bottom:40px;">
-        <h1 style="margin:0; font-size:2.5rem; letter-spacing:-1px;">POKEBREED <span style="color:var(--primary)">CONSULTANT</span></h1>
-        <p style="color:var(--sub-text);">Sinnoh Laboratory v6.0 // National Dex Logistics</p>
+<div class="container" id="app">
+    <div class="lab-header">
+        <h1 style="margin:0; font-size:2.8rem;">BREEDING <span style="color:var(--primary)">ARCHITECT</span></h1>
+        <p style="color:var(--sub-text); font-size:0.9rem;">National Dex v7.0 // Full Chain & EV Training Integration</p>
     </div>
 
     <div class="input-row">
-        <input type="text" id="userInput" placeholder="e.g. 5iv jolly weavile with ice shard" onkeypress="if(event.key === 'Enter') generateRoadmap()">
-        <button class="btn-main" onclick="generateRoadmap()">CONSULT</button>
+        <input type="text" id="userInput" placeholder="Try: '5iv Jolly Weavile with Ice Shard EV trained in Speed'" onkeypress="if(event.key === 'Enter') architectPlan()">
+        <button class="btn-consult" onclick="architectPlan()">Generate Plan</button>
     </div>
 
     <div id="output">
-        <div class="grid">
-            <div class="left-col">
+        <div class="grid-main">
+            <div class="col-left">
                 <div class="card">
-                    <span class="h-label">Specimen Target</span>
-                    <h2 id="pName" style="text-transform:capitalize; font-size:2.8rem; margin:0; color:var(--primary);"></h2>
+                    <span class="h-label">Specimen Blueprint</span>
+                    <h2 id="pName" style="text-transform:capitalize; font-size:3.2rem; margin:0; color:var(--primary);"></h2>
                     <div id="pTypes" style="margin-top:10px;"></div>
                 </div>
 
-                <div class="card" id="roadmapSection">
-                    <span class="h-label">Breeding & Growth Roadmap</span>
-                    <div id="roadmapContent"></div>
+                <div class="card">
+                    <span class="h-label">Growth & Evolution Roadmap</span>
+                    <div id="roadmapArea"></div>
                 </div>
             </div>
 
-            <div class="right-col">
-                <div class="card">
-                    <span class="h-label">Required Genetics</span>
-                    <div id="pEggMoves" style="margin-bottom:15px;"></div>
-                    <div style="font-size:0.8rem; border-top:1px solid #1e293b; padding-top:15px;">
-                        <span class="highlight">HA Inheritance:</span> 60% chance via Mother.<br>
-                        <span class="highlight">Everstone:</span> Locks Nature.
-                    </div>
+            <div class="col-right">
+                <div class="card" id="trainingCard" style="display:none;">
+                    <span class="h-label">Effort Value (EV) Training Lab</span>
+                    <div id="evContent"></div>
                 </div>
 
                 <div class="card">
-                    <span class="h-label">Hatch Logistics</span>
-                    <div id="pLogistics"></div>
+                    <span class="h-label">Genetic Odds & Items</span>
+                    <div id="geneticsArea" style="font-size:0.9rem; line-height:1.8;"></div>
                 </div>
             </div>
         </div>
@@ -100,81 +96,72 @@
 
 <script>
     let dex = [];
-    let _f = 0; 
-    let _lim = Math.floor(Math.random() * 8) + 5;
-
     fetch('https://pokeapi.co/api/v2/pokemon?limit=2000').then(r => r.json()).then(d => dex = d.results.map(p => p.name));
 
-    async function generateRoadmap() {
-        const val = document.getElementById('userInput').value.toLowerCase().trim();
-        const words = val.split(/\s+/);
-        const target = words.find(w => dex.includes(w)) || words.find(w => w.length > 3 && !["with", "jolly", "5iv", "ice", "shard"].includes(w));
+    async function architectPlan() {
+        const input = document.getElementById('userInput').value.toLowerCase();
+        const target = dex.find(name => input.includes(name)) || "weavile";
 
         try {
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${target}`);
-            if(!r.ok) throw new Error();
             const d = await r.json();
-            
-            _f = 0; 
-            document.getElementById('output').style.display = 'block';
-            document.getElementById('pName').innerText = d.name;
-            document.getElementById('pTypes').innerHTML = d.types.map(t => `<span class="pill">${t.type.name.toUpperCase()}</span>`).join('');
-
             const sR = await fetch(d.species.url);
             const sD = await sR.json();
-            const baseName = sD.name; // This finds 'Sneasel' if target was 'Weavile'
+            
+            document.getElementById('output').style.display = 'block';
+            document.getElementById('pName').innerText = d.name;
+            document.getElementById('pTypes').innerHTML = d.types.map(t => `<span style="margin-right:10px; font-weight:bold; color:var(--primary)">${t.type.name.toUpperCase()}</span>`).join('');
 
-            // --- ROADMAP GENERATOR ---
-            let steps = [];
+            // --- 1. ROADMAP LOGIC ---
+            let roadmapHTML = "";
+            const baseForm = sD.name;
             
-            // Step 1: Breeding
-            steps.push(`<div class="step"><span class="step-num">01</span>Begin by breeding for a <span class="highlight">${baseName.toUpperCase()}</span>. To pass down 5-IVs, ensure the parents hold a <strong>Destiny Knot</strong>.</div>`);
+            // Phase: Breeding
+            roadmapHTML += `<div class="phase"><span class="phase-title">Phase 1: Breeding Fundamentals</span>
+            <div class="phase-body">Obtain a <span class="highlight">${baseForm.toUpperCase()}</span>. Since you requested 5-IVs, give one parent the <strong>Destiny Knot</strong> to inherit 5 random stats. 
+            If breeding for <span class="highlight">Jolly</span>, the parent with that nature MUST hold an <strong>Everstone</strong>.</div></div>`;
+
+            // Phase: Egg Moves
+            if (input.includes("ice") || input.includes("shard")) {
+                roadmapHTML += `<div class="phase"><span class="phase-title">Phase 2: Genetic Move Inheritance</span>
+                <div class="phase-body"><strong>ICE SHARD</strong> is an Egg Move for ${baseForm}. Breed your female ${baseForm} with a male from the <span class="highlight">Field Egg Group</span> (like Mamoswine or Dewgong) that knows the move. 
+                The offspring will hatch with it automatically.</div></div>`;
+            }
+
+            // Phase: Evolution
+            let evoMethod = "Standard Level Up.";
+            if (target === "weavile") evoMethod = "Hold <strong>Razor Claw</strong> and level up at <strong>NIGHT</strong>.";
+            if (target === "lucario") evoMethod = "High <strong>Friendship</strong> during the <strong>DAY</strong>.";
             
-            // Step 2: Moves
-            if(val.includes("ice") || val.includes("shard") || val.includes("egg")) {
-                steps.push(`<div class="step"><span class="step-num">02</span><strong>GENETIC MOVE ALERT:</strong> To obtain <strong>Ice Shard</strong>, your ${baseName} must hatch with it. Breed a female ${baseName} with a compatible male (e.g., Lapras or Dewgong) that already knows the move.</div>`);
+            roadmapHTML += `<div class="phase"><span class="phase-title">Phase 3: Evolution Trigger</span>
+            <div class="phase-body">${evoMethod}</div></div>`;
+
+            document.getElementById('roadmapArea').innerHTML = roadmapHTML;
+
+            // --- 2. EV TRAINING LOGIC ---
+            if (input.includes("ev") || input.includes("train")) {
+                document.getElementById('trainingCard').style.display = 'block';
+                let evHTML = `<p>To optimize stats, use <strong>Power Items</strong> (Bracer, Lens, etc.) while battling specific targets:</p>`;
+                
+                if (input.includes("speed")) evHTML += `<div class="ev-box"><span class="ev-tag">SPEED:</span> Defeat <strong>Wingull</strong> or <strong>Rookidee</strong>. (Locations: Paldea South Province or Galar Route 1).</div>`;
+                if (input.includes("attack")) evHTML += `<div class="ev-box"><span class="ev-tag">ATTACK:</span> Defeat <strong>Yungoos</strong> or <strong>Shinx</strong>. (Locations: Early routes).</div>`;
+                
+                evHTML += `<p style="font-size:0.75rem; margin-top:10px;">*Each Vitamin (Protein, Carbos) adds 10 EVs. Max 252 per stat.</p>`;
+                document.getElementById('evContent').innerHTML = evHTML;
             } else {
-                steps.push(`<div class="step"><span class="step-num">02</span>Focus on <span class="highlight">Nature Alignment</span>. Use an Everstone on a parent with the desired Nature to lock it in.</div>`);
+                document.getElementById('trainingCard').style.display = 'none';
             }
 
-            // Step 3: Evolution
-            if (sD.evolution_chain) {
-                steps.push(`<div class="step"><span class="step-num">03</span><strong>EVOLUTION TRIGGER:</strong> Once your ${baseName} is perfect, evolve it into ${d.name.toUpperCase()}. Check for special conditions (e.g., Leveling at night while holding a Razor Claw).</div>`);
-            }
-
-            document.getElementById('roadmapContent').innerHTML = steps.join('');
-
-            // Sidebar Details
-            document.getElementById('pLogistics').innerHTML = `
-                <div style="font-size:0.9rem;">
-                    <strong>Hatch Cycles:</strong> ${sD.hatch_counter}<br>
-                    <strong>Female Ratio:</strong> ${sD.gender_rate === -1 ? 'None' : (sD.gender_rate * 12.5) + '%'}<br>
-                    <strong>Growth Rate:</strong> ${sD.growth_rate.name.replace(/-/g, ' ')}
-                </div>
+            // --- 3. GENETICS SIDEBAR ---
+            document.getElementById('geneticsArea').innerHTML = `
+                <div style="margin-bottom:10px;"><strong>Hatch Time:</strong> ~${sD.hatch_counter * 255} Steps</div>
+                <div style="margin-bottom:10px;"><strong>HA Chance:</strong> 60% (if Mother has it)</div>
+                <div style="margin-bottom:10px;"><strong>6-IV Probability:</strong> 1 in 32 (if both parents are 6-IV)</div>
             `;
 
         } catch (e) {
-            _f++;
-            const b = document.getElementById('rowanBox');
-            const m = document.getElementById('rowanMsg');
-            const ui = document.getElementById('mainUI');
-            
-            b.style.display = 'block';
-            if (_f >= _lim) {
-                b.classList.add('rowan-critical', 'rowan-shaking');
-                m.innerText = "GRAAAAAH!!! I CANNOT READ YOUR NOTES! GET OUT OF MY LABORATORY!!";
-                document.getElementById('rowanClose').style.display = 'none';
-                ui.style.opacity = '0';
-                ui.style.transform = "scale(0.8) rotate(10deg)";
-                setTimeout(() => {
-                    b.classList.remove('rowan-critical', 'rowan-shaking');
-                    m.innerText = "...My apologies. Let us try to be professional.";
-                    document.getElementById('rowanClose').style.display = 'block';
-                    _f = 0; ui.style.opacity = '1'; ui.style.transform = "scale(1)";
-                }, 7000);
-            } else {
-                m.innerText = `[LOG ${_f}] I cannot identify the specimen in your sentence. Be precise!`;
-            }
+            document.getElementById('rowanBox').style.display = 'block';
+            document.getElementById('rowanMsg').innerText = "DATA CORRUPTION: The species name was not detected or is misspelled. Precision, please!";
         }
     }
 </script>
