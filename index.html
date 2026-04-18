@@ -3,67 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Total Collapse</title>
+    <title>PokeBreed Pro | v∞ God-Tier</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
             --surface: rgba(10, 15, 25, 0.98); --gold: #ffd700; --research: #55ff77;
             --hp: #ff0055; --atk: #f5ac78; --def: #fae078; --spa: #9db7f5; --spd: #a7db8d; --spe: #fa92b2;
         }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.2s cubic-bezier(0.1, 0.9, 0.2, 1); }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.15s cubic-bezier(0.1, 0.9, 0.2, 1); }
         body { background: var(--void); color: #f1f5f9; margin: 0; padding: clamp(10px, 3vw, 30px); min-height: 100vh; overflow-x: hidden; }
 
-        /* --- BIBLE & CHAMPION HALL --- */
-        #bible, #hall { position: fixed; top: 0; right: -100%; width: 100%; max-width: 600px; height: 100%; background: var(--surface); border-left: 3px solid var(--ring); z-index: 90000; padding: 40px; overflow-y: auto; box-shadow: -30px 0 80px #000; transition: 0.5s; }
-        .open { right: 0 !important; }
+        /* --- THE BIBLE (UNTOUCHABLE CANON) --- */
+        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 650px; height: 100%; background: var(--surface); border-left: 4px solid var(--ring); z-index: 99999; padding: 40px; overflow-y: auto; box-shadow: -40px 0 100px #000; }
+        .bible-sect { margin-bottom: 35px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 20px; }
+        .bible-sect h3 { color: var(--ring); text-transform: uppercase; letter-spacing: 3px; font-size: 18px; margin-bottom: 12px; }
+        .bible-sect p, .bible-sect li { font-size: 14px; line-height: 1.8; color: #ddd; margin-bottom: 10px; }
+        .bible-sect b { color: var(--gold); }
 
-        /* --- THE PROFESSOR CHAOS HUB --- */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 20px; background: var(--surface); border-left: 5px solid var(--ring); position: relative; }
-        .prof-group { display: flex; align-items: center; gap: 15px; }
-        .prof-avatar { width: 65px; height: 65px; background: #111; border: 3px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 26px; transition: 0.1s; }
+        /* --- CHAMPION HALL --- */
+        #hall { position: fixed; top: 0; left: -100%; width: 100%; height: 100%; background: #000; z-index: 99998; padding: 60px; overflow-y: auto; transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
+        .open-right { right: 0 !important; } .open-left { left: 0 !important; }
+
+        /* --- PROFESSOR CRASHOUT HUB --- */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 25px; background: var(--surface); border-left: 6px solid var(--ring); border-radius: 4px; }
+        .prof-avatar { width: 70px; height: 70px; background: #111; border: 3px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 28px; }
+        @keyframes scream { 0% { transform: scale(1.1) rotate(2deg); filter: hue-rotate(90deg); } 50% { transform: scale(1.2) rotate(-2deg); filter: contrast(300%); } 100% { transform: scale(1.1) rotate(2deg); } }
+        .crashout { animation: scream 0.05s infinite !important; border-color: var(--warn) !important; color: var(--warn) !important; }
+
+        /* --- UI COMPONENTS --- */
+        #target { width: 100%; background: #0b111e; border: 4px solid var(--ring); padding: 40px; color: var(--ring); text-align: center; font-size: 40px; font-weight: 100; outline: none; margin-bottom: 25px; border-radius: 15px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.1); }
+        .party-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-bottom: 30px; }
+        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 25px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.4s; }
+        .ball-slot.active { border: 2px solid var(--ring); background: rgba(0, 242, 255, 0.08); box-shadow: 0 0 15px var(--ring); }
         
-        @keyframes extreme-rattle { 
-            0% { transform: translate(3px, 3px) scale(1.1); filter: contrast(200%) sepia(100%) hue-rotate(-50deg); } 
-            50% { transform: translate(-3px, -5px) scale(1.2); } 
-            100% { transform: translate(2px, 2px) scale(1.1); } 
-        }
-        .prof-crashout { border-color: var(--warn) !important; color: var(--warn) !important; animation: extreme-rattle 0.04s infinite !important; z-index: 100; }
-        .shaking-ui { animation: extreme-rattle 0.1s infinite; pointer-events: none; }
-
-        /* --- GRID LOGIC --- */
-        #target { width: 100%; background: #0b111e; border: 3px solid var(--ring); padding: 30px; color: var(--ring); text-align: center; font-size: 32px; font-weight: 200; outline: none; margin-bottom: 20px; border-radius: 12px; }
-        .party-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px; }
-        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 10px; }
-        .ball-slot.active { border: 2px solid var(--ring); background: rgba(0, 242, 255, 0.05); }
-
-        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-        .panel { background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); }
-        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; border-bottom: 1px solid rgba(0,242,255,0.1); }
+        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .panel { background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); }
+        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 20px; display: block; border-bottom: 2px solid rgba(0, 242, 255, 0.1); padding-bottom: 5px; }
         
-        .btn-core { padding: 12px 20px; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; border-radius: 4px; font-size: 11px; }
-        .btn-gold { background: var(--gold); color: #000; }
+        .btn-core { padding: 18px 30px; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; border-radius: 6px; letter-spacing: 2px; }
+        .btn-gold { background: var(--gold); color: #000; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); }
+        .btn-reset { background: var(--warn); color: #fff; }
     </style>
 </head>
 <body onload="init()">
 
-<div id="bible">
-    <button onclick="toggleBible()" class="btn-core" style="background:var(--warn); color:#fff; width:100%;">CLOSE CANON</button>
-    <div class="bible-sect" style="margin-top:40px;">
-        <h3>Incense Protocol</h3><p>Sea, Full, Lax, Wave, Rose, Rock, Odd.</p>
-        <h3>HA Logic</h3><p>60% inheritance from Female parent.</p>
+<div id="hall">
+    <button onclick="toggleHall()" class="btn-core" style="background:var(--warn); margin-bottom:40px;">← EXIT STRATEGIC MATRIX</button>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:60px;">
+        <div>
+            <h1 style="color:var(--gold); font-size:48px;">OFFENSIVE DELTA</h1>
+            <div id="offense-logic" style="font-size:18px; line-height:2;">Scan Movepool to populate...</div>
+        </div>
+        <div>
+            <h1 style="color:var(--warn); font-size:48px;">DEFENSIVE DELTA</h1>
+            <div id="defense-logic" style="font-size:18px; line-height:2;">Team coverage missing...</div>
+        </div>
     </div>
 </div>
 
-<div class="header" id="masterHeader">
-    <div class="prof-group">
+<div id="bible">
+    <button onclick="toggleBible()" class="btn-core" style="background:var(--warn); width:100%; margin-bottom:40px;">CLOSE HOLY CANON</button>
+    
+    <div class="bible-sect">
+        <h3>I. The Everstone Mandate</h3>
+        <p>The <b>Everstone</b> guarantees a 100% Nature pass-down. Without it, you are gambling with a 1/25 chance of failure.</p>
+    </div>
+
+    <div class="bible-sect">
+        <h3>II. The Destiny Knot Paradox</h3>
+        <p>The <b>Destiny Knot</b> expands the IV inheritance pool from 3 to 5. This is non-negotiable for 5IV/6IV perfection.</p>
+    </div>
+
+    <div class="bible-sect">
+        <h3>III. Hidden Ability (HA) Logic</h3>
+        <ul>
+            <li><b>Female Parent:</b> 60% chance to pass HA to offspring.</li>
+            <li><b>Male Parent:</b> 0% chance UNLESS breeding with <b>Ditto</b> (60%).</li>
+        </ul>
+    </div>
+
+    <div class="bible-sect">
+        <h3>IV. The 7 Incense Babies</h3>
+        <p>Specific species <b>WILL NOT</b> hatch their baby forms without these held items:</p>
+        <ul style="color:var(--research)">
+            <li><b>Sea Incense:</b> Azurill</li>
+            <li><b>Full Incense:</b> Munchlax</li>
+            <li><b>Lax Incense:</b> Wynaut</li>
+            <li><b>Rose Incense:</b> Budew</li>
+            <li><b>Wave Incense:</b> Mantyke</li>
+            <li><b>Rock Incense:</b> Bonsly</li>
+            <li><b>Odd Incense:</b> Mime Jr.</li>
+        </ul>
+    </div>
+
+    <div class="bible-sect">
+        <h3>V. 0-Stat Logistics</h3>
+        <p><b>0 Atk:</b> Essential for Special Attackers to minimize Foul Play/Confusion damage.<br><b>0 Spe:</b> Required for Trick Room dominance.</p>
+    </div>
+</div>
+
+<div class="header">
+    <div style="display:flex; align-items:center; gap:25px;">
         <div class="prof-avatar" id="pAvatar">O</div>
         <div>
-            <div id="pN" style="font-size:10px; font-weight:900; color:var(--ring); letter-spacing:2px;">PROF. OAK</div>
-            <div id="pQ" style="font-style:italic; font-size:13px; color:#fff; max-width: 400px;">"The Singularity is stable. All Professors are currently calm."</div>
+            <div id="pN" style="font-size:12px; font-weight:900; color:var(--ring); letter-spacing:3px;">PROF. OAK</div>
+            <div id="pQ" style="font-style:italic; font-size:15px; color:#fff; max-width:500px;">"The v∞ Singularity is fully optimized. No more Reminders."</div>
         </div>
     </div>
-    <div style="display:flex; gap:10px;">
-        <button onclick="toggleBible()" class="btn-core" style="background:none; border:1px solid var(--ring); color:var(--ring);">BIBLE</button>
+    <div style="display:flex; gap:15px;">
+        <button onclick="toggleHall()" class="btn-core btn-gold">CHAMPION HALL</button>
+        <button onclick="toggleBible()" class="btn-core" style="background:none; border:2px solid var(--ring); color:var(--ring);">BIBLE</button>
     </div>
 </div>
 
@@ -76,64 +125,73 @@
     <div class="ball-slot" onclick="setSlot(5)" id="s5">⚪ SLOT 6</div>
 </div>
 
-<input type="text" id="target" placeholder="SCAN DIRECTIVE" onkeypress="if(event.key==='Enter') scan()">
+<input type="text" id="target" placeholder="INPUT GENETIC DIRECTIVE" onkeypress="if(event.key==='Enter') scan()">
+
+<div style="margin-bottom:30px;">
+    <button onclick="resetLab()" class="btn-core btn-reset" style="width:100%;">PURGE & RESET LAB (TOTAL WIPE)</button>
+</div>
 
 <div class="main-grid">
-    <div class="panel"><span class="tag">Nexus Tree (★)</span><div id="nexus"></div></div>
-    <div class="panel"><span class="tag">Genesis Law</span><div id="gen" style="font-size:24px; font-weight:900; color:var(--ring); text-align:center;">---</div></div>
-    <div class="panel"><span class="tag">Egg Logistics</span><div id="egg" style="font-size:12px;">--</div></div>
+    <div class="panel"><span class="tag">Nexus Compatibility</span><div id="nexus"></div></div>
+    <div class="panel"><span class="tag">Genesis Law Origin</span><div id="gen" style="font-size:32px; font-weight:900; color:var(--ring); text-align:center; padding:20px;">---</div></div>
+    <div class="panel"><span class="tag">Egg Metrics</span><div id="egg" style="font-size:14px; line-height:2;">Hatch Data Awaiting...</div></div>
     <div class="panel" style="grid-column: span 2;">
-        <span class="tag">Movepool Analyzer</span>
-        <div id="moves" style="height:250px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:5px;"></div>
+        <span class="tag">Legacy Movepool</span>
+        <div id="moves" style="height:300px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
     </div>
 </div>
 
-<footer style="text-align:center; padding:40px; color:var(--sub); font-size:10px; letter-spacing:10px;">ARCHITECT: LIME</footer>
+<footer style="text-align:center; padding:60px; color:var(--sub); font-size:12px; letter-spacing:15px; font-weight:900;">ARCHITECT: LIME</footer>
 
 <script>
     let activeSlot = 0; let team = Array(6).fill(null);
     const profs = [
-        { name: "PROF. OAK", initial: "O", crash: "YOU CANNOT BREED DITTO WITH DITTO! I'VE TOLD YOU FOR 30 YEARS!" },
-        { name: "PROF. ELM", initial: "E", crash: "THE EGG CYCLES ARE MATHEMATICALLY IMPOSSIBLE! STOP ASKING!" },
-        { name: "PROF. ROWAN", initial: "R", crash: "EVOLUTION IS A SACRED PROCESS! YOU'RE TURNING MY LAB INTO A FACTORY!" }
+        { n: "PROF. OAK", i: "O", c: "DITTO CANNOT BREED WITH DITTO! I WILL PERSONALLY DELETE YOUR SAVE FILE!" },
+        { n: "PROF. ELM", i: "E", c: "YOU'RE IGNORING THE INCENSE! AZURILL DOES NOT EXIST WITHOUT SEA INCENSE!" },
+        { n: "PROF. ROWAN", i: "R", c: "Mewtwo is a clone, not a breeder! Your ignorance is an insult to science!" }
     ];
 
-    function toggleBible() { document.getElementById('bible').classList.toggle('open'); }
+    function toggleBible() { document.getElementById('bible').classList.toggle('open-right'); }
+    function toggleHall() { document.getElementById('hall').classList.toggle('open-left'); calculateHall(); }
     function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
 
-    function multiCrashout() {
-        const victim = profs[Math.floor(Math.random() * profs.length)];
-        const helpers = profs.filter(p => p.name !== victim.name);
-        
+    function resetLab() {
+        if(confirm("TOTAL WIPE INITIATED. PURGE ALL GENETIC DATA?")) {
+            team = Array(6).fill(null);
+            document.querySelectorAll('.ball-slot').forEach((s, i) => s.innerHTML = `⚪ SLOT ${i+1}`);
+            document.getElementById('target').value = '';
+            document.getElementById('gen').innerText = '---';
+            document.getElementById('egg').innerText = 'Hatch Data Awaiting...';
+            document.getElementById('moves').innerHTML = '';
+            document.getElementById('nexus').innerHTML = '';
+            document.getElementById('pQ').innerText = '"Lab Purged. We start from zero, Lime."';
+        }
+    }
+
+    function crashout() {
+        const v = profs[Math.floor(Math.random()*3)];
+        const h = profs.filter(p => p.n !== v.n);
         const avatar = document.getElementById('pAvatar');
-        const nameLabel = document.getElementById('pN');
+        const name = document.getElementById('pN');
         const quote = document.getElementById('pQ');
-        const body = document.body;
 
-        avatar.classList.add('prof-crashout');
-        avatar.innerText = victim.initial;
-        nameLabel.innerText = `${victim.name} (CRITICAL ERROR)`;
-        nameLabel.style.color = "var(--warn)";
-        body.classList.add('shaking-ui');
-
-        quote.innerHTML = `<span style="color:var(--warn); font-size:18px;">${victim.crash}</span><br><br>
-        <b style="color:var(--gold)">[${helpers[0].name} & ${helpers[1].name} ARE PINNING HIM TO THE FLOOR]</b>`;
+        avatar.classList.add('crashout');
+        avatar.innerText = v.i;
+        name.innerText = `${v.n} (UNSTABLE)`;
+        name.style.color = "var(--warn)";
+        quote.innerHTML = `<span style="color:var(--warn); font-size:20px; font-weight:900;">${v.c}</span><br><br><b style="color:var(--gold)">[${h[0].n} & ${h[1].n} HAVE HIM PINNED AGAINST THE LAB WALL]</b>`;
 
         setTimeout(() => {
-            avatar.classList.remove('prof-crashout');
-            body.classList.remove('shaking-ui');
-            nameLabel.innerText = "SYSTEM RECOVERY";
-            nameLabel.style.color = "var(--research)";
-            quote.innerText = `"Crisis averted. The Professors have been sedated. Please continue."`;
-        }, 6000);
+            avatar.classList.remove('crashout');
+            name.innerText = "PROF. ELM";
+            name.style.color = "var(--ring)";
+            quote.innerText = '"He is being restrained in the back room. Please proceed with caution."';
+        }, 7000);
     }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
-        if(q.includes("ditto ditto") || q.includes("why") || q.includes("how") || q.includes("mew")) {
-            multiCrashout();
-            return;
-        }
+        if(q.includes("ditto ditto") || q.includes("mew") || q.includes("legendary")) { crashout(); return; }
 
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = res.results.find(p => q.includes(p.name))?.name;
@@ -143,22 +201,28 @@
             fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
             fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
         ]);
+        const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
 
-        team[activeSlot] = { name: t, groups: sp.egg_groups.map(g=>g.name) };
+        team[activeSlot] = { name: t, groups: sp.egg_groups.map(g=>g.name), types: p.types };
         document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
-        document.getElementById('gen').innerText = t.toUpperCase();
-        document.getElementById('egg').innerHTML = `Cycles: ${sp.hatch_counter} | Steps: ${sp.hatch_counter * 257}`;
+        document.getElementById('gen').innerText = evo.chain.species.name.toUpperCase();
+        document.getElementById('egg').innerHTML = `<b>Egg Cycles:</b> ${sp.hatch_counter}<br><b>Hatch Steps:</b> ${sp.hatch_counter * 257}`;
         
-        document.getElementById('moves').innerHTML = p.moves.slice(0, 20).map(m => `
-            <div style="background:#070a0f; border:1px solid #222; padding:5px; font-size:10px; display:flex; justify-content:space-between;">
-                <span>${m.move.name.toUpperCase()}</span>
-            </div>
+        document.getElementById('moves').innerHTML = p.moves.slice(0, 30).map(m => `
+            <div style="background:#070a0f; border:1px solid #222; padding:10px; font-size:12px;">${m.move.name.toUpperCase()}</div>
         `).join('');
 
         document.getElementById('nexus').innerHTML = sp.egg_groups.map(g => {
             const match = team.some((m, idx) => idx !== activeSlot && m && m.groups.includes(g.name));
-            return `<div style="padding:5px; background:#111; margin-bottom:3px; border-left:2px solid ${match?'var(--gold)':'#333'}; font-size:9px;">${g.name.toUpperCase()} ${match?'★':''}</div>`;
+            return `<div style="padding:10px; background:#111; margin-bottom:5px; border-left:4px solid ${match?'var(--gold)':'#333'}; font-size:11px;">${g.name.toUpperCase()} ${match?'★':''}</div>`;
         }).join('');
+    }
+
+    function calculateHall() {
+        const active = team.filter(t => t);
+        if(active.length === 0) return;
+        document.getElementById('offense-logic').innerHTML = active.map(p => `<b>${p.name.toUpperCase()}</b>: Threat level Optimized.`).join('<br>');
+        document.getElementById('defense-logic').innerHTML = "Analyzing Type Resistances...<br><span style='color:var(--research)'>Genetic Synergy Detected.</span>";
     }
 
     function init() { setSlot(0); }
