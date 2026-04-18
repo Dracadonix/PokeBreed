@@ -3,337 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Shiny Umbreon Intelligence</title>
+    <title>PokeBreed Pro | Master Edition</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>⚡ PokeBreed Pro</h1>
+        <p class="subtitle">Breeding • Evolution • Location • Effort</p>
+        
+        <div class="input-group">
+            <input type="text" id="userInput" placeholder="e.g. 'I need a 5IV Garchomp Mr White...'" onkeypress="if(event.key === 'Enter') generateGuide()">
+            <button onclick="generateGuide()">Analyze</button>
+        </div>
+
+        <div id="output">
+            <h2 id="pokeHeader" style="margin-bottom:5px; color:var(--primary); font-size: 2.3em; text-transform: capitalize;"></h2>
+            <div id="metaInfo"></div>
+            
+            <div id="evolutionData"></div>
+
+            <div class="section-title">📍 Direct World Locations</div>
+            <div id="locationData" class="location-box">
+                <div id="locationList" style="font-size: 1em; line-height: 1.6; color: #ddd;"></div>
+                <div class="ref-links">
+                    <a id="linkSerebii" class="ref-btn serebii" target="_blank">Serebii Dex</a>
+                    <a id="linkBulba" class="ref-btn bulbapedia" target="_blank">Bulbapedia</a>
+                    <a id="linkDB" class="ref-btn pokemondb" target="_blank">PokemonDB</a>
+                </div>
+            </div>
+
+            <div class="section-title">🏋️ Effort Value (EV) Strategy</div>
+            <div id="evData" class="step" style="border-left-color: var(--ev-orange);"></div>
+
+            <div class="section-title">🛠️ Breeding Roadmap</div>
+            <div id="stepsList"></div>
+
+            <div class="section-title">🥚 Egg Movepool</div>
+            <div id="movepoolSection"></div>
+        </div>
+    </div>
+
+    <script>
+        const format = (str) => !str ? "" : str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+        async function generateGuide() {
+            const inputField = document.getElementById('userInput');
+            const outputDiv = document.getElementById('output');
+            const input = inputField.value.toLowerCase().trim();
+            
+            if (!input) return;
+            
+            // Show a "Loading" state so you know it clicked
+            console.log("Searching for:", input); 
+
+            const words = input.replace(/[?!.]/g, "").split(/\s+/);
+            const gameMap = { "bdsp": "BDSP", "sv": "Scarlet/Violet", "swsh": "Sword/Shield", "scarlet": "Scarlet/Violet", "violet": "Scarlet/Violet" };
+            const activeKey = Object.keys(gameMap).find(k => input.includes(k)) || "default";
+
+            const noise = ["how", "to", "get", "find", "where", "is", "breed", "in", "the", "a", "an", "with", "of", "shiny", "jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish", "5iv", "6iv", "iv", "ha", "hidden", "ability", "ev", "train", "need", "mr", "white", "pinkman", "protection", "meth", "blue", ...Object.keys(gameMap)];
+            const targets = words.filter(w => !noise.includes(w) && w.length > 2);
+
+            let data = null;
+            // Robust Search Loop
+            for (let name of targets) {
+                try {
+                    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+                    if (res.ok) { 
+                        data = await res.json(); 
+                        break; 
+                    }
+                } catch (e) { console.error("API Error:", e); }
+            }
+
+            if (!data) {
+                alert("Pokémon not found! Make sure you spelled the name correctly (e.g., Garchomp).");
+                return;
+            }
+
+            // If we get here, data was found, so show the output
+            outputDiv.style.display = 'block';
+            document.getElementById('pokeHeader').innerText = format(data.name);
+
+            // Fetch Species Data for Evolution/Hatch info
+            const sRes = await fetch(data.species.url);
+            const sData = await sRes.json();
+            const evoRes = await fetch(sData.evolution_chain.url);
+            const evoData = await evoRes.json();
+
+            // 1. Evolution Chain
+            let baseForm = evoData.chain.species.name;
+            let evoNotes = "";
+            if (baseForm !== data.name) {
+                let curr = evoData.chain;
+                while(curr) {
+                    const match = curr.evolves_to.find(e => e.species.name === data.name);
+                    if (match) {
+                        const d = match.evolution_details[0];
+                        let trigger = d.trigger.name.replace(/-/g, ' ');
+                        let req = d.min_level ? `Level ${d.min_level}` : d.item ? format(d.item.name) : d.min_happiness ? "High Friendship" : "Special Condition";
+                        evoNotes = `🧬 <strong>Evolution Alert:</strong> Hatch <strong>${format(baseForm)}</strong> and evolve it via ${trigger} (${req}).`;
+                        break;
+                    }
+                    curr = curr.evolves_to[0];
+                }
+            }
+            document.getElementById('evolutionData').innerHTML = evoNotes ? `<div class="evo-box">${evoNotes}</div>` : "";
+
+            // 2. EVs
+            let evs = data.stats.filter(s => s.effort > 0).map(s => `${s.effort} ${format(s.stat.name)}`);
+            document.getElementById('evData').innerHTML = `<strong>Yield:</strong> Defeating this species gives <strong>${evs.join(', ')}</strong>.`;
+
+            // 3. Locations
+            const locRes = await fetch(data.location_area_encounters);
+            const locData = await locRes.json();
+            let locHtml = "Wild data not found. Likely an Evolution or Raid-only species.";
+            if (locData.length > 0) {
+                const uniqueLocs = [...new Set(locData.slice(0, 5).map(l => format(l.location_area.name.replace(/-/g, ' '))))];
+                locHtml = "Spawns At: <br>" + uniqueLocs.map(l => `• <strong>${l}</strong>`).join('<br>');
+            }
+            document.getElementById('locationList').innerHTML = locHtml;
+
+            // 4. External Links
+            const clean = data.name.split('-')[0];
+            document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${clean}/`;
+            document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${format(clean)}_(Pokémon)`;
+            document.getElementById('linkDB').href = `https://pokemondb.net/pokedex/${clean}`;
+
+            // 5. Steps
+            let steps = [];
+            if (input.includes("iv")) steps.push(`📊 <strong>Best IVs:</strong> Use a <strong>Destiny Knot</strong>.`);
+            if (input.includes("shiny")) steps.push(`✨ <strong>Masuda Method:</strong> Use a foreign parent.`);
+            const n = ["jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish"].find(x => input.includes(x));
+            if (n) steps.push(`🧪 <strong>Everstone:</strong> Give to the <strong>${n.toUpperCase()}</strong> parent.`);
+            document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('') || `<div class="step">Ready to breed <strong>${format(baseForm)}</strong>.</div>`;
+            
+            // 6. Moves
+            const eggs = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg')).map(m => m.move.name);
+            document.getElementById('movepoolSection').innerHTML = eggs.length ? eggs.map(m => `<span class="move-pill">${format(m)}</span>`).join('') : "No Egg Moves.";
+
+            // 7. Badges
+            document.getElementById('metaInfo').innerHTML = `<span class="badge">${format(sData.egg_groups[0].name)} Group</span> <span class="badge" style="background:#000; border-color:var(--primary)">~${(sData.hatch_counter + 1) * 255} Steps</span>`;
+        }
+    </script>
+
     <style>
-        /* SHINY UMBREON DESIGN SYSTEM */
         :root { 
-            --bg: #0c0d10;              /* Deep fur charcoal */
-            --bg-offset: #14161a;        /* UI Element contrast */
-            --card: rgba(20, 22, 26, 0.98); 
-            --primary: #00e5ff;          /* UMBREON CYAN GLOW */
-            --secondary: #303541;        /* Desaturated slate */
-            --text: #f0f0f0; 
-            --sub-text: #a0a8b5; 
-            --border: #2d333f;
-            --evo-cyan: #00d4ff;
-            --ev-orange: #ff8c00;
+            --bg: #0c0d10; --bg-offset: #14161a; --card: #14161a; 
+            --primary: #00e5ff; --secondary: #303541; --text: #f0f0f0; 
+            --sub-text: #a0a8b5; --border: #2d333f; --evo-cyan: #00d4ff; --ev-orange: #ff8c00;
         }
         
         body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background-color: var(--bg); 
-            color: var(--text);
-            margin: 0; 
-            padding: 20px; 
-            display: flex; 
-            justify-content: center;
-            min-height: 100vh;
-            /* Subtitly textured background */
-            background-image: radial-gradient(var(--border) 1px, transparent 1px);
-            background-size: 30px 30px; 
-            background-attachment: fixed;
+            font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text);
+            margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center;
+            background-image: radial-gradient(var(--border) 1px, transparent 1px); background-size: 30px 30px;
         }
         
         .container { 
-            max-width: 850px; 
-            width: 100%; 
-            background: var(--card); 
-            padding: 40px; 
-            border-radius: 24px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(0, 229, 255, 0.05); 
-            border: 1px solid var(--border); 
-            backdrop-filter: blur(12px);
-            margin-top: 40px;
-            height: fit-content;
+            max-width: 850px; width: 100%; background: var(--card); padding: 40px; 
+            border-radius: 24px; border: 1px solid var(--border); margin-top: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
         
-        h1 { 
-            color: var(--primary); 
-            text-align: center; 
-            font-size: 2.6em; 
-            margin: 0 0 5px 0; 
-            text-transform: uppercase; 
-            letter-spacing: 4px; 
-            font-weight: 900;
-            text-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
-        }
+        h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 4px; }
+        .subtitle { text-align: center; color: var(--sub-text); margin-bottom: 30px; }
+        .input-group { display: flex; gap: 10px; }
+        input { flex: 1; padding: 15px; background: #1a1c23; border: 2px solid var(--border); border-radius: 10px; color: white; }
+        button { padding: 15px 25px; background: transparent; color: var(--primary); border: 2px solid var(--primary); border-radius: 10px; cursor: pointer; font-weight: bold; }
+        button:hover { background: var(--primary); color: var(--bg); }
         
-        .subtitle { text-align: center; color: var(--sub-text); margin-bottom: 35px; font-size: 0.9em; letter-spacing: 1px; }
-        
-        .input-group { display: flex; gap: 12px; margin-bottom: 35px; }
-        
-        input { 
-            flex: 1; 
-            padding: 18px; 
-            background: var(--bg-offset); 
-            border: 2px solid var(--border); 
-            border-radius: 14px; 
-            color: white; 
-            outline: none; 
-            font-size: 1.1em; 
-            transition: 0.3s;
-        }
-        
-        input:focus { 
-            border-color: var(--primary); 
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.15); 
-        }
-        
-        button { 
-            padding: 16px 30px; 
-            background: var(--bg-offset); 
-            color: var(--primary); 
-            border: 2px solid var(--primary); 
-            border-radius: 14px; 
-            cursor: pointer; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            transition: 0.3s;
-        }
-        
-        button:hover { 
-            background: var(--primary); 
-            color: var(--bg); 
-            transform: translateY(-2px); 
-            box-shadow: 0 5px 20px rgba(0, 229, 255, 0.4); 
-        }
-        
-        #output { display: none; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-        
-        .section-title { 
-            font-size: 0.8em; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            color: var(--primary); 
-            margin: 30px 0 12px; 
-            font-weight: 800; 
-            border-bottom: 1px solid var(--border); 
-            padding-bottom: 6px; 
-            opacity: 0.8;
-        }
-        
-        .badge { 
-            display: inline-block; 
-            background: var(--secondary); 
-            color: var(--primary); 
-            padding: 6px 15px; 
-            border-radius: 9px; 
-            font-size: 0.75em; 
-            font-weight: 700; 
-            margin: 0 8px 8px 0; 
-            border: 1px solid rgba(0, 229, 255, 0.15);
-        }
-        
-        .step { 
-            margin-bottom: 14px; 
-            padding: 20px; 
-            background: rgba(0, 0, 0, 0.25); 
-            border-left: 6px solid var(--primary); 
-            border-radius: 0 14px 14px 0; 
-            line-height: 1.6; 
-            border: 1px solid var(--border);
-            border-left-width: 6px;
-        }
-        
-        .evo-box { 
-            background: rgba(0, 212, 255, 0.08); 
-            border: 1px solid var(--evo-cyan); 
-            padding: 18px; 
-            border-radius: 14px; 
-            margin-bottom: 25px; 
-        }
-        
-        .location-box { 
-            background: var(--bg-offset); 
-            border: 1px solid var(--border); 
-            padding: 22px; 
-            border-radius: 16px; 
-            margin: 20px 0; 
-        }
-        
-        .ref-links { 
-            display: flex; 
-            gap: 12px; 
-            margin-top: 18px; 
-            flex-wrap: wrap; 
-        }
-        
-        .ref-btn { 
-            flex: 1; 
-            padding: 12px; 
-            text-align: center; 
-            border-radius: 10px; 
-            font-size: 0.85em; 
-            text-decoration: none; 
-            color: white; 
-            font-weight: 800; 
-            transition: 0.2s; 
-        }
-        
-        .serebii { background: #0e7a3a; } 
-        .bulbapedia { background: #60298a; } 
-        .pokemondb { background: #cf4a10; }
-        
-        .ref-btn:hover { 
-            filter: brightness(1.2); 
-            transform: translateY(-2px); 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
-        }
-        
-        .move-pill { 
-            display: inline-block; 
-            background: var(--bg-offset); 
-            color: var(--primary); 
-            padding: 5px 12px; 
-            border-radius: 7px; 
-            font-size: 0.8em; 
-            margin: 4px; 
-            border: 1px solid var(--border);
-            text-transform: capitalize;
-        }
-
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(30px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        .section-title { color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-top: 25px; font-size: 0.9em; text-transform: uppercase; }
+        .badge { display: inline-block; background: var(--secondary); color: var(--primary); padding: 5px 12px; border-radius: 5px; margin: 5px; font-size: 0.8em; }
+        .step { padding: 15px; background: rgba(0,0,0,0.2); border-left: 5px solid var(--primary); margin-top: 10px; border-radius: 5px; }
+        .evo-box { border: 1px solid var(--evo-cyan); padding: 15px; margin-top: 20px; background: rgba(0, 212, 255, 0.05); }
+        .location-box { background: var(--bg-offset); padding: 20px; border: 1px solid var(--border); margin-top: 10px; }
+        .ref-links { display: flex; gap: 10px; margin-top: 15px; }
+        .ref-btn { flex: 1; padding: 10px; text-align: center; text-decoration: none; color: white; border-radius: 5px; font-size: 0.8em; }
+        .serebii { background: #0e7a3a; } .bulbapedia { background: #60298a; } .pokemondb { background: #cf4a10; }
+        .move-pill { display: inline-block; padding: 5px 10px; border: 1px solid var(--border); margin: 3px; font-size: 0.8em; color: var(--primary); }
     </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>⚡ PokeBreed Pro</h1>
-    <p class="subtitle">Breeding • Evolution • Location • Effort</p>
-    
-    <div class="input-group">
-        <input type="text" id="userInput" placeholder="e.g. 'I need a 5IV Garchomp in SV Mr White...'">
-        <button onclick="generateGuide()">Analyze</button>
-    </div>
-
-    <div id="output">
-        <h2 id="pokeHeader" style="margin-bottom:5px; color:var(--primary); font-size: 2.3em; text-transform: capitalize;"></h2>
-        <div id="metaInfo"></div>
-        
-        <div id="evolutionData"></div>
-
-        <div class="section-title">📍 Direct World Locations</div>
-        <div id="locationData" class="location-box">
-            <div id="locationList" style="font-size: 1em; line-height: 1.6; color: #ddd;"></div>
-            <div class="ref-links">
-                <a id="linkSerebii" class="ref-btn serebii" target="_blank">Serebii Dex</a>
-                <a id="linkBulba" class="ref-btn bulbapedia" target="_blank">Bulbapedia</a>
-                <a id="linkDB" class="ref-btn pokemondb" target="_blank">PokemonDB</a>
-            </div>
-        </div>
-
-        <div class="section-title">🏋️ Effort Value (EV) Strategy</div>
-        <div id="evData" class="step" style="border-left-color: var(--ev-orange);"></div>
-
-        <div class="section-title">🛠️ Breeding Roadmap</div>
-        <div id="stepsList"></div>
-
-        <div class="section-title">🥚 Egg Movepool</div>
-        <div id="movepoolSection"></div>
-    </div>
-</div>
-
-<script>
-    // Universal formatting helper
-    const format = (str) => !str ? "" : str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
-    async function generateGuide() {
-        const input = document.getElementById('userInput').value.toLowerCase().trim();
-        if (!input) return;
-        
-        const words = input.replace(/[?!.]/g, "").split(/\s+/);
-        const gameMap = { "bdsp": "BDSP", "sv": "Scarlet/Violet", "swsh": "Sword/Shield", "sword": "Sword", "shield": "Shield", "scarlet": "Scarlet/Violet", "violet": "Scarlet/Violet" };
-        const activeKey = Object.keys(gameMap).find(k => input.includes(k)) || "default";
-
-        // Filtering for Pokemon names while ignoring slang/roleplay words
-        const noise = ["how", "to", "get", "find", "where", "is", "breed", "in", "the", "a", "an", "with", "of", "shiny", "jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish", "5iv", "6iv", "iv", "ha", "hidden", "ability", "ev", "train", "need", "mr", "white", "pinkman", "protection", "meth", "blue", ...Object.keys(gameMap)];
-        const targets = words.filter(w => !noise.includes(w) && w.length > 2);
-
-        let data = null;
-        for (let name of targets) {
-            try {
-                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-                if (res.ok) { data = await res.json(); break; }
-            } catch (e) { continue; }
-        }
-
-        if (!data) return alert("Pokémon not recognized. Check your spelling!");
-
-        const sRes = await fetch(data.species.url);
-        const sData = await sRes.json();
-        const evoRes = await fetch(sData.evolution_chain.url);
-        const evoData = await evoRes.json();
-        
-        document.getElementById('output').style.display = 'block';
-        document.getElementById('pokeHeader').innerText = format(data.name);
-
-        // 1. Evolution Alert System
-        let baseForm = evoData.chain.species.name;
-        let evoNotes = "";
-        if (baseForm !== data.name) {
-            let curr = evoData.chain;
-            while(curr) {
-                const match = curr.evolves_to.find(e => e.species.name === data.name);
-                if (match) {
-                    const d = match.evolution_details[0];
-                    let trigger = d.trigger.name.replace(/-/g, ' ');
-                    let req = d.min_level ? `Level ${d.min_level}` : d.item ? format(d.item.name) : d.min_happiness ? "High Friendship" : "Special Condition";
-                    evoNotes = `🧬 <strong>Evolution Alert:</strong> You cannot hatch ${format(data.name)}. Breed <strong>${format(baseForm)}</strong> and evolve it via ${trigger} (${req}).`;
-                    break;
-                }
-                curr = curr.evolves_to[0];
-            }
-        }
-        document.getElementById('evolutionData').innerHTML = evoNotes ? `<div class="evo-box">${evoNotes}</div>` : "";
-
-        // 2. EV Strategy
-        let evs = data.stats.filter(s => s.effort > 0).map(s => `${s.effort} ${format(s.stat.name)}`);
-        document.getElementById('evData').innerHTML = `<strong>Yield:</strong> Defeating this species gives <strong>${evs.join(', ')}</strong>. <br>Vitamins (26 per stat) or Power Items (+8 per battle) are the fastest training methods.`;
-
-        // 3. Location Scraper
-        const locRes = await fetch(data.location_area_encounters);
-        const locData = await locRes.json();
-        let locHtml = "Wild data not found. Likely an Evolution, Gift, or Raid encounter.";
-        if (locData.length > 0) {
-            const gameFilter = activeKey === "default" ? "" : activeKey.split('/')[0];
-            const filtered = locData.filter(l => l.version_details.some(v => v.version.name.includes(gameFilter)));
-            const source = filtered.length > 0 ? filtered : locData;
-            // Clean up and deduplicate locations
-            const uniqueLocs = [...new Set(source.slice(0, 5).map(l => format(l.location_area.name.replace(/-/g, ' '))))];
-            locHtml = "Commonly Spawns At: <br>" + uniqueLocs.map(l => `• <strong>${l}</strong>`).join('<br>');
-        }
-        document.getElementById('locationList').innerHTML = locHtml;
-
-        // 4. External References
-        const clean = data.name.split('-')[0];
-        document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${clean}/`;
-        document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${format(clean)}_(Pokémon)`;
-        document.getElementById('linkDB').href = `https://pokemondb.net/pokedex/${clean}`;
-
-        // 5. Breeding Roadmaps
-        let steps = [];
-        if (input.includes("iv")) steps.push(`📊 <strong>Best IVs:</strong> Hold a <strong>Destiny Knot</strong> to pass down 5 stats from the parents.`);
-        if (input.includes("shiny")) steps.push(`✨ <strong>Masuda Method:</strong> Use parents from different real-world languages (e.g., Japanese Ditto) for max Shiny odds.`);
-        const natures = ["jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish"];
-        const n = natures.find(x => input.includes(x));
-        if (n) steps.push(`🧪 <strong>Everstone:</strong> Give to the <strong>${n.toUpperCase()}</strong> parent to lock in that Nature.`);
-        
-        document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('') || `<div class="step">Ready to breed <strong>${format(baseForm)}</strong>. Check the movepool below for Egg Moves!</div>`;
-        
-        // 6. Egg Moves List
-        const eggs = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg')).map(m => m.move.name);
-        document.getElementById('movepoolSection').innerHTML = eggs.length ? eggs.map(m => `<span class="move-pill">${format(m)}</span>`).join('') : "No Egg Moves available for this species.";
-
-        // 7. Meta Badges (Egg Groups + Steps)
-        const hatchSteps = (sData.hatch_counter + 1) * 255;
-        document.getElementById('metaInfo').innerHTML = `
-            ${sData.egg_groups.map(g => `<span class="badge">${format(g.name)} Group</span>`).join('')}
-            <span class="badge" style="background:#000; border-color:var(--primary)">~${hatchSteps.toLocaleString()} Hatch Steps</span>
-        `;
-    }
-</script>
 </body>
 </html>
