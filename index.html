@@ -3,99 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Grand Architect</title>
+    <title>PokeBreed Pro | v5000</title>
     <style>
         :root { 
-            --bg: #020617; --card: #0f172a; --primary: #0ea5e9; --accent: #8b5cf6; 
-            --text: #f8fafc; --border: #1e293b; --pivot: #fbbf24; --lime: #bef264; --warn: #f43f5e;
+            --bg: #030712; --card: rgba(17, 24, 39, 0.7); --primary: #38bdf8; 
+            --accent: #818cf8; --text: #f3f4f6; --border: rgba(255,255,255,0.1); 
+            --warn: #ef4444; --lime: #4ade80; --pivot: #fbbf24;
         }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { 
+            background: radial-gradient(circle at top right, #1e1b4b, #030712); 
+            color: var(--text); margin: 0; min-height: 100vh; padding: 20px; 
+            display: flex; justify-content: center;
+        }
         .container { max-width: 1200px; width: 100%; animation: fadeIn 0.8s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* MODALS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { background: #fff; color: #000; padding: 40px; border: 10px solid #000; max-width: 550px; font-family: 'Courier New', monospace; }
-        .btn-modal { background: #000; color: #fff; border: none; padding: 15px 30px; cursor: pointer; font-weight: bold; margin-top: 25px; width: 100%; text-transform: uppercase; }
+        /* LAB BENCH SIDEBAR (DESKTOP) / HEADER (MOBILE) */
+        .bench { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 15px; margin-bottom: 30px; 
+        }
+        .slot { 
+            background: var(--card); backdrop-filter: blur(12px); border: 1px solid var(--border); 
+            padding: 15px; border-radius: 16px; cursor: pointer; text-align: center;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slot.active { border-color: var(--primary); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); transform: translateY(-5px); }
+        .slot-pk { font-weight: 800; font-size: 0.85rem; color: #fff; }
 
-        /* HEADER */
-        .header { text-align: center; margin-bottom: 30px; }
-        .input-group { display: flex; background: #000; border: 2px solid var(--border); border-radius: 16px; padding: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
-        .btn-run { background: var(--primary); color: #fff; border: none; padding: 0 35px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        /* NEON CONSOLE */
+        .console-wrap { 
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border); 
+            border-radius: 24px; padding: 8px; display: flex; align-items: center; 
+            margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        input { 
+            flex: 1; background: transparent; border: none; padding: 15px 25px; 
+            color: var(--primary); font-size: 1.1rem; outline: none; font-weight: 500;
+        }
+        .btn-exe { 
+            background: var(--primary); color: #000; border: none; padding: 15px 35px; 
+            border-radius: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase;
+        }
 
-        /* GRID */
-        #output { display: none; margin-top: 40px; }
-        .grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; margin-bottom: 25px; }
-        .tag { color: var(--primary); font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; display: block; }
+        /* GRID SYSTEM */
+        #output { display: none; }
+        .layout { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        @media (min-width: 1024px) { .layout { grid-template-columns: 1.3fr 0.7fr; } }
 
-        /* MOVE SYSTEM */
-        .move-slot { background: #1e293b; border-radius: 12px; padding: 18px; margin-bottom: 12px; border-left: 5px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
-        .move-slot.pinned { border-left-color: var(--pivot); background: rgba(251, 191, 36, 0.1); }
-        .move-source { font-size: 0.7rem; color: var(--lime); display: block; margin-top: 4px; font-weight: bold; }
+        .card { 
+            background: var(--card); backdrop-filter: blur(16px); 
+            border: 1px solid var(--border); border-radius: 28px; padding: 30px; 
+            position: relative; overflow: hidden;
+        }
+        .tag { 
+            font-size: 0.65rem; font-weight: 900; text-transform: uppercase; 
+            letter-spacing: 3px; color: var(--primary); margin-bottom: 20px; display: block;
+        }
 
-        /* WARNINGS */
-        .warn-box { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--warn); color: var(--warn); padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 0.85rem; font-weight: bold; }
+        /* THE ROWAN CRASH-OUT */
+        @keyframes desk-slam {
+            0%, 100% { transform: scale(1); }
+            10%, 30%, 50% { transform: scale(1.02) rotate(0.5deg); }
+            20%, 40% { transform: scale(0.98) rotate(-0.5deg); }
+        }
+        .rage-mode { animation: desk-slam 0.4s ease-in-out; border-color: var(--warn) !important; }
+        .rage-banner { 
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), transparent); 
+            border-left: 4px solid var(--warn); padding: 20px; border-radius: 12px; 
+            margin-bottom: 25px; color: #ff8888; font-weight: 800; font-family: monospace;
+        }
 
-        /* STATS */
-        .bar-bg { height: 8px; background: #334155; border-radius: 4px; margin-top: 6px; }
-        .bar-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 1s; }
-        .stat-dropped { color: var(--warn); text-decoration: line-through; }
+        /* STAT BARS */
+        .stat-bar { margin-bottom: 15px; }
+        .bar-bg { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 8px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--primary); border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
+
+        /* PILLS */
+        .pill { 
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 18px; 
+            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .pill.pivot { border-left: 4px solid var(--pivot); background: rgba(251, 191, 36, 0.05); }
     </style>
 </head>
-<body>
-
-<div id="modal1" class="modal-overlay">
-    <div class="modal-box">
-        <h2>LEGAL DISCLAIMER</h2>
-        <p>This software is a fan-produced strategic tool. All characters and names are property of Nintendo/Game Freak. Usage implies agreement to respect IP rights.</p>
-        <button class="btn-modal" onclick="document.getElementById('modal1').style.display='none'; document.getElementById('modal2').style.display='flex';">I AGREE</button>
-    </div>
-</div>
-
-<div id="modal2" class="modal-overlay" style="display: none;">
-    <div class="modal-box" style="border-color: var(--lime);">
-        <h2 style="color: #4d7c0f;">SYSTEM ORIGIN</h2>
-        <p>PokeBreed Pro initialized. Level-Sync and Heredity Logic operational.</p>
-        <p style="background: #bef264; padding: 15px; border: 2px solid #000; font-weight: bold;">Conceptualized and Developed by LIME.</p>
-        <button class="btn-modal" onclick="document.getElementById('modal2').style.display='none';">INITIALIZE</button>
-    </div>
-</div>
+<body onload="init()">
 
 <div class="container">
-    <div class="header">
-        <h1 style="margin:0; font-size: 2.8rem;">PokeBreed <span style="color:var(--primary)">Pro</span></h1>
-        <p style="color:var(--sub-text); font-weight: 800; letter-spacing: 4px;">LIME STRATEGIC SYSTEMS // v21.0</p>
+    <div class="header" style="text-align: center; margin-bottom: 40px;">
+        <h1 style="margin:0; font-size: 2.5rem; letter-spacing: -1px;">PokeBreed <span style="color:var(--primary)">Pro</span></h1>
+        <p style="opacity: 0.4; font-size: 0.7rem; font-weight: 900; letter-spacing: 5px;">SINGULARITY v5000.0 // LIME LABS</p>
     </div>
 
-    <div class="input-group">
-        <input type="text" id="query" placeholder="e.g. Jolly 5iv Weavile dropping Sp Def with Ice Shard" onkeypress="if(event.key === 'Enter') startArchitect()">
-        <button class="btn-run" onclick="startArchitect()">Analyze</button>
+    <div class="bench" id="bench">
+        <div class="slot" id="s0" onclick="switchSlot(0)"><span class="slot-pk" id="n0">EMPTY SLOT 1</span></div>
+        <div class="slot" id="s1" onclick="switchSlot(1)"><span class="slot-pk" id="n1">EMPTY SLOT 2</span></div>
+        <div class="slot" id="s2" onclick="switchSlot(2)"><span class="slot-pk" id="n2">EMPTY SLOT 3</span></div>
+        <div class="slot" id="s3" onclick="switchSlot(3)"><span class="slot-pk" id="n3">EMPTY SLOT 4</span></div>
+    </div>
+
+    <div class="console-wrap">
+        <input type="text" id="cmd" placeholder="Directive (e.g. '0 Speed Quiet Hatterene with Trick Room')" onkeypress="if(event.key==='Enter') execute()">
+        <button class="btn-exe" onclick="execute()">Process</button>
     </div>
 
     <div id="output">
-        <div class="grid">
-            <div class="col-main">
+        <div id="rageZone"></div>
+        <div class="layout">
+            <div class="main-col">
                 <div class="card">
-                    <span class="tag">Genealogy & Evolution Logistics</span>
-                    <div id="evoDisplay" style="display:flex; gap:10px; flex-wrap:wrap; font-weight:700;"></div>
-                    <div id="evoWarnings"></div>
-                    <div id="locDisplay" style="margin-top:20px; color:var(--accent); font-weight:bold;"></div>
+                    <span class="tag">Species Intelligence & Biological Data</span>
+                    <h2 id="pkName" style="margin:0; font-size: 1.8rem; color: #fff;"></h2>
+                    <p id="bioNotes" style="font-style: italic; opacity: 0.7; line-height: 1.6; margin: 20px 0; border-left: 3px solid var(--primary); padding-left: 20px;"></p>
+                    <div id="evoLine" style="display:flex; gap:10px; font-weight: 900; color: var(--accent); font-size: 0.8rem;"></div>
                 </div>
-                <div class="card">
-                    <span class="tag">Pivoted Tactical Moveset</span>
-                    <div id="moveDisplay"></div>
+                <div class="card" style="margin-top: 25px;">
+                    <span class="tag">Tactical Move Pivot</span>
+                    <div id="moveGrid"></div>
                 </div>
             </div>
-            <div class="col-side">
+            <div class="side-col">
                 <div class="card">
-                    <span class="tag">Target Stat Profile</span>
-                    <div id="statDisplay"></div>
+                    <span class="tag">Optimized Stat Aura</span>
+                    <div id="statGrid"></div>
                 </div>
-                <div class="card">
-                    <span class="tag">Breeding Blueprint</span>
-                    <div id="roadDisplay" style="line-height:2.2; font-size:0.9rem;"></div>
+                <div class="card" style="margin-top: 25px;">
+                    <span class="tag">Strategic Roadmap</span>
+                    <div id="roadmap" style="font-size: 0.8rem; line-height: 2.2;"></div>
+                    <button class="btn-exe" style="width: 100%; margin-top: 20px; background: transparent; color: var(--lime); border: 1px solid var(--lime);" onclick="commit()">Commit to Bench</button>
                 </div>
             </div>
         </div>
@@ -103,99 +139,101 @@
 </div>
 
 <script>
-    const format = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    const sanitize = (s) => s.toLowerCase().replace(/[\s-]/g, '');
+    let activeSlot = 0; let currentData = null;
+    const fmt = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const snz = (s) => s.toLowerCase().replace(/[\s-]/g, '');
 
-    async function startArchitect() {
-        const input = document.getElementById('query').value;
-        const pList = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000').then(r => r.json());
-        const target = pList.results.find(p => input.toLowerCase().includes(p.name))?.name;
+    function init() {
+        for(let i=0; i<4; i++) {
+            const d = localStorage.getItem('sing_v5_'+i);
+            if(d) document.getElementById('n'+i).innerText = JSON.parse(d).name;
+        }
+        switchSlot(0);
+    }
 
-        if (!target) return alert("SPECIES UNRECOGNIZED.");
+    function switchSlot(i) {
+        activeSlot = i;
+        document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
+        document.getElementById('s'+i).classList.add('active');
+        const d = localStorage.getItem('sing_v5_'+i);
+        if(d) render(JSON.parse(d));
+        else document.getElementById('output').style.display = 'none';
+    }
 
-        try {
-            const [p, s] = await Promise.all([
-                fetch(`https://pokeapi.co/api/v2/pokemon/${target}`).then(r => r.json()),
-                fetch(`https://pokeapi.co/api/v2/pokemon-species/${target}`).then(r => r.json())
-            ]);
+    function commit() {
+        if(!currentData) return;
+        localStorage.setItem('sing_v5_'+activeSlot, JSON.stringify(currentData));
+        document.getElementById('n'+activeSlot).innerText = currentData.name;
+    }
 
-            document.getElementById('output').style.display = 'block';
+    async function execute() {
+        const q = document.getElementById('cmd').value.toLowerCase();
+        const list = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
+        const tName = list.results.find(x => q.includes(x.name))?.name;
+        if(!tName) return;
 
-            // GENEALOGY
-            const eR = await fetch(s.evolution_chain.url).then(r => r.json());
-            let chain = []; let curr = eR.chain;
-            while(curr) { chain.push(curr.species.name); curr = curr.evolves_to[0]; }
-            document.getElementById('evoDisplay').innerHTML = chain.map(n => `<span style="padding:6px 14px; background:#1e293b; border-radius:30px; ${n===target?'border:2px solid var(--primary); color:var(--primary);':''}">${format(n)}</span>`).join(' → ');
+        const [p, sp] = await Promise.all([
+            fetch(`https://pokeapi.co/api/v2/pokemon/${tName}`).then(r=>r.json()),
+            fetch(`https://pokeapi.co/api/v2/pokemon-species/${tName}`).then(r=>r.json())
+        ]);
 
-            // STATS & DROPPED STAT
-            const inputLower = input.toLowerCase();
-            const droppedKeywords = ["dropping", "drop", "minus"];
-            let droppedStat = "";
-            droppedKeywords.forEach(k => {
-                if(inputLower.includes(k)) droppedStat = inputLower.split(k)[1].trim().split(" ")[0];
-            });
+        const eR = await fetch(sp.evolution_chain.url).then(r=>r.json());
+        let ch = []; let c = eR.chain; while(c){ ch.push(c.species.name); c = c.evolves_to[0]; }
 
-            document.getElementById('statDisplay').innerHTML = p.stats.map(st => {
-                const isDropped = droppedStat && sanitize(st.stat.name).includes(sanitize(droppedStat));
-                return `
-                <div class="stat-bar">
-                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;">
-                        <span class="${isDropped ? 'stat-dropped' : ''}">${format(st.stat.name)}</span>
-                        <span>${st.base_stat}</span>
-                    </div>
-                    <div class="bar-bg"><div class="bar-fill" style="width:${(st.base_stat/255)*100}%; background:${isDropped ? '#f43f5e' : 'var(--primary)'}"></div></div>
-                </div>`;
-            }).join('');
+        const flavor = sp.flavor_text_entries.find(x => x.language.name === 'en').flavor_text.replace(/\f/g, ' ');
+        const moves = await Promise.all(p.moves.slice(0, 40).map(x=>fetch(x.move.url).then(r=>r.json())));
+        
+        let pivotMove = moves.find(x => snz(q).includes(snz(x.name)));
+        let kit = pivotMove ? [{...pivotMove, isPivot: true}] : [];
+        kit = [...kit, ...moves.filter(x => x.power && (!pivotMove || x.name !== pivotMove.name)).slice(0, 3)];
 
-            // PIVOT & LEVEL LOGIC
-            const founderData = await fetch(`https://pokeapi.co/api/v2/pokemon/${chain[0]}`).then(r => r.json());
-            const moveDetails = await Promise.all(p.moves.slice(0, 100).map(m => fetch(m.move.url).then(r => r.json())));
-            const inputSanitized = sanitize(input);
-            
-            let userMove = moveDetails.find(md => inputSanitized.includes(sanitize(md.name)));
-            let kit = [];
-            let warnings = [];
-
-            if (userMove) {
-                const moveInFounder = founderData.moves.find(m => m.move.name === userMove.name);
-                const levelLearned = moveInFounder?.version_group_details[0]?.level_learned_at;
-                kit.push({ ...userMove, isPinned: true, level: levelLearned });
-                
-                if (levelLearned > 1 && chain.length > 1) {
-                    warnings.push(`⚠️ EVOLUTION DELAY: ${format(chain[0])} learns ${format(userMove.name)} at Level ${levelLearned}. Hold evolution until learned.`);
-                }
+        // THE ROWAN SINGULARITY RAGE
+        let rage = "";
+        const nature = q.match(/(jolly|adamant|modest|timid|bold|calm|quiet|brave|sassy|relaxed)/);
+        if(nature && pivotMove) {
+            const isSpec = pivotMove.damage_class.name === 'special';
+            const bad = isSpec ? ['jolly', 'adamant', 'brave', 'relaxed'] : ['modest', 'timid', 'quiet'];
+            if(bad.includes(nature[0])) {
+                const lines = [
+                    `CRITICAL FAILURE! A ${nature[0].toUpperCase()} nature with ${pivotMove.name.toUpperCase()}? You're insulting the very concept of biology!`,
+                    `DESK SLAM! I didn't spend 50 years in the field for you to pair a ${nature[0].toUpperCase()} nature with a ${pivotMove.damage_class.name.toUpperCase()} move!`,
+                    `ABSOLUTE INCOMPETENCE! Look at ${fmt(tName)}'s stats! Your directive is a genetic disaster!`
+                ];
+                rage = lines[Math.floor(Math.random()*lines.length)];
             }
+        }
 
-            let scored = moveDetails.filter(m => m.power && m.name !== userMove?.name).map(m => {
-                let score = m.power;
-                if (p.types.map(t => t.type.name).includes(m.type.name)) score *= 1.5;
-                return { ...m, score };
-            }).sort((a,b) => b.score - a.score);
-            
-            kit = [...kit, ...scored.slice(0, 4 - kit.length)];
+        currentData = { name: fmt(tName), ch, stats: p.stats, kit, flavor, rage, q, nature: nature?nature[0]:'None' };
+        render(currentData);
+    }
 
-            document.getElementById('moveDisplay').innerHTML = kit.map(m => `
-                <div class="move-slot ${m.isPinned ? 'pinned' : ''}">
-                    <div>
-                        <span style="font-weight:800;">${format(m.name)}</span>
-                        <span class="move-source">${m.isPinned ? '[PIVOT TARGET]' : '[STAB OPTIMIZED]'}</span>
-                    </div>
-                    <span style="font-size:0.75rem; color:var(--sub-text); font-family:monospace;">${m.power} BP | ${m.damage_class.name.toUpperCase()}</span>
-                </div>
-            `).join('');
+    function render(d) {
+        const out = document.getElementById('output');
+        out.style.display = 'block';
+        if(d.rage) out.classList.add('rage-mode'); else out.classList.remove('rage-mode');
 
-            document.getElementById('evoWarnings').innerHTML = warnings.map(w => `<div class="warn-box">${w}</div>`).join('');
-            const loc = await fetch(`https://pokeapi.co/api/v2/pokemon/${chain[0]}/encounters`).then(r => r.json());
-            document.getElementById('locDisplay').innerText = `FOUNDER HABITAT: ${loc.length > 0 ? format(loc[0].location_area.name) : "BREEDING ONLY"}`;
+        document.getElementById('rageZone').innerHTML = d.rage ? `<div class="rage-banner">${d.rage}</div>` : "";
+        document.getElementById('pkName').innerText = d.name;
+        document.getElementById('bioNotes').innerText = `Rowan's Field Entry: "${d.flavor}"`;
+        document.getElementById('evoLine').innerText = d.ch.map(n => fmt(n)).join(' ⟫ ');
+        
+        document.getElementById('moveGrid').innerHTML = d.kit.map(m => `
+            <div class="pill ${m.isPivot?'pivot':''}">
+                <b>${fmt(m.name)}</b> <span>${m.power||'--'} BP | ${m.damage_class.name.toUpperCase()}</span>
+            </div>`).join('');
 
-            document.getElementById('roadDisplay').innerHTML = `
-                • <strong>Founder:</strong> ${format(chain[0])}<br>
-                • <strong>Sacrifice Stat:</strong> ${droppedStat ? format(droppedStat) : "None"}<br>
-                • <strong>Items:</strong> Everstone / Destiny Knot<br>
-                • <strong>Incubation:</strong> ~${s.hatch_counter * 255} Steps
-            `;
+        document.getElementById('statGrid').innerHTML = d.stats.map(st => `
+            <div class="stat-bar">
+                <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:800; opacity:0.8;"><span>${fmt(st.stat.name)}</span><span>${st.base_stat}</span></div>
+                <div class="bar-bg"><div class="bar-fill" style="width:${(st.base_stat/255)*100}%"></div></div>
+            </div>`).join('');
 
-        } catch (e) { console.error(e); }
+        document.getElementById('roadmap').innerHTML = `
+            • FOUNDER: ${fmt(d.ch[0])}<br>
+            • OPTIMIZATION: ${d.q.includes('0 speed') ? 'Min-Speed Trick Room' : 'Standard Speed'}<br>
+            • NATURE: ${fmt(d.nature)} (Everstone Required)<br>
+            • DNA INTEGRITY: ${d.rage ? 'COMPROMISED' : 'STABLE'}
+        `;
     }
 </script>
 </body>
