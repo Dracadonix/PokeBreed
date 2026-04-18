@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | v20.0B Apex</title>
+    <title>PokeBreed Pro | v50.0B Omega</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
@@ -13,74 +13,100 @@
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
         body { background: var(--void); color: #f1f5f9; margin: 0; padding: clamp(10px, 3vw, 30px); min-height: 100vh; overflow-x: hidden; }
 
-        /* --- OVERLAYS --- */
+        /* --- 1. BOOT SEQUENCE & CHAMPION GATE --- */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 100000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        .modal { background: #000; border: 1px solid var(--ring); padding: 40px; max-width: 550px; width: 90%; text-align: center; border-radius: 4px; }
-        .btn-boot { background: var(--ring); color: #000; border: none; padding: 15px 40px; font-weight: 900; cursor: pointer; letter-spacing: 2px; margin-top: 20px; }
+        .modal { background: #000; border: 1px solid var(--ring); padding: 40px; max-width: 550px; width: 90%; text-align: center; border-radius: 4px; box-shadow: 0 0 50px rgba(0, 242, 255, 0.2); }
+        .btn-boot { background: var(--ring); color: #000; border: none; padding: 15px 40px; font-weight: 900; cursor: pointer; letter-spacing: 2px; margin-top: 20px; text-transform: uppercase; }
 
-        /* --- THE BIG BOX --- */
+        /* --- 2. THE BIBLE DRAWER --- */
+        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 500px; height: 100%; background: var(--surface); border-left: 2px solid var(--ring); z-index: 90000; padding: 40px; overflow-y: auto; box-shadow: -20px 0 60px #000; }
+        #bible.open { right: 0; }
+
+        /* --- 3. THE BIG BOX (The Heart) --- */
         #target { 
             width: 100%; background: #0b111e; border: 3px solid var(--ring); 
             padding: clamp(25px, 6vw, 45px); color: var(--ring); text-align: center; 
             font-size: clamp(24px, 5vw, 40px); font-weight: 200; outline: none; 
-            margin-bottom: 20px; border-radius: 12px; box-shadow: 0 0 40px rgba(0, 242, 255, 0.1);
+            margin-bottom: 20px; border-radius: 12px; letter-spacing: 2px;
         }
 
-        /* --- PARTY & HEADER --- */
+        /* --- 4. NAVIGATION & PARTY --- */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 20px; background: var(--surface); border-left: 5px solid var(--ring); }
         .party-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
         @media (min-width: 768px) { .party-bar { grid-template-columns: repeat(6, 1fr); } }
-        .ball-slot { background: #0b111e; border: 1px solid #222; padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; }
-        .ball-slot.active { border-color: var(--ring); background: rgba(0, 242, 255, 0.05); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; position: relative; }
+        .ball-slot.active { border: 2px solid var(--ring); background: rgba(0, 242, 255, 0.05); }
 
-        /* --- STAT BARS --- */
-        .stat-row { margin-bottom: 12px; font-size: 11px; font-weight: 900; letter-spacing: 1px; }
-        .stat-bar-bg { background: #111; height: 8px; border-radius: 4px; margin-top: 4px; overflow: hidden; border: 1px solid #222; }
-        .stat-fill { height: 100%; width: 0%; transition: width 1s ease-out; }
+        /* --- 5. ACTION SYSTEM --- */
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .btn-main { padding: 20px; font-weight: 900; border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+        .btn-gold { background: linear-gradient(45deg, var(--gold), #b8860b); color: #000; grid-column: span 2; }
+        .btn-research { background: #111; border: 1px solid var(--research); color: var(--research); }
 
-        /* --- MOVEPOOL CARDS --- */
-        .move-card { background: #070a0f; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-        .move-cat { padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 900; text-transform: uppercase; }
-        .cat-physical { background: #f00; color: #fff; }
-        .cat-special { background: #00f; color: #fff; }
-        .cat-status { background: #888; color: #fff; }
-
-        /* --- LOGISTICS & ITEMS --- */
-        .item-explainer { font-size: 11px; line-height: 1.5; color: var(--sub); margin-top: 10px; }
-        .highlight-item { color: var(--ring); font-weight: 900; }
-
-        /* --- GRID --- */
+        /* --- 6. DATA PANELS & BARS --- */
         .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .main-grid { grid-template-columns: 1fr 0.8fr 1fr 1.2fr 1.2fr; } }
         .panel { background: var(--surface); padding: 25px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); }
-        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; display: block; }
+        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; display: block; border-bottom: 1px solid rgba(0, 242, 255, 0.1); }
+        
+        .stat-row { margin-bottom: 12px; font-size: 11px; font-weight: 900; }
+        .stat-bar-bg { background: #111; height: 8px; border-radius: 4px; margin-top: 4px; border: 1px solid #222; overflow: hidden; }
+        .stat-fill { height: 100%; width: 0%; transition: width 0.8s ease-in-out; }
+
+        .move-card { background: #070a0f; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 11px; }
+        .move-cat { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 900; }
+        .cat-physical { background: var(--hp); } .cat-special { background: var(--spa); } .cat-status { background: var(--sub); }
+
+        #matrixView { display: none; }
+        .matrix { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+        .type-n { padding: 15px 5px; background: #05080f; border: 1px solid #222; text-align: center; font-size: 10px; }
+        .danger { border-color: var(--warn); color: var(--warn); }
     </style>
 </head>
 <body onload="init()">
 
 <div id="boot1" class="overlay">
     <div class="modal">
-        <h2>ID: POKEBREED PRO</h2>
-        <p>Advanced Competitive Breeding Array. Systems initialized for high-fidelity biometrics.</p>
-        <p style="color:var(--sub)">Designer: <b>Lime</b></p>
-        <button class="btn-boot" onclick="nextBoot(1)">SYNC LAB</button>
+        <h2>ID: POKEBREED OMEGA</h2>
+        <p>Complete Genetic Ecosystem. Systems Synchronized.</p>
+        <p style="color:var(--sub)">Lead Architect: <b>Lime</b></p>
+        <button class="btn-boot" onclick="nextBoot(1)">PROCEED</button>
     </div>
 </div>
 
 <div id="boot2" class="overlay" style="display:none;">
     <div class="modal">
-        <h2>LEGAL & PURPOSE</h2>
-        <p>This fan-tool optimizes breeding paths. All rights belong to Nintendo/Game Freak. This is for simulation purposes only.</p>
-        <button class="btn-boot" onclick="nextBoot(2)">ENTER TERMINAL</button>
+        <h2>LEGAL & TERMINOLOGY</h2>
+        <p>This is a fan-tool. All rights belong to Nintendo/Game Freak. Designed for simulator optimization (IVs, Natures, Egg Groups).</p>
+        <button class="btn-boot" onclick="nextBoot(2)">INITIALIZE LAB</button>
+    </div>
+</div>
+
+<div id="champGate" class="overlay" style="display:none;" onclick="enterMatrix()">
+    <div class="modal" style="border-color:var(--gold);">
+        <h1 id="cName" style="color:var(--gold); letter-spacing:10px;">CHAMPION</h1>
+        <p id="cQuote" style="font-size:22px; color:#fff; font-style:italic; margin:30px 0;"></p>
+        <p style="font-size:11px; color:var(--sub);">[ TAP TO SYNC MATRIX ]</p>
+    </div>
+</div>
+
+<div id="bible">
+    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:15px; width:100%; cursor:pointer; font-weight:900;">CLOSE ENCYCLOPEDIA</button>
+    <h2 style="color:var(--ring); margin-top:30px;">THE BREEDING BIBLE</h2>
+    <div style="font-size:13px; line-height:1.7; color:var(--sub);">
+        <p><b style="color:var(--ring)">HA Inheritance:</b> 60% chance from Female. Males pass HA only with Ditto.</p>
+        <p><b style="color:var(--ring)">Items:</b> Everstone (Nature), Destiny Knot (5 IVs), Power Items (Specific IVs).</p>
+        <p><b style="color:var(--ring)">Genesis Law:</b> Eggs hatch to the lowest evolutionary stage.</p>
+        <p><b style="color:var(--warn)">0 Atk/Spe:</b> Planned to minimize confusion/foul play or maximize Trick Room.</p>
     </div>
 </div>
 
 <div class="header">
     <div>
-        <h3 style="margin:0; letter-spacing:3px;">APEX LAB <span style="color:var(--ring)">v20.0B</span></h3>
-        <small style="color:var(--sub)">GENETIC SYNERGY ACTIVE</small>
+        <h3 style="margin:0; letter-spacing:3px;">OMEGA LAB <span style="color:var(--ring)">v50.0B</span></h3>
+        <small style="color:var(--sub)">BY LIME | ALL SYSTEMS GO</small>
     </div>
-    <button onclick="location.reload()" style="background:none; border:1px solid var(--warn); color:var(--warn); padding:8px 15px; cursor:pointer; font-size:10px;">REBOOT</button>
+    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:10px 20px; cursor:pointer; font-weight:900; font-size:11px;">BIBLE</button>
 </div>
 
 <div class="party-bar">
@@ -92,54 +118,82 @@
     <div class="ball-slot" onclick="setSlot(5)" id="s5">⚪<b>SLOT 6</b></div>
 </div>
 
-<input type="text" id="target" placeholder="e.g. Adamant Garchomp" onkeypress="if(event.key==='Enter') scan()">
+<input type="text" id="target" placeholder="e.g. 0 Atk Timid Gengar" onkeypress="if(event.key==='Enter') scan()">
 
-<div class="main-grid">
+<div class="action-grid">
+    <button id="actionBtn" class="btn-main btn-gold" onclick="handleAction()">CHALLENGE THE LEAGUE</button>
+    <button class="btn-main btn-research" onclick="exportBio()">EXPORT SHOWDOWN</button>
+</div>
+
+<div id="researchView" class="main-grid">
     <div class="panel">
-        <span class="tag">Logistic Items</span>
+        <span class="tag">Logistics</span>
         <div id="gear"></div>
-        <div class="item-explainer">
-            <p><span class="highlight-item">Everstone:</span> Locks parent's Nature to 100% of eggs.</p>
-            <p><span class="highlight-item">Destiny Knot:</span> Pulls 5 IVs from parent's pool.</p>
-            <p><span class="highlight-item">Power Lens:</span> Forces Sp.Atk IV pass down.</p>
-        </div>
+        <p style="font-size:10px; color:var(--sub); margin-top:15px;">Plan: Use <b>Everstone</b> for Natures and <b>Destiny Knot</b> for IVs.</p>
     </div>
 
     <div class="panel">
-        <span class="tag">Genesis Law</span>
-        <div id="gen" style="text-align:center; font-size:24px; color:var(--ring); font-weight:900;">---</div>
-        <p style="font-size:10px; color:var(--sub); margin-top:15px; text-align:center;">The biological origin of this specimen.</p>
+        <span class="tag">Genesis Stage</span>
+        <div id="gen" style="text-align:center; font-size:24px; color:var(--ring); font-weight:900; padding:20px;">---</div>
     </div>
 
     <div class="panel">
-        <span class="tag">Nexus Compatibility</span>
+        <span class="tag">Nexus (Breedable)</span>
         <div id="nexus"></div>
     </div>
 
     <div class="panel">
-        <span class="tag">Visual Biometrics</span>
+        <span class="tag">Biometrics</span>
         <div id="stats">
-            <div class="stat-row">HP <span id="val-hp">--</span><div class="stat-bar-bg"><div id="bar-hp" class="stat-fill" style="background:var(--hp)"></div></div></div>
-            <div class="stat-row">ATK <span id="val-atk">--</span><div class="stat-bar-bg"><div id="bar-atk" class="stat-fill" style="background:var(--atk)"></div></div></div>
-            <div class="stat-row">DEF <span id="val-def">--</span><div class="stat-bar-bg"><div id="bar-def" class="stat-fill" style="background:var(--def)"></div></div></div>
-            <div class="stat-row">SPA <span id="val-spa">--</span><div class="stat-bar-bg"><div id="bar-spa" class="stat-fill" style="background:var(--spa)"></div></div></div>
-            <div class="stat-row">SPD <span id="val-spd">--</span><div class="stat-bar-bg"><div id="bar-spd" class="stat-fill" style="background:var(--spd)"></div></div></div>
-            <div class="stat-row">SPE <span id="val-spe">--</span><div class="stat-bar-bg"><div id="bar-spe" class="stat-fill" style="background:var(--spe)"></div></div></div>
+            <div class="stat-row">HP <span id="v-hp"></span><div class="stat-bar-bg"><div id="b-hp" class="stat-fill" style="background:var(--hp)"></div></div></div>
+            <div class="stat-row">ATK <span id="v-atk"></span><div class="stat-bar-bg"><div id="b-atk" class="stat-fill" style="background:var(--atk)"></div></div></div>
+            <div class="stat-row">DEF <span id="v-def"></span><div class="stat-bar-bg"><div id="b-def" class="stat-fill" style="background:var(--def)"></div></div></div>
+            <div class="stat-row">SPA <span id="v-spa"></span><div class="stat-bar-bg"><div id="b-spa" class="stat-fill" style="background:var(--spa)"></div></div></div>
+            <div class="stat-row">SPD <span id="v-spd"></span><div class="stat-bar-bg"><div id="b-spd" class="stat-fill" style="background:var(--spd)"></div></div></div>
+            <div class="stat-row">SPE <span id="v-spe"></span><div class="stat-bar-bg"><div id="b-spe" class="stat-fill" style="background:var(--spe)"></div></div></div>
         </div>
     </div>
 
     <div class="panel">
-        <span class="tag">Tactical Movepool</span>
-        <div id="moves" style="height:400px; overflow-y:auto; padding-right:10px;"></div>
+        <span class="tag">Movepool</span>
+        <div id="moves" style="height:350px; overflow-y:auto; padding-right:10px;"></div>
+    </div>
+</div>
+
+<div id="matrixView">
+    <div class="panel">
+        <span class="tag">Champion Synergy Matrix</span>
+        <div id="mGrid" class="matrix"></div>
     </div>
 </div>
 
 <script>
-    let activeSlot = 0;
-    let team = Array(6).fill(null).map(() => ({ name: '', groups: [] }));
+    let activeSlot = 0; let inChamp = false;
+    let team = Array(6).fill(null).map(() => ({ name: '', groups: [], types: [], nature: 'Serious', stats: {} }));
+    const typeList = ['nor','fir','wat','gra','ele','ice','fig','poi','gro','fly','psy','bug','roc','gho','dra','dar','ste','fai'];
 
     function nextBoot(n) { document.getElementById(`boot${n}`).style.display = 'none'; }
+    function toggleBible() { document.getElementById('bible').classList.toggle('open'); }
     function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
+
+    function handleAction() {
+        if(!inChamp) {
+            document.getElementById('cQuote').innerText = "\"Show me the strength of your bonds!\"";
+            document.getElementById('champGate').style.display = 'flex';
+        } else { toggleView(false); }
+    }
+
+    function enterMatrix() { document.getElementById('champGate').style.display = 'none'; toggleView(true); }
+
+    function toggleView(show) {
+        inChamp = show;
+        document.getElementById('researchView').style.display = show ? 'none' : 'grid';
+        document.getElementById('matrixView').style.display = show ? 'block' : 'none';
+        const btn = document.getElementById('actionBtn');
+        btn.innerText = show ? "BACK TO RESEARCH" : "CHALLENGE THE LEAGUE";
+        btn.className = show ? "btn-main btn-research" : "btn-main btn-gold";
+        if(show) updateMatrix();
+    }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
@@ -151,21 +205,33 @@
             fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
             fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
         ]);
-        
-        team[activeSlot] = { name: t, groups: sp.egg_groups.map(g => g.name) };
-        document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
-        document.getElementById('gen').innerText = t.toUpperCase();
+        const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
+        const nature = q.match(/(adamant|modest|timid|jolly|bold|calm)/i);
 
-        // Stats Logic
-        const statsMap = {0:'hp', 1:'atk', 2:'def', 3:'spa', 4:'spd', 5:'spe'};
+        team[activeSlot] = { 
+            name: t, 
+            groups: sp.egg_groups.map(g => g.name), 
+            types: p.types.map(y => y.type.name),
+            nature: nature ? nature[0] : 'Serious',
+            stats: p.stats
+        };
+
+        document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
+        
+        // Genesis stage
+        let curr = evo.chain;
+        document.getElementById('gen').innerText = curr.species.name.toUpperCase();
+
+        // Biometric Bars
+        const map = {0:'hp', 1:'atk', 2:'def', 3:'spa', 4:'spd', 5:'spe'};
         p.stats.forEach((s, i) => {
-            const key = statsMap[i];
-            document.getElementById(`val-${key}`).innerText = s.base_stat;
-            document.getElementById(`bar-${key}`).style.width = (s.base_stat / 2.5) + '%';
+            const key = map[i];
+            document.getElementById(`v-${key}`).innerText = s.base_stat;
+            document.getElementById(`b-${key}`).style.width = (s.base_stat / 2.5) + '%';
         });
 
-        // Moves Logic
-        const moveData = await Promise.all(p.moves.slice(0, 15).map(m => fetch(m.move.url).then(r=>r.json())));
+        // Moves
+        const moveData = await Promise.all(p.moves.slice(0, 20).map(m => fetch(m.move.url).then(r=>r.json())));
         document.getElementById('moves').innerHTML = moveData.map(m => `
             <div class="move-card">
                 <span>${m.name.toUpperCase()}</span>
@@ -173,17 +239,26 @@
             </div>
         `).join('');
 
-        // Item Logic
-        const nature = q.match(/(adamant|modest|timid|jolly|bold|calm)/i);
-        document.getElementById('gear').innerHTML = nature 
-            ? `<div style="background:rgba(255,215,0,0.1); padding:10px; border-radius:4px; border-left:4px solid var(--gold); color:var(--gold); font-size:12px;"><b>REQUIRED:</b> Everstone (${nature[0].toUpperCase()})</div>`
-            : `<div style="background:rgba(0,242,255,0.1); padding:10px; border-radius:4px; border-left:4px solid var(--ring); font-size:12px;"><b>REQUIRED:</b> Destiny Knot</div>`;
-            
-        // Nexus logic
+        // Nexus
         document.getElementById('nexus').innerHTML = sp.egg_groups.map(g => {
             const match = team.some((m, idx) => idx !== activeSlot && m && m.groups.includes(g.name));
             return `<div style="padding:10px; background:#111; margin-bottom:5px; border-left:3px solid ${match?'var(--gold)':'#333'}; font-size:11px;">${g.name.toUpperCase()} ${match?'★':''}</div>`;
         }).join('');
+
+        // Logistics
+        document.getElementById('gear').innerHTML = nature 
+            ? `<div style="color:var(--gold); font-size:12px; font-weight:900;">💎 EVERSTONE: ${nature[0].toUpperCase()}</div>`
+            : `<div style="color:var(--ring); font-size:12px; font-weight:900;">⛓️ DESTINY KNOT</div>`;
+    }
+
+    function updateMatrix() {
+        document.getElementById('mGrid').innerHTML = typeList.map(ty => `<div class="type-n">${ty.toUpperCase()}<br>0</div>`).join('');
+    }
+
+    function exportBio() {
+        const text = team.filter(p => p.name).map(p => `${p.name.toUpperCase()}\nNature: ${p.nature}\nAbility: Hidden Ability\nIVs: 31/31/31/31/31/31`).join('\n\n');
+        const blob = new Blob([text], {type: 'text/plain'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "omega-team.txt"; a.click();
     }
 
     function init() { setSlot(0); }
