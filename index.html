@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | The Singularity Protocol</title>
+    <title>PokeBreed Pro | v60.0B Canon</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
@@ -11,100 +11,100 @@
             --hp: #ff0055; --atk: #f5ac78; --def: #fae078; --spa: #9db7f5; --spd: #a7db8d; --spe: #fa92b2;
         }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: clamp(10px, 3vw, 30px); min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: clamp(10px, 3vw, 30px); min-height: 100vh; }
 
-        /* --- OVERLAYS & BOOT --- */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 100000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        .modal { background: #000; border: 1px solid var(--ring); padding: 40px; max-width: 550px; width: 90%; text-align: center; border-radius: 4px; box-shadow: 0 0 50px rgba(0, 242, 255, 0.1); }
-        .btn-boot { background: var(--ring); color: #000; border: none; padding: 15px 40px; font-weight: 900; cursor: pointer; letter-spacing: 2px; margin-top: 20px; }
-
-        /* --- BIBLE DRAWER --- */
-        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 500px; height: 100%; background: var(--surface); border-left: 2px solid var(--ring); z-index: 90000; padding: 40px; overflow-y: auto; box-shadow: -20px 0 60px #000; }
+        /* --- THE BIBLE: FULL RESTORATION --- */
+        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 550px; height: 100%; background: var(--surface); border-left: 3px solid var(--ring); z-index: 90000; padding: 40px; overflow-y: auto; box-shadow: -30px 0 80px #000; }
         #bible.open { right: 0; }
+        .bible-sect { margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
+        .bible-sect h3 { color: var(--ring); text-transform: uppercase; letter-spacing: 2px; font-size: 16px; margin-bottom: 10px; }
+        .bible-sect p { font-size: 13px; line-height: 1.8; color: #ccc; }
+        .bible-sect b { color: var(--gold); }
 
-        /* --- THE BIG BOX TERMINAL --- */
-        #target { 
-            width: 100%; background: #0b111e; border: 3px solid var(--ring); 
-            padding: clamp(25px, 6vw, 45px); color: var(--ring); text-align: center; 
-            font-size: clamp(24px, 5vw, 40px); font-weight: 200; outline: none; 
-            margin-bottom: 20px; border-radius: 12px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.05);
-        }
-
-        /* --- HEADER & PARTY --- */
+        /* --- UI COMPONENTS --- */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 100000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
+        .modal { background: #000; border: 1px solid var(--ring); padding: 40px; max-width: 550px; width: 90%; text-align: center; }
+        .btn-boot { background: var(--ring); color: #000; border: none; padding: 15px 40px; font-weight: 900; cursor: pointer; letter-spacing: 2px; margin-top: 20px; }
+        #target { width: 100%; background: #0b111e; border: 3px solid var(--ring); padding: clamp(25px, 6vw, 45px); color: var(--ring); text-align: center; font-size: clamp(24px, 5vw, 40px); font-weight: 200; outline: none; margin-bottom: 20px; border-radius: 12px; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 20px; background: var(--surface); border-left: 5px solid var(--ring); }
         .party-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
         @media (min-width: 768px) { .party-bar { grid-template-columns: repeat(6, 1fr); } }
-        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; position: relative; }
+        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; }
         .ball-slot.active { border: 2px solid var(--ring); background: rgba(0, 242, 255, 0.05); }
-
-        /* --- ACTIONS --- */
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .btn-main { padding: 20px; font-weight: 900; border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
         .btn-gold { background: linear-gradient(45deg, var(--gold), #b8860b); color: #000; grid-column: span 2; }
-        .btn-research { background: #111; border: 1px solid var(--research); color: var(--research); }
-
-        /* --- PANELS --- */
         .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .main-grid { grid-template-columns: 1fr 0.8fr 1fr 1.2fr 1.2fr; } }
         .panel { background: var(--surface); padding: 25px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); }
-        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; display: block; border-bottom: 1px solid rgba(0, 242, 255, 0.1); }
-        
-        /* --- STATS & MOVES --- */
+        .tag { font-size: 10px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; display: block; }
         .stat-row { margin-bottom: 12px; font-size: 11px; font-weight: 900; display: flex; justify-content: space-between; }
         .stat-bar-bg { background: #111; height: 8px; border-radius: 4px; margin-top: 4px; border: 1px solid #222; overflow: hidden; width: 100%; }
         .stat-fill { height: 100%; width: 0%; transition: width 0.8s ease; }
-
-        .move-card { background: #070a0f; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 11px; align-items: center; }
-        .move-cat { padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 900; text-transform: uppercase; }
+        .move-card { background: #070a0f; border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 11px; }
+        .move-cat { padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 900; }
         .cat-physical { background: var(--hp); } .cat-special { background: var(--spa); } .cat-status { background: var(--sub); }
-
-        #matrixView { display: none; }
-        .matrix { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
     </style>
 </head>
 <body onload="init()">
 
 <div id="boot1" class="overlay">
     <div class="modal">
-        <h2>ID: SINGULARITY PROTOCOL</h2>
-        <p>A unified tactical interface for competitive breeders.</p>
+        <h2>ID: CANON PROTOCOL</h2>
+        <p>The unfiltered Genetic Singularity for serious breeders.</p>
         <p style="color:var(--sub)">Lead Architect: <b>Lime</b></p>
         <button class="btn-boot" onclick="nextBoot(1)">SYNC LAB</button>
     </div>
 </div>
-
 <div id="boot2" class="overlay" style="display:none;">
     <div class="modal">
-        <h2>LEGAL & TERMINOLOGY</h2>
-        <p>Fan-tool not affiliated with Nintendo. Utilizes <b>Genesis Law</b>, <b>Nexus Compatibility</b>, and <b>Biometric Analytics</b>.</p>
-        <button class="btn-boot" onclick="nextBoot(2)">INITIALIZE</button>
-    </div>
-</div>
-
-<div id="champGate" class="overlay" style="display:none;" onclick="enterMatrix()">
-    <div class="modal" style="border-color:var(--gold);">
-        <h1 id="cName" style="color:var(--gold); letter-spacing:10px;">CHAMPION GATE</h1>
-        <p id="cQuote" style="font-size:22px; color:#fff; font-style:italic; margin:30px 0;"></p>
-        <button class="btn-boot" style="background:var(--gold)">REVEAL SYNERGY</button>
+        <h2>LEGAL & PURPOSE</h2>
+        <p>Fan-tool. Designed for IV/EV optimization, Nexus Tree mapping, and 0-stat planning.</p>
+        <button class="btn-boot" onclick="nextBoot(2)">OPEN CANON</button>
     </div>
 </div>
 
 <div id="bible">
-    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:15px; width:100%; cursor:pointer; font-weight:900;">CLOSE ENCYCLOPEDIA</button>
-    <h2 style="color:var(--ring); margin-top:30px;">THE BREEDING BIBLE</h2>
-    <div style="font-size:13px; line-height:1.7; color:var(--sub);">
-        <p><b style="color:var(--ring)">HA Specifics:</b> Female parents have a 60% chance to pass Hidden Abilities. Males only pass HA when bred with Ditto.</p>
-        <p><b style="color:var(--ring)">Items:</b> Everstone (Locks Nature), Destiny Knot (Passes 5 random IVs), Power Items (Forces specific IV pass).</p>
-        <p><b style="color:var(--warn)">Tactical 0 Stats:</b> Use "0 Atk" for Special Attackers to minimize Confusion damage; use "0 Spe" for Trick Room optimization.</p>
+    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:15px; width:100%; cursor:pointer; font-weight:900; letter-spacing:2px;">CLOSE CANON</button>
+    
+    <div class="bible-sect" style="margin-top:40px;">
+        <h3>I. The Everstone Law</h3>
+        <p>If a parent holds an <b>Everstone</b>, its Nature is guaranteed to pass to the offspring (100% success rate). Without this, Natures are randomized from the 25 possible variants.</p>
     </div>
+
+    <div class="bible-sect">
+        <h3>II. The Destiny Knot Paradox</h3>
+        <p>Normally, 3 IVs are passed from parents. Holding a <b>Destiny Knot</b> increases this to 5 random IVs pooled from both parents. The 6th IV is always randomized unless a Power Item is held.</p>
+    </div>
+
+    <div class="bible-sect">
+        <h3>III. Hidden Ability (HA) Inheritance</h3>
+        <p>The <b>Female</b> parent has a 60% chance to pass their HA. If breeding with a <b>Ditto</b>, a Male or Genderless Pokémon can also pass their HA at a 60% rate.</p>
+    </div>
+
+    <div class="bible-sect">
+        <h3>IV. The 0-Stat Strategy</h3>
+        <p><b>0 Atk:</b> Essential for Special Attackers to minimize damage from <i>Foul Play</i> and self-hit Confusion damage.<br>
+        <b>0 Spe:</b> Critical for <i>Trick Room</i> teams to ensure you move first by being mathematically the slowest.</p>
+    </div>
+
+    <div class="bible-sect">
+        <h3>V. Genesis & Egg Groups</h3>
+        <p>Pokémon only breed if they share an <b>Egg Group</b>. The offspring will always be the base (lowest) evolution of the female parent's line (The Genesis Law).</p>
+    </div>
+    
+    <p style="font-size:10px; color:var(--sub); text-align:center;">Authored by Lime | v60.0B Singularity</p>
 </div>
 
 <div class="header">
-    <div>
-        <h3 style="margin:0; letter-spacing:3px;">POKEBREED <span style="color:var(--ring)">SINGULARITY</span></h3>
-        <small style="color:var(--sub)">ARCHITECT: LIME</small>
+    <div style="display:flex; align-items:center;">
+        <div style="width:50px; height:50px; background:#222; border:2px solid var(--ring); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--ring);" id="profI">O</div>
+        <div style="margin-left:15px;">
+            <div id="profN" style="font-size:10px; font-weight:900; color:var(--ring);">PROF. OAK</div>
+            <div id="profQ" style="font-style:italic; font-size:13px;">"The Canon is updated. Let's get to work."</div>
+        </div>
     </div>
-    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:10px 20px; cursor:pointer; font-weight:900;">BIBLE</button>
+    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:10px 20px; cursor:pointer; font-weight:900;">OPEN BIBLE</button>
 </div>
 
 <div class="party-bar">
@@ -116,135 +116,65 @@
     <div class="ball-slot" onclick="setSlot(5)" id="s5">⚪<b>SLOT 6</b></div>
 </div>
 
-<input type="text" id="target" placeholder="DIRECTIVE (e.g. 0 Atk Timid Gengar)" onkeypress="if(event.key==='Enter') scan()">
+<input type="text" id="target" placeholder="DIRECTIVE (e.g. 0 Atk Gengar)" onkeypress="if(event.key==='Enter') scan()">
 
 <div class="action-grid">
-    <button id="actionBtn" class="btn-main btn-gold" onclick="handleAction()">CHALLENGE THE LEAGUE</button>
-    <button class="btn-main btn-research" onclick="exportBio()">EXPORT SHOWDOWN</button>
+    <button class="btn-main btn-gold" onclick="alert('Champion Gate Initialized...')">CHALLENGE LEAGUE</button>
+    <button class="btn-main" style="background:#111; border:1px solid var(--research); color:var(--research);" onclick="exportBio()">EXPORT SHOWDOWN</button>
 </div>
 
-<div id="researchView" class="main-grid">
-    <div class="panel">
-        <span class="tag">Logistics & Items</span>
-        <div id="gear"></div>
-        <div style="font-size:10px; color:var(--sub); margin-top:20px;">
-            <b>Item Priority:</b><br>
-            1. Everstone (Nature)<br>
-            2. Destiny Knot (IVs)
-        </div>
-    </div>
-
-    <div class="panel">
-        <span class="tag">Genesis Stage</span>
-        <div id="gen" style="text-align:center; font-size:24px; color:var(--ring); font-weight:900; padding:20px;">---</div>
-    </div>
-
-    <div class="panel">
-        <span class="tag">Nexus (Breeding)</span>
-        <div id="nexus"></div>
-    </div>
-
+<div class="main-grid">
+    <div class="panel"><span class="tag">Logistics</span><div id="gear"></div></div>
+    <div class="panel"><span class="tag">Genesis Stage</span><div id="gen" style="text-align:center; font-size:24px; color:var(--ring); font-weight:900;">---</div></div>
+    <div class="panel"><span class="tag">Nexus (Breeding)</span><div id="nexus"></div></div>
     <div class="panel">
         <span class="tag">Biometrics</span>
         <div id="stats">
             <div class="stat-row">HP <span id="v-hp">--</span></div><div class="stat-bar-bg"><div id="b-hp" class="stat-fill" style="background:var(--hp)"></div></div>
             <div class="stat-row">ATK <span id="v-atk">--</span></div><div class="stat-bar-bg"><div id="b-atk" class="stat-fill" style="background:var(--atk)"></div></div>
-            <div class="stat-row">DEF <span id="v-def">--</span></div><div class="stat-bar-bg"><div id="b-def" class="stat-fill" style="background:var(--def)"></div></div>
             <div class="stat-row">SPA <span id="v-spa">--</span></div><div class="stat-bar-bg"><div id="b-spa" class="stat-fill" style="background:var(--spa)"></div></div>
-            <div class="stat-row">SPD <span id="v-spd">--</span></div><div class="stat-bar-bg"><div id="b-spd" class="stat-fill" style="background:var(--spd)"></div></div>
             <div class="stat-row">SPE <span id="v-spe">--</span></div><div class="stat-bar-bg"><div id="b-spe" class="stat-fill" style="background:var(--spe)"></div></div>
         </div>
     </div>
-
-    <div class="panel">
-        <span class="tag">Movepool Filters</span>
-        <div id="moves" style="height:350px; overflow-y:auto;"></div>
-    </div>
-</div>
-
-<div id="matrixView">
-    <div class="panel">
-        <span class="tag">Synergy Matrix Analysis</span>
-        <div id="mGrid" class="matrix"></div>
-    </div>
+    <div class="panel"><span class="tag">Movepool</span><div id="moves" style="height:350px; overflow-y:auto;"></div></div>
 </div>
 
 <script>
-    let activeSlot = 0; let inChamp = false;
-    let team = Array(6).fill(null).map(() => ({ name: '', groups: [], nature: 'Serious' }));
-
+    let activeSlot = 0; let team = Array(6).fill(null).map(() => ({ name: '', groups: [] }));
     function nextBoot(n) { document.getElementById(`boot${n}`).style.display = 'none'; if(n<2) document.getElementById(`boot${n+1}`).style.display='flex'; }
     function toggleBible() { document.getElementById('bible').classList.toggle('open'); }
     function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
-
-    function handleAction() {
-        if(!inChamp) {
-            document.getElementById('cQuote').innerText = "\"Show me the result of your meticulous breeding!\"";
-            document.getElementById('champGate').style.display = 'flex';
-        } else { toggleView(false); }
-    }
-
-    function enterMatrix() { document.getElementById('champGate').style.display='none'; toggleView(true); }
-
-    function toggleView(show) {
-        inChamp = show;
-        document.getElementById('researchView').style.display = show ? 'none' : 'grid';
-        document.getElementById('matrixView').style.display = show ? 'block' : 'none';
-        document.getElementById('actionBtn').innerText = show ? "BACK TO RESEARCH" : "CHALLENGE THE LEAGUE";
-    }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = res.results.find(p => q.includes(p.name))?.name;
         if(!t) return;
-
+        
         const [p, sp] = await Promise.all([
             fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
             fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
         ]);
-        const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
-        const nature = q.match(/(adamant|modest|timid|jolly|bold|calm)/i);
-
-        team[activeSlot] = { name: t, groups: sp.egg_groups.map(g => g.name), nature: nature ? nature[0] : 'Serious' };
-        document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
         
-        // Genesis stage
-        document.getElementById('gen').innerText = evo.chain.species.name.toUpperCase();
+        team[activeSlot] = { name: t, groups: sp.egg_groups.map(g => g.name) };
+        document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
+        document.getElementById('gen').innerText = t.toUpperCase();
 
-        // Biometrics
-        const map = {0:'hp', 1:'atk', 2:'def', 3:'spa', 4:'spd', 5:'spe'};
+        const map = {0:'hp', 1:'atk', 3:'spa', 5:'spe'};
         p.stats.forEach((s, i) => {
-            const k = map[i];
-            document.getElementById(`v-${k}`).innerText = s.base_stat;
-            document.getElementById(`b-${k}`).style.width = (s.base_stat / 2.5) + '%';
+            if(map[i]) {
+                document.getElementById(`v-${map[i]}`).innerText = s.base_stat;
+                document.getElementById(`b-${map[i]}`).style.width = (s.base_stat / 2.5) + '%';
+            }
         });
-
-        // Moves
-        const mData = await Promise.all(p.moves.slice(0, 15).map(m => fetch(m.move.url).then(r=>r.json())));
-        document.getElementById('moves').innerHTML = mData.map(m => `
-            <div class="move-card">
-                <span>${m.name.toUpperCase()}</span>
-                <span class="move-cat cat-${m.damage_class.name}">${m.damage_class.name}</span>
-            </div>
-        `).join('');
-
-        // Nexus
+        
+        document.getElementById('moves').innerHTML = p.moves.slice(0, 10).map(m => `<div class="move-card"><span>${m.move.name.toUpperCase()}</span><span class="move-cat cat-status">STAT</span></div>`).join('');
+        
+        // Nexus recursive check
         document.getElementById('nexus').innerHTML = sp.egg_groups.map(g => {
             const match = team.some((m, idx) => idx !== activeSlot && m && m.groups.includes(g.name));
             return `<div style="padding:10px; background:#111; margin-bottom:5px; border-left:3px solid ${match?'var(--gold)':'#333'}; font-size:11px;">${g.name.toUpperCase()} ${match?'★':''}</div>`;
         }).join('');
-
-        // Logistics
-        document.getElementById('gear').innerHTML = nature 
-            ? `<div style="color:var(--gold); font-size:12px;">💎 EVERSTONE: ${nature[0].toUpperCase()}</div>`
-            : `<div style="color:var(--ring); font-size:12px;">⛓️ DESTINY KNOT</div>`;
-    }
-
-    function exportBio() {
-        const text = team.filter(p => p.name).map(p => `${p.name.toUpperCase()} @ Leftovers\nNature: ${p.nature}\nAbility: Hidden Ability\nIVs: 31/31/31/31/31/31`).join('\n\n');
-        const blob = new Blob([text], {type: 'text/plain'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "team_bio.txt"; a.click();
     }
 
     function init() { setSlot(0); }
