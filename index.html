@@ -3,188 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | ARCHITECT: LIME | VGC CORE</title>
+    <title>POKEBREED PRO | ARCHITECT: LIME | THE FINAL MONOLITH</title>
     <style>
-        :root { --void: #010204; --ring: #00f2ff; --warn: #ff0055; --gold: #ffd700; --surface: #0a0f19; --sub: #64748b; --glass: rgba(10, 15, 25, 0.8); }
-        * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: var(--ring); border-radius: 10px; }
-        body { background: var(--void); color: #f1f5f9; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        :root { --void: #010204; --ring: #00f2ff; --warn: #ff0055; --gold: #ffd700; --surface: #0a0f19; --sub: #64748b; --panel-bg: #0d1421; --type-fire: #ff4422; --type-water: #3399ff; --type-grass: #77cc55; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.25s ease; }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; display: flex; height: 100vh; overflow: hidden; font-size: 14px; }
 
-        /* --- THE BIBLE OVERLAY (FULL SCREEN DENSITY) --- */
-        #bibleOverlay { display: none; position: fixed; inset: 0; background: var(--void); z-index: 50000; grid-template-columns: 320px 1fr; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .bible-nav { background: #05080f; border-right: 1px solid #1a2333; padding: 40px 25px; overflow-y: auto; display: flex; flex-direction: column; }
-        .bible-nav h2 { color: var(--gold); font-size: 14px; letter-spacing: 2px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-        .nav-link { display: block; color: var(--sub); text-decoration: none; font-size: 11px; margin-bottom: 18px; cursor: pointer; text-transform: uppercase; font-weight: 800; transition: 0.2s; border-left: 2px solid transparent; padding-left: 0; }
-        .nav-link:hover { color: var(--ring); border-left: 2px solid var(--ring); padding-left: 10px; }
-        .bible-body { padding: 80px 40px; overflow-y: auto; background: radial-gradient(circle at top, #0d1421 0%, #010204 100%); }
-        .bible-text-wrap { max-width: 900px; margin: 0 auto; line-height: 1.9; color: #cbd5e1; font-size: 16px; font-family: 'Georgia', serif; }
-        .bible-text-wrap h1 { color: var(--gold); font-size: 38px; border-bottom: 5px double #333; padding-bottom: 20px; text-align: center; font-family: 'Inter'; }
-        .bible-text-wrap h2 { color: var(--ring); margin-top: 60px; font-size: 26px; border-left: 5px solid var(--ring); padding-left: 20px; font-family: 'Inter'; }
-        .bible-text-wrap h3 { color: var(--gold); font-size: 18px; margin-top: 30px; }
-        .bible-text-wrap b { color: var(--gold); font-weight: 900; }
-        .bible-text-wrap p { margin-bottom: 25px; }
-        table { width: 100%; border-collapse: collapse; margin: 30px 0; background: rgba(0,0,0,0.5); font-family: 'Inter'; font-size: 13px; border: 1px solid #333; }
-        th, td { border: 1px solid #222; padding: 15px; text-align: left; }
-        th { background: #1a2333; color: var(--ring); text-transform: uppercase; letter-spacing: 1px; }
-        .close-bible { position: fixed; top: 25px; right: 45px; background: var(--warn); color: white; border: none; padding: 12px 30px; font-weight: 900; cursor: pointer; border-radius: 4px; box-shadow: 0 5px 15px rgba(255,0,85,0.3); }
+        /* --- THE GREAT BIBLE OVERLAY --- */
+        #bibleOverlay { display: none; position: fixed; inset: 0; background: var(--void); z-index: 99999; grid-template-columns: 350px 1fr; border-top: 4px solid var(--gold); }
+        .bible-nav { background: #05080f; border-right: 1px solid #222; padding: 40px; overflow-y: auto; }
+        .nav-link { display: block; color: var(--sub); text-decoration: none; font-size: 10px; margin-bottom: 20px; cursor: pointer; text-transform: uppercase; font-weight: 900; letter-spacing: 2px; border-left: 2px solid transparent; padding-left: 10px; }
+        .nav-link:hover { color: var(--gold); border-left-color: var(--gold); }
+        .bible-body { padding: 80px; overflow-y: auto; background: linear-gradient(135deg, #0a0f19 0%, #010204 100%); }
+        .bible-text { max-width: 850px; margin: 0 auto; line-height: 2; color: #cbd5e1; font-family: 'Georgia', serif; }
+        .bible-text h1 { color: var(--gold); font-size: 42px; text-align: center; font-family: 'Inter'; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        .bible-text h2 { color: var(--ring); margin-top: 60px; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Inter'; border-left: 4px solid var(--ring); padding-left: 15px; }
+        .bible-text p { margin-bottom: 25px; text-indent: 20px; }
+        .bible-text table { width: 100%; border-collapse: collapse; margin: 30px 0; background: rgba(0,0,0,0.4); font-family: 'Inter'; font-size: 12px; }
+        .bible-text th { background: #1a2333; color: var(--gold); padding: 12px; border: 1px solid #333; }
+        .bible-text td { padding: 12px; border: 1px solid #222; }
 
-        /* --- DASHBOARD UI --- */
-        .sidebar { width: 380px; background: #05080f; border-right: 1px solid #1a2333; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; }
-        .prof-card { background: var(--surface); padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--ring); border-bottom: 2px solid #1a2333; position: relative; }
-        .prof-card b { color: var(--ring); font-size: 12px; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .prof-card p { font-size: 13px; margin: 0; line-height: 1.5; color: #e2e8f0; }
-        .grumble { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #333; color: var(--gold); font-size: 10px; font-weight: 800; font-style: italic; opacity: 0.8; }
-        
-        .main { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; }
-        .header-ui { display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-bottom: 35px; }
-        input, .bible-btn { background: #000; border: 2px solid var(--ring); padding: 22px; color: var(--ring); font-size: 18px; border-radius: 10px; outline: none; transition: 0.3s; }
-        input:focus { box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
-        .bible-btn { background: var(--gold); color: #000; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2); }
-        .bible-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        /* --- SIDEBAR: THE ELDER COUNCIL --- */
+        .sidebar { width: 450px; background: #05080f; border-right: 1px solid #1a2333; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .prof-card { background: var(--panel-bg); padding: 25px; border-radius: 12px; border-left: 5px solid var(--ring); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.4); min-height: 160px; }
+        .prof-card b { color: var(--ring); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 10px; }
+        .speech-bubble { font-style: italic; color: #f1f5f9; line-height: 1.5; font-size: 13px; }
+        .grumble-line { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #333; color: var(--gold); font-size: 10px; font-weight: 900; opacity: 0.7; }
 
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
-        .panel { background: #0d1421; padding: 30px; border-radius: 16px; border: 1px solid #1a2333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .tag { font-size: 11px; color: var(--ring); font-weight: 900; border-bottom: 1px solid #222; display: block; margin-bottom: 20px; letter-spacing: 2px; text-transform: uppercase; }
-        
-        .stat-row { margin-bottom: 15px; }
-        .stat-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; font-weight: 700; color: var(--sub); }
-        .stat-bar { height: 10px; background: #05080f; border-radius: 5px; overflow: hidden; border: 1px solid #111; }
-        .bar-fill { height: 100%; width: 0%; transition: 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        /* --- MAIN CORE --- */
+        .main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        .ctrl-group { display: grid; grid-template-columns: 1fr 280px; gap: 20px; margin-bottom: 40px; }
+        input, .action-btn { background: #000; border: 2px solid var(--ring); padding: 25px; color: var(--ring); font-size: 18px; border-radius: 8px; outline: none; }
+        .action-btn { background: var(--gold); color: #000; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .action-btn:hover { background: #fff; transform: translateY(-2px); }
 
-        .move-scroll { overflow-y: auto; max-height: 500px; padding-right: 10px; }
-        .move-row { display: flex; justify-content: space-between; align-items: center; background: #05080f; padding: 12px 15px; margin-bottom: 6px; border: 1px solid #1a2333; border-radius: 6px; font-size: 11px; font-weight: 700; }
-        .m-tag { padding: 4px 8px; border-radius: 4px; font-size: 9px; border: 1px solid currentColor; }
+        .dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .panel { background: var(--panel-bg); padding: 30px; border-radius: 15px; border: 1px solid #1a2333; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        .panel-tag { color: var(--ring); font-size: 10px; font-weight: 900; letter-spacing: 3px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; display: block; }
 
-        .warn-alert { background: rgba(255, 0, 85, 0.1); border: 1px solid var(--warn); color: var(--warn); padding: 15px; border-radius: 8px; font-size: 12px; font-weight: 900; margin-bottom: 20px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-        .evo-pill { background: #000; border: 1px solid var(--gold); padding: 10px; margin: 8px 0; text-align: center; color: var(--gold); font-size: 12px; font-weight: 900; border-radius: 4px; letter-spacing: 1px; }
+        .stat-bar-container { margin-bottom: 15px; }
+        .stat-meta { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; font-weight: 800; }
+        .bar-outer { height: 8px; background: #05080f; border-radius: 4px; overflow: hidden; border: 1px solid #111; }
+        .bar-inner { height: 100%; width: 0%; transition: 1.5s ease-out; }
+
+        .move-list { height: 450px; overflow-y: auto; padding-right: 10px; }
+        .move-card { background: #010204; padding: 12px; border-radius: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 11px; border: 1px solid #1a2333; font-weight: 700; }
+        .type-pill { padding: 2px 8px; border-radius: 3px; font-size: 9px; text-transform: uppercase; border: 1px solid currentColor; }
+
+        .alert-box { background: rgba(255,0,85,0.1); border: 1px solid var(--warn); color: var(--warn); padding: 15px; border-radius: 6px; font-size: 11px; font-weight: 900; margin-bottom: 20px; }
+        .evo-block { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
+        .evo-item { background: #000; border: 1px solid var(--gold); padding: 10px; font-size: 10px; color: var(--gold); border-radius: 4px; font-weight: 900; }
+
+        .close-btn { position: fixed; top: 30px; right: 40px; background: var(--warn); color: #fff; border: none; padding: 12px 25px; font-weight: 900; cursor: pointer; border-radius: 4px; }
     </style>
 </head>
-<body>
+<body onload="initProfs()">
 
 <div id="bibleOverlay">
-    <button class="close-bible" onclick="toggleBible()">TERMINATE ARCHIVE SESSION</button>
+    <button class="close-btn" onclick="toggleBible()">CLOSE ARCHIVE</button>
     <div class="bible-nav">
-        <h2>COMPENDIUM ARCHIVE</h2>
-        <a class="nav-link" onclick="sc('intro')">I. Abstract & Thesis</a>
-        <a class="nav-link" onclick="sc('bio')">II. Biological Compatibility</a>
-        <a class="nav-link" onclick="sc('stats')">III. Statistical Inheritance</a>
-        <a class="nav-link" onclick="sc('mirror')">IV. Mirror Herb Protocols</a>
-        <a class="nav-link" onclick="sc('speed')">V. Logistical Optimization</a>
-        <a class="nav-link" onclick="sc('shiny')">VI. Shiny Mathematics</a>
-        <a class="nav-link" onclick="sc('history')">VII. Generational History</a>
-        <a class="nav-link" onclick="sc('psych')">VIII. Practitioner Psychology</a>
+        <h2>COMPENDIUM INDEX</h2>
+        <a class="nav-link" onclick="sc('sec1')">I. Biological Framework</a>
+        <a class="nav-link" onclick="sc('sec2')">II. Statistical Inheritance</a>
+        <a class="nav-link" onclick="sc('sec3')">III. Tactical Minimalism (0-IV)</a>
+        <a class="nav-link" onclick="sc('sec4')">IV. Nature & Everstone Sync</a>
+        <a class="nav-link" onclick="sc('sec5')">V. Mirror Herb Revolution</a>
+        <a class="nav-link" onclick="sc('sec6')">VI. The Masuda Mathematics</a>
+        <a class="nav-link" onclick="sc('sec7')">VII. Paldean Culinary Logistics</a>
+        <a class="nav-link" onclick="sc('sec8')">VIII. Practitioner Psychology</a>
     </div>
     <div class="bible-body">
-        <div class="bible-text-wrap">
-            <h1 id="intro">The Biological and Statistical Foundations of Pokémon Breeding</h1>
-            <p><i>A Comprehensive Professional Compendium | Research Lead: Lime | 2024-2026 Archive</i></p>
-            <p>The pursuit of excellence within the Pokémon ecosystem has centered upon the rigorous discipline of breeding. While the casual observer may perceive breeding as a simple mechanic, the professional understands it as a <b>complex synthesis of genetic manipulation</b> and statistical probability.</p>
-
-            <h2 id="bio">The Biological Framework: Egg Groups</h2>
-            <p>Compatibility remains governed by the rigid biological classification of Egg Groups. For an egg to be produced, the two parents must share at least one Egg Group and be of opposite genders, or one parent must be a <b>Ditto</b>.</p>
+        <div class="bible-text">
+            <h1 id="sec1">The Breeding Bible: OMNI-REDOX</h1>
+            <p>The pursuit of excellence within the Pokémon ecosystem has centered upon the rigorous discipline of breeding. While the casual observer perceives breeding as a simple mechanic, the professional understands it as a synthesis of genetic manipulation and logistical optimization.</p>
+            
+            <h2>I. Biological Framework</h2>
+            <p>Pokémon are classified into fifteen distinct Egg Groups. For an egg to be produced, the two parents must share an Egg Group. The offspring manifestations are dictated by the maternal lineage.</p>
             <table>
-                <tr><th>Egg Group</th><th>Taxonomy Characteristics</th><th>Sample Species</th></tr>
-                <tr><td>Dragon</td><td>Draconic/Mythical reptilian physiology.</td><td>Dratini, Gible, Bagon</td></tr>
-                <tr><td>Amorphous</td><td>Ethereal or fluid-based compositions.</td><td>Gastly, Muk, Ralts</td></tr>
-                <tr><td>Field</td><td>Terrestrial mammals; largest diversity group.</td><td>Eevee, Lucario, Pikachu</td></tr>
-                <tr><td>No Eggs</td><td>Legendaries & Baby forms; Infertile.</td><td>Mewtwo, Pichu, Koraidon</td></tr>
+                <tr><th>Egg Group</th><th>Biological Archetype</th><th>Species Example</th></tr>
+                <tr><td>Dragon</td><td>Draconic, reptilian, or mythical archetypes.</td><td>Dratini, Gible</td></tr>
+                <tr><td>Amorphous</td><td>Ethereal or fluid-based compositions.</td><td>Gastly, Ralts</td></tr>
+                <tr><td>Field</td><td>Terrestrial mammals and land-based fauna.</td><td>Eevee, Lucario</td></tr>
+                <tr><td>Mineral</td><td>Inorganic rock, metal, or crystal.</td><td>Steelix, Roggenrola</td></tr>
             </table>
 
-            <h2 id="stats">Statistical Inheritance: IVs & Natures</h2>
-            <p>Individual Values (IVs) range from 0 to 31. The <b>Destiny Knot</b> guarantees that 5 of the parents' combined 12 IVs will be passed to the offspring. The <b>Everstone</b> locks the Nature (10% stat shift).</p>
-            <table>
-                <tr><th>Desired 0-IV</th><th>Tactical Justification</th><th>VGC Application</th></tr>
-                <tr><td>Speed</td><td>Movement priority in Trick Room.</td><td>Slow Sweepers / Pivots</td></tr>
-                <tr><td>Attack</td><td>Minimize Foul Play/Confusion self-damage.</td><td>Special Attackers</td></tr>
-            </table>
+            <h2 id="sec2">II. Statistical Inheritance</h2>
+            <p>Individual Values (IVs) range from 0 to 31. The <b>Destiny Knot</b> guarantees that 5 of the parents' combined 12 IVs will be passed to the offspring. This allows breeders to statistically "lock in" near-perfection.</p>
 
-            <h2 id="mirror">Egg Moves: The Mirror Herb Revolution</h2>
-            <p>The Mirror Herb allows for immediate transfer of an Egg Move during a Picnic. <b>Protocol:</b> The target must have an empty slot, hold the herb, and share a picnic with a donor knowing the move. <i>Note: Mirror moves cannot be recovered via Move Reminder.</i></p>
+            <h2 id="sec3">III. Tactical Minimalism (0-IV Strategy)</h2>
+            <p>In the VGC meta, "perfect" stats are not always 31. Professionals seek <b>0 IVs</b> in Speed for Trick Room conditions or <b>0 IVs</b> in Attack to minimize damage from Foul Play or Confusion.</p>
 
-            <h2 id="speed">Logistical Optimization: The Sandwich Meta</h2>
-            <p>Efficiency is achieved through <b>Egg Power</b> buffs. Level 2 (Peanut Butter/Banana) is the standard for mass breeding. Level 3 (Herba Mystica) is reserved for high-stakes Shiny hunting.</p>
+            <h2 id="sec4">IV. Nature and the Everstone</h2>
+            <p>The <b>Everstone</b> provides a 100% guarantee that the parent holding it will pass its Nature. This is essential for competitive builds like Jolly, Timid, or Adamant.</p>
 
-            <h2 id="shiny">Shiny Mathematics: Masuda Method</h2>
-            <p>By using parents from different regional languages (e.g., Japanese Ditto + English Charizard), the shiny rate is permanently boosted to 1/683, or 1/512 with the Shiny Charm.</p>
-            <table>
-                <tr><th>Scenario</th><th>50% Probability</th><th>90% Probability</th></tr>
-                <tr><td>Masuda + Charm</td><td>355 Eggs</td><td>1,178 Eggs</td></tr>
-            </table>
+            <h2 id="sec5">V. The Mirror Herb Revolution</h2>
+            <p>Generation IX introduced the <b>Mirror Herb</b>. By having an empty move slot and holding the herb during a Picnic, moves can be transferred instantly between species, bypassing days of chain-breeding.</p>
 
-            <h2 id="history">Historical Mechanics: Johto to Paldea</h2>
-            <p>In Gen II, the <b>Deter Values (DVs)</b> were inherited directly from the opposite-gender parent. In Gen V, Hidden Abilities (HA) were gender-locked to females. Today, <b>Ditto</b> allows any gender to pass an HA with a 60% probability.</p>
+            <h2 id="sec6">VI. Shiny Mathematics</h2>
+            <p>The Masuda Method (breeding parents of different languages) increases shiny rolls to 1/683. With the Shiny Charm, this drops to 1/512. Statistically, 90% probability is reached after 1,178 eggs.</p>
 
-            <h2 id="psych">The Psychology of Mastery</h2>
-            <p>The professional must resist the "Sunk Cost Fallacy." Every 4-IV hatch is obsolete data once a 5-IV hatch occurs. The <b>Nursery Swap</b> must be ruthless. Mastery is the conversion of random chance into precision science.</p>
-            <hr style="border: 1px solid #222; margin: 50px 0;">
+            <h2 id="sec7">VII. Culinary Logistics</h2>
+            <p><b>Egg Power Level 2</b>: Banana + Peanut Butter + Butter. This is the professional standard for resource-to-result efficiency in Paldea.</p>
+            
+            <h2 id="sec8">VIII. The Professional Mindset</h2>
+            <p>The breeder must be ruthless. Once a 5-IV specimen is hatched, every 4-IV specimen is obsolete data. Efficiency is not just about the game—it is about the time of the practitioner.</p>
         </div>
     </div>
 </div>
 
 <div class="sidebar">
-    <h3 style="color:var(--gold); text-align:center; letter-spacing:4px; margin-bottom:30px;">ELDER COUNCIL</h3>
-    
-    <div class="prof-card">
-        <b>Prof. Oak</b>
-        <p>"A foreign Ditto is the foundation of any serious genetic program, Lime."</p>
-        <div class="grumble">OAK: "Back in my day, we didn't have Sandwiches. We had grit!"</div>
-    </div>
-
-    <div class="prof-card">
-        <b>Prof. Elm</b>
-        <p>"The Destiny Knot is a masterpiece of modern inheritance science."</p>
-        <div class="grumble">ELM: "I discovered the first Egg! Why does everyone forget that?"</div>
-    </div>
-
-    <div class="prof-card">
-        <b>Prof. Birch</b>
-        <p>"Regional forms require an Everstone to persist in this climate!"</p>
-        <div class="grumble">BIRCH: "I just got chased by a Zigzagoon again. Classic research."</div>
-    </div>
-
-    <div class="prof-card">
-        <b>Prof. Rowan</b>
-        <p>"Focus on the 0-IV Attack stats for your Special Sweepers. Efficiency is duty."</p>
-        <div class="grumble">ROWAN: "I studied evolution for 60 years. You do it in one picnic."</div>
-    </div>
+    <h3 style="color:var(--gold); text-align:center; letter-spacing:5px;">ELDER COUNCIL</h3>
+    <div id="oak-p" class="prof-card"><b>PROF. OAK</b><div class="speech-bubble"></div><div class="grumble-line"></div></div>
+    <div id="elm-p" class="prof-card"><b>PROF. ELM</b><div class="speech-bubble"></div><div class="grumble-line"></div></div>
+    <div id="birch-p" class="prof-card"><b>PROF. BIRCH</b><div class="speech-bubble"></div><div class="grumble-line"></div></div>
+    <div id="rowan-p" class="prof-card"><b>PROF. ROWAN</b><div class="speech-bubble"></div><div class="grumble-line"></div></div>
 </div>
 
 <div class="main">
-    <div class="header-ui">
-        <input type="text" id="target" placeholder="INITIATE GENETIC SCAN..." onkeypress="if(event.key==='Enter') scan()">
-        <button class="bible-btn" onclick="toggleBible()">Open The Breeding Bible</button>
+    <div class="ctrl-group">
+        <input type="text" id="scanner" placeholder="INITIATE GENETIC SCAN..." onkeypress="if(event.key==='Enter') runScan()">
+        <button class="action-btn" onclick="toggleBible()">OPEN BIBLE ARCHIVE</button>
     </div>
 
-    <div class="grid">
+    <div class="dashboard">
         <div class="panel">
-            <span class="tag">I. Lineage & Species Data</span>
-            <div id="incense-box"></div>
-            <div id="species-info" style="font-size:13px; margin-bottom:20px; color:var(--sub);">Search a species to begin scan.</div>
-            <div id="evo-tree"></div>
+            <span class="panel-tag">I. SPECIES LINEAGE</span>
+            <div id="alert-zone"></div>
+            <div id="species-data" style="font-size:12px; color:var(--sub); margin-bottom:15px;">Enter a Pokémon above.</div>
+            <div id="evolution-display" class="evo-block"></div>
         </div>
-
         <div class="panel">
-            <span class="tag">II. Base Stat Analysis</span>
-            <div id="stats-container">
-                <div style="text-align:center; color:#333; padding-top:100px;">WAITING FOR DATA...</div>
-            </div>
-            <div class="tag" style="margin-top:30px;">Breeding Recommendation</div>
-            <div id="recommendation" style="font-size:12px; font-style:italic; color:var(--gold);">--</div>
+            <span class="panel-tag">II. DNA STAT AUDIT</span>
+            <div id="stat-display"></div>
+            <div class="panel-tag" style="margin-top:25px;">VGC STRATEGY</div>
+            <div id="strat-text" style="font-size:12px; color:var(--gold); line-height:1.4;">Waiting for scan...</div>
         </div>
-
         <div class="panel">
-            <span class="tag">III. Move Audit (Source)</span>
-            <div id="move-container" class="move-scroll">
-                </div>
+            <span class="panel-tag">III. INHERITABLE MOVES</span>
+            <div id="move-display" class="move-list"></div>
         </div>
     </div>
 </div>
 
 <script>
     const COLORS = { hp: '#4ade80', attack: '#facc15', defense: '#fb923c', 'special-attack': '#60a5fa', 'special-defense': '#a78bfa', speed: '#f472b6' };
-    const INCENSE = { 'snorlax': 'FULL', 'roselia': 'ROSE', 'marill': 'SEA', 'wobbuffet': 'LAX', 'mr-mime': 'ODD', 'mantine': 'WAVE', 'sudowoodo': 'ROCK', 'chansey': 'LUCK' };
+    const MEMORY = {
+        oak: {
+            s: ["A foreign Ditto is the start of every legend, Lime.", "Every species has a hidden potential.", "Your data collection is impressive.", "Research is the map of the future.", "Check the Egg Groups—that's where compatibility begins.", "I've seen many trainers, but your focus is unmatched.", "A master knows every stat by heart."],
+            g: ["OAK: In my day, we didn't have held items!", "OAK: I once walked from Pallet to Indigo with no Repels!", "OAK: Where is my tea?", "OAK: I'm getting too old for these Picnic mechanics.", "OAK: Gary never bred a 6-IV Pokémon. Not once!"]
+        },
+        elm: {
+            s: ["The mystery of the Egg is Johto's greatest pride.", "Hatch cycles are the heartbeat of the lab.", "The Destiny Knot is a masterpiece of science.", "I discovered the first Togepi egg!", "Breeding isn't just luck; it's a science.", "Each egg holds a world of possibility.", "Evolutionary paths are rarely a straight line."],
+            g: ["ELM: Nobody remembers I discovered the first Egg!", "ELM: Oak gets all the credit, as usual.", "ELM: Is the egg incubator still plugged in?", "ELM: I'm still waiting on those Togepi reports!", "ELM: Why is this lab so cold? Eggs need warmth!"]
+        },
+        birch: {
+            s: ["Nature preservation requires the Everstone.", "Hoenn's diverse habitats yield the best specimens.", "Always keep a Flame Body Pokémon in your lead.", "Fieldwork is better than labwork.", "The environment shapes the creature.", "Watch the regional variants closely.", "Mudkip research is entering phase four."],
+            g: ["BIRCH: I've been chased by more Pokémon than you've bred!", "BIRCH: This lab is too clean. I miss the dirt.", "BIRCH: Has anyone seen my running shoes?", "BIRCH: Why is there always a Zigzagoon in my way?", "BIRCH: I should have worn my hiking boots today."]
+        },
+        rowan: {
+            s: ["Efficiency is the hallmark of a scholar.", "0-Speed IVs are a choice, not a failure.", "Evolution is the most profound change.", "Data doesn't lie, trainers do.", "Do not neglect the technical Move Pool.", "Breeding is a duty to the species.", "Patience is a prerequisite for mastery."],
+            g: ["ROWAN: Mirror Herbs? Pure laziness!", "ROWAN: 60 years of study, and you use a sandwich?", "ROWAN: Hmph. Stand up straight while breeding!", "ROWAN: Why are there so many Pikachus in Sinnoh?", "ROWAN: I miss the old nursery system. It was honest work."]
+        }
+    };
 
     function toggleBible() {
         const b = document.getElementById('bibleOverlay');
@@ -193,50 +174,50 @@
 
     function sc(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
 
-    async function scan() {
-        const query = document.getElementById('target').value.toLowerCase();
-        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`).then(r => r.json()).catch(() => null);
-        if(!res) return alert("Species not found in global database.");
+    function initProfs() {
+        ['oak', 'elm', 'birch', 'rowan'].forEach(p => {
+            const card = document.getElementById(`${p}-p`);
+            card.querySelector('.speech-bubble').innerText = `"${MEMORY[p].s[Math.floor(Math.random() * MEMORY[p].s.length)]}"`;
+            card.querySelector('.grumble-line').innerText = MEMORY[p].g[Math.floor(Math.random() * MEMORY[p].g.length)];
+        });
+    }
 
+    async function runScan() {
+        const query = document.getElementById('scanner').value.toLowerCase();
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`).then(r => r.json()).catch(() => null);
+        if(!res) return;
+
+        initProfs();
         const species = await fetch(res.species.url).then(r => r.json());
         const evolution = await fetch(species.evolution_chain.url).then(r => r.json());
 
-        // 1. Incense & Species
-        document.getElementById('incense-box').innerHTML = INCENSE[res.name] ? `<div class="warn-alert">⚠ ATTENTION: BREEDING REQUIRES ${INCENSE[res.name]} INCENSE FOR PRE-EVO</div>` : "";
-        document.getElementById('species-info').innerHTML = `
-            <b>GROUPS:</b> ${species.egg_groups.map(g => g.name.toUpperCase()).join(', ')}<br>
-            <b>HATCH TIME:</b> ${species.hatch_counter} Cycles (${species.hatch_counter * 255} steps)
-        `;
-        
-        let evoLine = []; let curr = evolution.chain;
-        while(curr) { evoLine.push(curr.species.name.toUpperCase()); curr = curr.evolves_to[0]; }
-        document.getElementById('evo-tree').innerHTML = evoLine.map(n => `<div class="evo-pill">${n}</div>`).join('↓');
+        // Lineage
+        const incenses = { 'snorlax': 'FULL', 'roselia': 'ROSE', 'marill': 'SEA', 'wobbuffet': 'LAX', 'mr-mime': 'ODD', 'mantine': 'WAVE', 'sudowoodo': 'ROCK' };
+        document.getElementById('alert-zone').innerHTML = incenses[res.name] ? `<div class="alert-box">⚠ BREEDING REQUIRES ${incenses[res.name]} INCENSE</div>` : "";
+        document.getElementById('species-data').innerHTML = `<b>EGG GROUPS:</b> ${species.egg_groups.map(g => g.name.toUpperCase()).join(' | ')}<br><b>HATCH TIME:</b> ${species.hatch_counter} Cycles`;
 
-        // 2. Stats
-        document.getElementById('stats-container').innerHTML = res.stats.map(s => `
-            <div class="stat-row">
-                <div class="stat-label"><span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span></div>
-                <div class="stat-bar"><div class="bar-fill" style="width:${(s.base_stat/255)*100}%; background:${COLORS[s.stat.name]}"></div></div>
-            </div>
-        `).join('');
+        let evoChain = []; let curr = evolution.chain;
+        while(curr) { evoChain.push(curr.species.name.toUpperCase()); curr = curr.evolves_to[0]; }
+        document.getElementById('evolution-display').innerHTML = evoChain.map(n => `<div class="evo-item">${n}</div>`).join('→');
+
+        // Stats
+        document.getElementById('stat-display').innerHTML = res.stats.map(s => `
+            <div class="stat-bar-container">
+                <div class="stat-meta"><span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span></div>
+                <div class="bar-outer"><div class="bar-inner" style="width:${(s.base_stat/255)*100}%; background:${COLORS[s.stat.name]}"></div></div>
+            </div>`).join('');
         
         const isSpecial = res.stats[3].base_stat > res.stats[1].base_stat;
-        document.getElementById('recommendation').innerText = isSpecial ? "High Sp.Atk detected. Aim for 0-Attack IV spread to minimize Foul Play damage." : "Physical attacker detected. Aim for 31-Attack IV spread.";
+        document.getElementById('strat-text').innerHTML = `<b>CORE STRAT:</b> ${isSpecial ? 'Special Attacker. Target 0-Attack IV to minimize Foul Play/Confusion recoil.' : 'Physical Attacker. Target 31-Attack and Jolly/Adamant nature.'}<br><br><b>SANDWICH:</b> Level 2 Egg Power (Banana/Peanut Butter).`;
 
-        // 3. Moves
-        document.getElementById('move-container').innerHTML = res.moves.map(m => {
-            const method = m.version_group_details[0].move_learn_method.name;
-            let tag = method === 'egg' ? 'EGG' : method === 'machine' ? 'TM' : 'LVL';
-            let color = method === 'egg' ? '#f472b6' : method === 'machine' ? '#60a5fa' : '#64748b';
-            return `
-                <div class="move-row">
-                    <span>${m.move.name.replace('-', ' ').toUpperCase()}</span>
-                    <span class="m-tag" style="color:${color}">${tag}</span>
-                </div>`;
+        // Moves
+        document.getElementById('move-display').innerHTML = res.moves.map(m => {
+            const meth = m.version_group_details[0].move_learn_method.name;
+            const label = meth === 'egg' ? 'EGG' : meth === 'machine' ? 'TM' : 'LVL';
+            const color = meth === 'egg' ? '#f472b6' : meth === 'machine' ? '#60a5fa' : '#64748b';
+            return `<div class="move-card"><span>${m.move.name.toUpperCase()}</span><span class="type-pill" style="color:${color}">${label}</span></div>`;
         }).join('');
     }
-    
-    function boot() { console.log("PokeBreed Pro Online. Waiting for Lime's input."); }
 </script>
 </body>
 </html>
