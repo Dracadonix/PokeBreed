@@ -3,39 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéBreed Pro | Lime Edition</title>
+    <title>PokeBreed Pro | Grand Architect</title>
     <style>
         :root { 
-            --bg: #020617; --card: #111827; --primary: #0ea5e9; --accent: #a855f7; 
-            --text: #f8fafc; --border: #1e293b; --pivot: #fbbf24; --lime: #bef264;
+            --bg: #020617; --card: #0f172a; --primary: #0ea5e9; --accent: #8b5cf6; 
+            --text: #f8fafc; --border: #1e293b; --pivot: #fbbf24; --lime: #bef264; --warn: #f43f5e;
         }
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { max-width: 1200px; width: 100%; }
+        .container { max-width: 1200px; width: 100%; animation: fadeIn 0.8s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* MODALS */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .modal-box { background: #fff; color: #000; padding: 40px; border: 10px solid #000; max-width: 550px; font-family: 'Courier New', monospace; }
         .btn-modal { background: #000; color: #fff; border: none; padding: 15px 30px; cursor: pointer; font-weight: bold; margin-top: 25px; width: 100%; text-transform: uppercase; }
 
-        /* SEARCH */
+        /* HEADER */
         .header { text-align: center; margin-bottom: 30px; }
         .input-group { display: flex; background: #000; border: 2px solid var(--border); border-radius: 16px; padding: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
         .btn-run { background: var(--primary); color: #fff; border: none; padding: 0 35px; border-radius: 12px; font-weight: 800; cursor: pointer; }
 
-        /* OUTPUT */
+        /* GRID */
         #output { display: none; margin-top: 40px; }
         .grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; }
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; margin-bottom: 25px; }
         .tag { color: var(--primary); font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; display: block; }
 
-        /* MOVE SLOTS */
-        .move-slot { background: #0f172a; border-radius: 12px; padding: 18px; margin-bottom: 12px; border-left: 5px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
+        /* MOVE SYSTEM */
+        .move-slot { background: #1e293b; border-radius: 12px; padding: 18px; margin-bottom: 12px; border-left: 5px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
         .move-slot.pinned { border-left-color: var(--pivot); background: rgba(251, 191, 36, 0.1); }
-        
-        .stat-bar { margin-bottom: 15px; }
-        .bar-bg { height: 8px; background: #1e293b; border-radius: 4px; margin-top: 6px; }
+        .move-source { font-size: 0.7rem; color: var(--lime); display: block; margin-top: 4px; font-weight: bold; }
+
+        /* WARNINGS */
+        .warn-box { background: rgba(244, 63, 94, 0.1); border: 1px solid var(--warn); color: var(--warn); padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 0.85rem; font-weight: bold; }
+
+        /* STATS */
+        .bar-bg { height: 8px; background: #334155; border-radius: 4px; margin-top: 6px; }
         .bar-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 1s; }
+        .stat-dropped { color: var(--warn); text-decoration: line-through; }
     </style>
 </head>
 <body>
@@ -51,7 +57,7 @@
 <div id="modal2" class="modal-overlay" style="display: none;">
     <div class="modal-box" style="border-color: var(--lime);">
         <h2 style="color: #4d7c0f;">SYSTEM ORIGIN</h2>
-        <p>Apex Pivot Architect initialized. Professional-grade breeding logic online.</p>
+        <p>PokeBreed Pro initialized. Level-Sync and Heredity Logic operational.</p>
         <p style="background: #bef264; padding: 15px; border: 2px solid #000; font-weight: bold;">Conceptualized and Developed by LIME.</p>
         <button class="btn-modal" onclick="document.getElementById('modal2').style.display='none';">INITIALIZE</button>
     </div>
@@ -59,21 +65,22 @@
 
 <div class="container">
     <div class="header">
-        <h1 style="margin:0;">PokéBreed <span style="color:var(--primary)">Apex Pivot</span></h1>
-        <p style="color:var(--sub-text); font-weight: 800; letter-spacing: 4px;">LIME STRATEGIC SYSTEMS // 2026</p>
+        <h1 style="margin:0; font-size: 2.8rem;">PokeBreed <span style="color:var(--primary)">Pro</span></h1>
+        <p style="color:var(--sub-text); font-weight: 800; letter-spacing: 4px;">LIME STRATEGIC SYSTEMS // v21.0</p>
     </div>
 
     <div class="input-group">
-        <input type="text" id="query" placeholder="Directive: 'Jolly Weavile with Ice Shard'" onkeypress="if(event.key === 'Enter') runArchitect()">
-        <button class="btn-run" onclick="runArchitect()">Analyze</button>
+        <input type="text" id="query" placeholder="e.g. Jolly 5iv Weavile dropping Sp Def with Ice Shard" onkeypress="if(event.key === 'Enter') startArchitect()">
+        <button class="btn-run" onclick="startArchitect()">Analyze</button>
     </div>
 
     <div id="output">
         <div class="grid">
             <div class="col-main">
                 <div class="card">
-                    <span class="tag">Evolutionary Genealogy</span>
+                    <span class="tag">Genealogy & Evolution Logistics</span>
                     <div id="evoDisplay" style="display:flex; gap:10px; flex-wrap:wrap; font-weight:700;"></div>
+                    <div id="evoWarnings"></div>
                     <div id="locDisplay" style="margin-top:20px; color:var(--accent); font-weight:bold;"></div>
                 </div>
                 <div class="card">
@@ -83,11 +90,11 @@
             </div>
             <div class="col-side">
                 <div class="card">
-                    <span class="tag">Base Stat Profile</span>
+                    <span class="tag">Target Stat Profile</span>
                     <div id="statDisplay"></div>
                 </div>
                 <div class="card">
-                    <span class="tag">Founder Roadmap</span>
+                    <span class="tag">Breeding Blueprint</span>
                     <div id="roadDisplay" style="line-height:2.2; font-size:0.9rem;"></div>
                 </div>
             </div>
@@ -99,7 +106,7 @@
     const format = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     const sanitize = (s) => s.toLowerCase().replace(/[\s-]/g, '');
 
-    async function runArchitect() {
+    async function startArchitect() {
         const input = document.getElementById('query').value;
         const pList = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000').then(r => r.json());
         const target = pList.results.find(p => input.toLowerCase().includes(p.name))?.name;
@@ -114,57 +121,78 @@
 
             document.getElementById('output').style.display = 'block';
 
-            // GENEALOGY & HABITAT
+            // GENEALOGY
             const eR = await fetch(s.evolution_chain.url).then(r => r.json());
             let chain = []; let curr = eR.chain;
             while(curr) { chain.push(curr.species.name); curr = curr.evolves_to[0]; }
             document.getElementById('evoDisplay').innerHTML = chain.map(n => `<span style="padding:6px 14px; background:#1e293b; border-radius:30px; ${n===target?'border:2px solid var(--primary); color:var(--primary);':''}">${format(n)}</span>`).join(' → ');
 
-            const loc = await fetch(`https://pokeapi.co/api/v2/pokemon/${chain[0]}/encounters`).then(r => r.json());
-            document.getElementById('locDisplay').innerText = `FOUNDER HABITAT: ${loc.length > 0 ? format(loc[0].location_area.name) : "BREEDING ONLY"}`;
+            // STATS & DROPPED STAT
+            const inputLower = input.toLowerCase();
+            const droppedKeywords = ["dropping", "drop", "minus"];
+            let droppedStat = "";
+            droppedKeywords.forEach(k => {
+                if(inputLower.includes(k)) droppedStat = inputLower.split(k)[1].trim().split(" ")[0];
+            });
 
-            // STATS
-            document.getElementById('statDisplay').innerHTML = p.stats.map(st => `
+            document.getElementById('statDisplay').innerHTML = p.stats.map(st => {
+                const isDropped = droppedStat && sanitize(st.stat.name).includes(sanitize(droppedStat));
+                return `
                 <div class="stat-bar">
-                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;"><span>${format(st.stat.name)}</span><span>${st.base_stat}</span></div>
-                    <div class="bar-bg"><div class="bar-fill" style="width:${(st.base_stat/255)*100}%"></div></div>
-                </div>
-            `).join('');
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;">
+                        <span class="${isDropped ? 'stat-dropped' : ''}">${format(st.stat.name)}</span>
+                        <span>${st.base_stat}</span>
+                    </div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${(st.base_stat/255)*100}%; background:${isDropped ? '#f43f5e' : 'var(--primary)'}"></div></div>
+                </div>`;
+            }).join('');
 
-            // HARDENED PIVOT MOVE ENGINE
+            // PIVOT & LEVEL LOGIC
+            const founderData = await fetch(`https://pokeapi.co/api/v2/pokemon/${chain[0]}`).then(r => r.json());
             const moveDetails = await Promise.all(p.moves.slice(0, 100).map(m => fetch(m.move.url).then(r => r.json())));
-            const myTypes = p.types.map(t => t.type.name);
             const inputSanitized = sanitize(input);
             
-            let scored = moveDetails.filter(m => m.power).map(m => {
-                let score = m.power;
-                if (myTypes.includes(m.type.name)) score *= 1.5;
-                if ((input.toLowerCase().includes('jolly') || input.toLowerCase().includes('adamant')) && m.damage_class.name !== 'physical') score *= 0.1;
-                return { name: m.name, power: m.power, type: m.type.name, cat: m.damage_class.name, score };
-            }).sort((a,b) => b.score - a.score);
-
-            // Fuzzy match: check if the sanitized move name (e.g., "iceshard") exists in the sanitized user input
-            let userMove = moveDetails.find(md => inputSanitized.includes(sanitize(md.name)))?.name;
-            
+            let userMove = moveDetails.find(md => inputSanitized.includes(sanitize(md.name)));
             let kit = [];
+            let warnings = [];
+
             if (userMove) {
-                const pm = moveDetails.find(md => md.name === userMove);
-                kit.push({ ...pm, isPinned: true });
-                scored = scored.filter(s => s.name !== userMove);
+                const moveInFounder = founderData.moves.find(m => m.move.name === userMove.name);
+                const levelLearned = moveInFounder?.version_group_details[0]?.level_learned_at;
+                kit.push({ ...userMove, isPinned: true, level: levelLearned });
+                
+                if (levelLearned > 1 && chain.length > 1) {
+                    warnings.push(`⚠️ EVOLUTION DELAY: ${format(chain[0])} learns ${format(userMove.name)} at Level ${levelLearned}. Hold evolution until learned.`);
+                }
             }
+
+            let scored = moveDetails.filter(m => m.power && m.name !== userMove?.name).map(m => {
+                let score = m.power;
+                if (p.types.map(t => t.type.name).includes(m.type.name)) score *= 1.5;
+                return { ...m, score };
+            }).sort((a,b) => b.score - a.score);
+            
             kit = [...kit, ...scored.slice(0, 4 - kit.length)];
 
             document.getElementById('moveDisplay').innerHTML = kit.map(m => `
                 <div class="move-slot ${m.isPinned ? 'pinned' : ''}">
-                    <span style="font-weight:800; font-size:1.1rem;">${format(m.name)} ${m.isPinned ? '<small style="color:var(--pivot); margin-left:10px;">[PIVOT]</small>' : ''}</span>
-                    <span style="font-size:0.8rem; color:var(--sub-text); font-weight: bold;">${m.power} BP | ${m.damage_class?.name.toUpperCase() || 'PHYSICAL'}</span>
+                    <div>
+                        <span style="font-weight:800;">${format(m.name)}</span>
+                        <span class="move-source">${m.isPinned ? '[PIVOT TARGET]' : '[STAB OPTIMIZED]'}</span>
+                    </div>
+                    <span style="font-size:0.75rem; color:var(--sub-text); font-family:monospace;">${m.power} BP | ${m.damage_class.name.toUpperCase()}</span>
                 </div>
             `).join('');
 
+            document.getElementById('evoWarnings').innerHTML = warnings.map(w => `<div class="warn-box">${w}</div>`).join('');
+            const loc = await fetch(`https://pokeapi.co/api/v2/pokemon/${chain[0]}/encounters`).then(r => r.json());
+            document.getElementById('locDisplay').innerText = `FOUNDER HABITAT: ${loc.length > 0 ? format(loc[0].location_area.name) : "BREEDING ONLY"}`;
+
             document.getElementById('roadDisplay').innerHTML = `
-                • <strong>Base Stage:</strong> ${format(chain[0])}<br>
-                • <strong>Incubation:</strong> ~${s.hatch_counter * 255} Steps<br>
-                • <strong>Constraint:</strong> Everstone (Nature Lock)
+                • <strong>Founder:</strong> ${format(chain[0])}<br>
+                • <strong>Sacrifice Stat:</strong> ${droppedStat ? format(droppedStat) : "None"}<br>
+                • <strong>Items:</strong> Everstone / Destiny Knot<br>
+                • <strong>Incubation:</strong> ~${s.hatch_counter * 255} Steps
             `;
 
         } catch (e) { console.error(e); }
