@@ -1,255 +1,200 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>POKEBREED PRO | OMNI MONOLITH V6</title>
-
-<style>
-:root {
-    --void:#010204;
-    --panel:#0d1421;
-    --ring:#00f2ff;
-    --gold:#ffd700;
-    --warn:#ff0055;
-    --sub:#64748b;
-}
-
-* {
-    box-sizing:border-box;
-    font-family:Inter, sans-serif;
-}
-
-body {
-    margin:0;
-    background:var(--void);
-    color:#fff;
-    display:flex;
-    height:100vh;
-    overflow:hidden;
-}
-
-/* SIDEBAR */
-.sidebar {
-    width:420px;
-    background:#05080f;
-    padding:30px;
-    overflow-y:auto;
-    border-right:1px solid #1a2333;
-}
-
-.prof-card {
-    background:var(--panel);
-    padding:20px;
-    margin-bottom:20px;
-    border-left:4px solid var(--ring);
-}
-
-/* MAIN */
-.main {
-    flex:1;
-    padding:30px;
-    overflow-y:auto;
-}
-
-/* TOP NAV */
-.nav {
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-.nav button {
-    padding:10px 15px;
-    background:#111;
-    border:1px solid #222;
-    color:#fff;
-    cursor:pointer;
-}
-
-.nav button.active {
-    background:var(--gold);
-    color:#000;
-    font-weight:bold;
-}
-
-/* PANELS */
-.panel {
-    background:var(--panel);
-    padding:20px;
-    border-radius:10px;
-    margin-bottom:20px;
-}
-
-/* INPUT */
-input {
-    width:70%;
-    padding:15px;
-    background:#000;
-    border:2px solid var(--ring);
-    color:var(--ring);
-}
-
-button.action {
-    padding:15px;
-    background:var(--gold);
-    border:none;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-/* MOVE LIST */
-.move-item {
-    display:flex;
-    justify-content:space-between;
-    padding:10px;
-    background:#05080f;
-    margin-bottom:5px;
-}
-
-/* BIBLE PAGE */
-#bible {
-    display:none;
-    padding:20px;
-}
-
-#bible.active {
-    display:block;
-}
-
-.bible-wrap {
-    max-width:900px;
-    margin:auto;
-    line-height:1.8;
-    color:#cbd5e1;
-}
-
-.bible-wrap h1 {
-    color:var(--gold);
-    text-align:center;
-}
-
-.bible-wrap h2 {
-    color:var(--ring);
-    margin-top:40px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <h2 style="color:var(--gold);">ELDER COUNCIL</h2>
-    <div id="oak" class="prof-card"><b>OAK</b><div class="speech"></div></div>
-    <div id="elm" class="prof-card"><b>ELM</b><div class="speech"></div></div>
-    <div id="birch" class="prof-card"><b>BIRCH</b><div class="speech"></div></div>
-    <div id="rowan" class="prof-card"><b>ROWAN</b><div class="speech"></div></div>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-<!-- NAV -->
-<div class="nav">
-    <button class="active" onclick="showTab('home')">BREEDING LAB</button>
-    <button onclick="showTab('bible')">BREEDING BIBLE</button>
-</div>
-
-<!-- HOME -->
-<div id="home">
-
-<div class="panel">
-    <input id="pokeInput" placeholder="Enter Pokémon..." />
-    <button class="action" onclick="start()">ANALYZE</button>
-</div>
-
-<div class="panel">
-    <h3>DATA</h3>
-    <div id="bio"></div>
-</div>
-
-<div class="panel">
-    <h3>MOVES</h3>
-    <div id="moves"></div>
-</div>
-
-</div>
-
-<!-- BIBLE PAGE -->
-<div id="bible">
-<div class="bible-wrap">
-<h1>BREEDING BIBLE</h1>
-
-<h2>Biological Framework</h2>
-<p>Breeding operates through Egg Groups...</p>
-
-<h2>IV Inheritance</h2>
-<p>Destiny Knot locks 5 IVs...</p>
-
-<h2>0-IV Strategy</h2>
-<p>Speed manipulation for Trick Room...</p>
-
-<h2>Mirror Herb System</h2>
-<p>Instant Egg Move transfer...</p>
-
-<h2>Masuda Method</h2>
-<p>Shiny probability optimization...</p>
-
-</div>
-</div>
-
-</div>
-
 <script>
+/* =========================
+   🧬 CORE MONOLITH ENGINE (RESTORED)
+========================= */
+
 const $ = id => document.getElementById(id);
 
-/* TAB SYSTEM */
-function showTab(tab) {
-    $('home').style.display = tab === 'home' ? 'block' : 'none';
-    $('bible').classList.toggle('active', tab === 'bible');
-
-    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-}
-
-/* PROFESSORS */
-const QUOTES = {
-    oak:["Logic defines power","Breeding is science"],
-    elm:["Eggs contain destiny","Johto remembers"],
-    birch:["Nature decides outcomes","Field data matters"],
-    rowan:["Efficiency is truth","0 IV is strategy"]
+/* ---------- STATE ---------- */
+const STATE = {
+    cache: new Map()
 };
 
-function profs(){
+/* ---------- CONSTANTS ---------- */
+const COLORS = {
+    hp:'#4ade80',
+    attack:'#facc15',
+    defense:'#fb923c',
+    'special-attack':'#60a5fa',
+    'special-defense':'#a78bfa',
+    speed:'#f472b6'
+};
+
+const INCENSES = {
+    snorlax:'FULL',
+    roselia:'ROSE',
+    marill:'SEA',
+    wobbuffet:'LAX',
+    'mr-mime':'ODD',
+    mantine:'WAVE',
+    sudowoodo:'ROCK'
+};
+
+/* ---------- UTIL ---------- */
+const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+
+async function fetchJSON(url){
+    if(STATE.cache.has(url)) return STATE.cache.get(url);
+
+    try{
+        const r = await fetch(url);
+        const d = await r.json();
+        STATE.cache.set(url,d);
+        return d;
+    }catch{
+        return null;
+    }
+}
+
+/* =========================
+   👑 PROFESSOR ENGINE (RESTORED DEPTH)
+========================= */
+const QUOTES = {
+    oak:{
+        s:["Genetics is the backbone of strategy","Every IV tells a story","Precision defines champions"],
+        g:["OAK: I miss field research...","OAK: These kids and their sandwiches..."]
+    },
+    elm:{
+        s:["Eggs are compressed potential","Johto still leads research","Hatch cycles define evolution"],
+        g:["ELM: I haven't slept in days...","ELM: Where are my incubators?"]
+    },
+    birch:{
+        s:["Nature is unpredictable but measurable","Field data beats theory","Wild habitats shape perfection"],
+        g:["BIRCH: I lost another Pokéball...","BIRCH: Too many Poochyena again..."]
+    },
+    rowan:{
+        s:["Efficiency is truth","0 IV is intentional design","Stat control defines mastery"],
+        g:["ROWAN: This is inefficient...","ROWAN: Where is my notebook?"]
+    }
+};
+
+function refreshProfs(){
     ['oak','elm','birch','rowan'].forEach(p=>{
-        $(p).querySelector('.speech').innerText =
-        QUOTES[p][Math.floor(Math.random()*2)];
+        const el=$(p);
+        const q=QUOTES[p];
+
+        el.querySelector('.speech').innerText =
+            `"${rand(q.s)}"`;
+
+        el.querySelector('.grumble').innerText =
+            rand(q.g);
     });
 }
 
-/* FETCH */
-async function start(){
-    const name = $('pokeInput').value.toLowerCase();
-    const data = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`).then(r=>r.json()).catch(()=>null);
+/* =========================
+   🔬 EVOLUTION ENGINE (RESTORED FULL CHAIN)
+========================= */
+function buildEvo(chain){
+    const out=[];
+    let c=chain;
 
-    if(!data) return alert("Not found");
+    while(c){
+        out.push(c.species.name.toUpperCase());
+        c=c.evolves_to[0];
+    }
 
-    $('bio').innerHTML = `
-        <b>HP:</b> ${data.stats[0].base_stat}<br>
-        <b>ATK:</b> ${data.stats[1].base_stat}<br>
-    `;
-
-    $('moves').innerHTML = data.moves.slice(0,20).map(m =>
-        `<div class="move-item">
-            <span>${m.move.name}</span>
-            <span>MOVE</span>
-        </div>`
-    ).join('');
+    return out.join(" → ");
 }
 
-window.onload = profs;
-</script>
+/* =========================
+   📊 STAT ENGINE (RESTORED + ROLE LOGIC)
+========================= */
+function analyzeStats(stats){
+    const atk=stats[1].base_stat;
+    const spa=stats[3].base_stat;
+    const spe=stats[5].base_stat;
 
-</body>
-</html>
+    const special=spa>atk;
+
+    let role="";
+    if(spe>=100 && special) role="Fast Special Attacker";
+    else if(spe>=100) role="Fast Physical Attacker";
+    else if(special) role="Bulky Special Attacker";
+    else role="Bulky Physical Attacker";
+
+    return {role,special};
+}
+
+function renderStats(stats){
+    return stats.map(s=>`
+        <div>
+            <div class="stat-meta">
+                <span>${s.stat.name.toUpperCase()}</span>
+                <span>${s.base_stat}</span>
+            </div>
+            <div class="bar-outer">
+                <div class="bar-inner"
+                     style="width:${(s.base_stat/255)*100}%;
+                     background:${COLORS[s.stat.name]}"></div>
+            </div>
+        </div>
+    `).join('');
+}
+
+/* =========================
+   🎯 MOVE ENGINE (RESTORED CLASSIFICATION)
+========================= */
+function renderMoves(moves){
+    return moves.slice(0,80).map(m=>{
+        const method=m.version_group_details[0]?.move_learn_method.name;
+
+        let tag="LVL";
+        let color="#64748b";
+
+        if(method==="egg"){tag="EGG";color="#f472b6";}
+        if(method==="machine"){tag="TM";color="#60a5fa";}
+
+        return `
+            <div class="move-item">
+                <span>${m.move.name.toUpperCase()}</span>
+                <span style="color:${color}">${tag}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+/* =========================
+   ⚡ MAIN ANALYSIS PIPELINE (RESTORED FULL FLOW)
+========================= */
+async function start(){
+    const name=$('pokeInput').value.toLowerCase();
+
+    const p=await fetchJSON(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    if(!p) return alert("SPECIES NOT FOUND");
+
+    const sp=await fetchJSON(p.species.url);
+    const evo=await fetchJSON(sp.evolution_chain.url);
+
+    refreshProfs();
+
+    /* incense system restored */
+    const inc=INCENSES[p.name];
+    $('bio').innerHTML=`
+        ${inc?`⚠ REQUIRES ${inc} INCENSE<br><br>`:""}
+        <b>Egg Groups:</b> ${sp.egg_groups.map(g=>g.name.toUpperCase()).join(" | ")}<br>
+        <b>Hatch:</b> ${sp.hatch_counter} cycles
+    `;
+
+    const analysis=analyzeStats(p.stats);
+
+    $('moves').innerHTML=renderMoves(p.moves);
+
+    $('bio').innerHTML+=`
+        <br><br>
+        <b>ROLE:</b> ${analysis.role}<br>
+        <b>BREEDING NOTE:</b> ${analysis.special ? "0 ATK IV recommended" : "Max ATK IV recommended"}<br>
+        <b>STRATEGY:</b> Destiny Knot + Everstone optimization
+    `;
+}
+
+/* =========================
+   📚 BIBLE SYSTEM (RESTORED STRUCTURE)
+========================= */
+function showTab(tab){
+    $('home').style.display = tab==="home"?"block":"none";
+    $('bible').style.display = tab==="bible"?"block":"none";
+}
+
+/* INIT */
+window.onload=refreshProfs;
+</script>
