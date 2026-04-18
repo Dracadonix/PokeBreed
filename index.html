@@ -3,76 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Sinnoh Edition</title>
+    <title>PokeBreed Pro | Game-Specific Edition</title>
     <style>
-        :root { --bg: #0f1014; --card: #1c1d24; --primary: #00e5ff; --text: #ffffff; --sub-text: #a0a8b5; --border: #2d333f; }
-        
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        
-        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-top: 50px; position: relative; }
-        
-        h1 { color: var(--primary); text-align: center; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; }
-        
-        .input-group { display: flex; gap: 10px; margin-bottom: 30px; }
-        input { flex: 1; padding: 15px; border-radius: 10px; border: 2px solid var(--border); background: #12131a; color: white; font-size: 1.1em; }
-        input:focus { border-color: var(--primary); outline: none; }
-        
-        button { padding: 15px 25px; border-radius: 10px; border: none; background: var(--primary); color: #000; font-weight: bold; cursor: pointer; }
-        
+        :root { --bg: #0c0d10; --card: #16181d; --primary: #00e5ff; --text: #f0f0f0; --sub-text: #a0a8b5; --border: #2d333f; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
+        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.6); margin-top: 40px; height: fit-content; }
+        h1 { color: var(--primary); text-align: center; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 4px; font-weight: 900; }
+        .subtitle { text-align: center; color: var(--sub-text); margin-bottom: 35px; font-size: 0.85em; }
+        .input-group { display: flex; gap: 12px; margin-bottom: 30px; }
+        input { flex: 1; padding: 18px; background: #1a1c23; border: 2px solid var(--border); border-radius: 12px; color: white; font-size: 1.1em; outline: none; }
+        input:focus { border-color: var(--primary); }
+        button { padding: 18px 30px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
         #output { display: none; }
-        .section-title { color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-top: 30px; text-transform: uppercase; font-size: 0.85em; font-weight: bold; }
-        
-        .step { padding: 15px; background: rgba(255,255,255,0.03); border-left: 4px solid var(--primary); margin-top: 10px; line-height: 1.6; }
-        
-        /* OLD SCHOOL POPUP STYLES */
-        #rowanPopup {
-            display: none;
-            position: fixed;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 600px;
-            background: #f8f8f8;
-            border: 6px double #383838;
-            border-radius: 5px;
-            padding: 20px;
-            z-index: 1000;
-            color: #383838;
-            font-family: 'Courier New', Courier, monospace;
-            box-shadow: 0 0 0 1000px rgba(0,0,0,0.7);
-        }
-
-        .rowan-header { font-weight: bold; font-size: 1.2em; margin-bottom: 10px; color: #cc0000; border-bottom: 2px solid #383838; display: inline-block; }
-        .rowan-btn { background: #383838; color: white; border: none; padding: 5px 15px; float: right; cursor: pointer; margin-top: 10px; }
-
-        .move-pill { display: inline-block; padding: 4px 10px; background: #12131a; border: 1px solid var(--border); margin: 3px; border-radius: 4px; font-size: 0.8em; color: var(--primary); text-transform: capitalize; }
-        .ref-links { display: flex; gap: 10px; margin-top: 15px; }
-        .ref-btn { flex: 1; padding: 10px; text-align: center; text-decoration: none; color: white; border-radius: 5px; font-weight: bold; font-size: 0.8em; }
+        .section-title { color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-top: 35px; text-transform: uppercase; font-size: 0.85em; font-weight: 800; }
+        .step { padding: 18px; background: rgba(255,255,255,0.02); border-left: 5px solid var(--primary); margin-top: 12px; line-height: 1.6; border-radius: 0 10px 10px 0; border: 1px solid var(--border); border-left-width: 5px; }
+        .location-box { background: #111216; padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-top: 12px; }
+        .move-pill { display: inline-block; padding: 5px 12px; background: var(--bg); border: 1px solid var(--border); margin: 4px; border-radius: 6px; font-size: 0.8em; color: var(--primary); text-transform: capitalize; }
+        .egg-pill { border-color: #ff00ff; color: #ff00ff; } /* Pink glow for Egg Moves */
+        #rowanPopup { display: none; position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%); width: 90%; max-width: 650px; background: #fdfdfd; border: 6px double #333; padding: 25px; z-index: 9999; color: #222; font-family: 'Courier New', monospace; box-shadow: 0 0 0 5000px rgba(0,0,0,0.8); }
+        .rowan-title { font-weight: 900; color: #b00; border-bottom: 2px solid #333; margin-bottom: 10px; display: inline-block; }
+        .ref-links { display: flex; gap: 12px; margin-top: 18px; }
+        .ref-btn { flex: 1; padding: 12px; text-align: center; text-decoration: none; color: white; border-radius: 10px; font-weight: 800; font-size: 0.85em; }
         .serebii { background: #0e7a3a; } .bulbapedia { background: #60298a; } .pokemondb { background: #cf4a10; }
     </style>
 </head>
 <body>
 
 <div id="rowanPopup">
-    <div class="rowan-header">PROF. ROWAN:</div>
-    <div id="rowanText">Hmm! Your spelling is as unrefined as a fledgling Trainer's! Be precise with your data!</div>
-    <button class="rowan-btn" onclick="closeRowan()">OK...</button>
+    <div class="rowan-title">PROF. ROWAN</div><br>
+    <div id="rowanText">Precision is paramount! That Pokemon name does not exist in our records!</div>
+    <button style="background:#333; color:#fff; border:none; padding:8px 20px; float:right; cursor:pointer;" onclick="closeRowan()">OK</button>
 </div>
 
 <div class="container">
     <h1>⚡ PokeBreed Pro</h1>
+    <p class="subtitle">Breeding • Strategy • Game-Specific Locations</p>
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="Search Pokemon Name, Nature, or IVs..." onkeypress="if(event.key === 'Enter') generateGuide()">
+        <input type="text" id="userInput" placeholder="e.g. 'Jolly Garchomp SV'" onkeypress="if(event.key === 'Enter') generateGuide()">
         <button onclick="generateGuide()">Analyze</button>
     </div>
 
     <div id="output">
-        <h2 id="pokeHeader" style="text-transform: capitalize; font-size: 2.2em; color: var(--primary); margin-bottom: 5px;"></h2>
-        <div id="metaInfo" style="margin-bottom: 20px;"></div>
+        <h2 id="pokeHeader" style="text-transform: capitalize; font-size: 2.5em; color: var(--primary); margin: 0;"></h2>
+        <div id="gameBadge" style="margin-bottom: 15px;"></div>
 
-        <div class="section-title">📍 Wild Locations</div>
-        <div id="locationList" style="background: #12131a; padding: 20px; border-radius: 10px; margin-top: 10px; border: 1px solid var(--border);"></div>
+        <div class="section-title">📍 Wild Encounter Locations</div>
+        <div id="locationList" class="location-box"></div>
         
         <div class="ref-links">
             <a id="linkSerebii" class="ref-btn serebii" target="_blank">Serebii</a>
@@ -80,24 +56,31 @@
             <a id="linkDB" class="ref-btn pokemondb" target="_blank">PokemonDB</a>
         </div>
 
+        <div class="section-title">⚔️ Genetic Egg Moves (Must be Bred)</div>
+        <div id="eggMovepool" style="margin-top: 12px;"></div>
+
         <div class="section-title">🛠️ Breeding & Strategy</div>
         <div id="stepsList"></div>
 
-        <div class="section-title">⚔️ Movepool Analysis</div>
-        <div id="movepool" style="margin-top: 10px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;"></div>
+        <div class="section-title">📖 TMs & Level-Up Moves</div>
+        <div id="standardMovepool" style="margin-top: 12px;"></div>
     </div>
 </div>
 
 <script>
-    function openRowan() { document.getElementById('rowanPopup').style.display = 'block'; }
+    const format = (str) => str.replace(/-/g, ' ');
     function closeRowan() { document.getElementById('rowanPopup').style.display = 'none'; }
 
     async function generateGuide() {
-        const input = document.getElementById('userInput').value.toLowerCase();
+        const input = document.getElementById('userInput').value.toLowerCase().trim();
         if(!input) return;
 
-        // Pure Pokemon Filter
-        const noise = ["get", "find", "breed", "need", "iv", "5iv", "6iv", "shiny", "jolly", "adamant", "timid", "modest", "bold", "calm", "careful", "impish", "in", "the", "a"];
+        // Game Detection Logic
+        const games = { "sv": "scarlet-violet", "swsh": "sword-shield", "bdsp": "brilliant-diamond-shining-pearl" };
+        const activeGameKey = Object.keys(games).find(k => input.includes(k)) || "default";
+        const gameDisplay = activeGameKey.toUpperCase();
+
+        const noise = ["get", "find", "breed", "need", "iv", "5iv", "shiny", "jolly", "adamant", "timid", "modest", "bold", "calm", "careful", "impish", "in", "the", "sv", "swsh", "bdsp"];
         const pokemonName = input.split(/\s+/).find(w => w.length > 2 && !noise.includes(w));
 
         try {
@@ -107,52 +90,54 @@
             
             document.getElementById('output').style.display = 'block';
             document.getElementById('pokeHeader').innerText = data.name;
+            document.getElementById('gameBadge').innerHTML = activeGameKey !== "default" ? `<span style="color:var(--primary); font-weight:bold; font-size:0.8em;">GAME: ${gameDisplay}</span>` : "";
 
-            // 1. Locations
+            // 1. Game-Specific Location Logic
             const lRes = await fetch(data.location_area_encounters);
             const lData = await lRes.json();
-            document.getElementById('locationList').innerHTML = lData.length > 0 ? 
-                `Spawns wild at: <strong>${lData[0].location_area.name.replace(/-/g, ' ')}</strong>` : 
-                "No wild spawns found in the main database.";
+            let locText = "No specific wild spawns found.";
+            
+            if (lData.length > 0) {
+                // Filter encounters by game if a game was specified
+                const filtered = activeGameKey === "default" ? lData : lData.filter(loc => 
+                    loc.version_details.some(v => v.version.name.includes(activeGameKey))
+                );
+                const source = filtered.length > 0 ? filtered : lData;
+                locText = `Commonly found at: <strong>${format(source[0].location_area.name)}</strong>.`;
+            }
+            document.getElementById('locationList').innerHTML = locText;
 
-            // 2. Strategy
+            // 2. Separate Egg Moves
+            const eggMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg'));
+            const stdMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'level-up' || v.move_learn_method.name === 'machine'));
+
+            document.getElementById('eggMovepool').innerHTML = eggMoves.length > 0 ? 
+                eggMoves.slice(0, 10).map(m => `<span class="move-pill egg-pill">${format(m.move.name)}</span>`).join('') : "No Egg Moves available.";
+            
+            document.getElementById('standardMovepool').innerHTML = stdMoves.slice(0, 12).map(m => `<span class="move-pill">${format(m.move.name)}</span>`).join('');
+
+            // 3. Strategy
             let steps = [];
-            const evs = data.stats.filter(s => s.effort > 0).map(s => s.effort + " " + s.stat.name.replace(/-/g, ' ')).join(', ');
-            steps.push(`<strong>EV Yields:</strong> Defeating this species provides <strong>${evs}</strong>.`);
+            const evs = data.stats.filter(s => s.effort > 0).map(s => s.effort + " " + s.stat.name).join(', ');
+            steps.push(`<strong>EV Yield:</strong> This Pokemon yields <strong>${evs}</strong>.`);
 
             const natures = ["jolly", "adamant", "timid", "modest", "bold", "calm", "careful", "impish"];
-            const foundNature = natures.find(n => input.includes(n));
-            if(foundNature) {
-                steps.push(`🧪 <strong>Nature:</strong> Use an <strong>Everstone</strong> to lock in the <strong>${foundNature.toUpperCase()}</strong> nature.`);
-            }
-            if(input.includes("iv")) {
-                steps.push(`📊 <strong>IVs:</strong> Hold the <strong>Destiny Knot</strong> to transfer 5 IVs from parents.`);
-            }
+            const n = natures.find(x => input.includes(x));
+            if(n) steps.push(`🧪 <strong>Nature:</strong> Since you want <strong>${n.toUpperCase()}</strong>, the parent must hold an <strong>Everstone</strong>.`);
+            
+            if(input.includes("iv")) steps.push(`📊 <strong>IVs:</strong> Use a <strong>Destiny Knot</strong> on a 6IV parent to pass down 5 IVs.`);
 
-            // 3. Species / Evo
-            const sRes = await fetch(data.species.url);
-            const sData = await sRes.json();
-            const eRes = await fetch(sData.evolution_chain.url);
-            const eData = await eRes.json();
-            if(eData.chain.species.name !== data.name) {
-                steps.push(`🧬 <strong>Note:</strong> Breed the base form <strong>${eData.chain.species.name.toUpperCase()}</strong>.`);
-            }
             document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('');
 
-            // 4. Movepool
-            const moves = data.moves.slice(0, 15).map(m => `<span class="move-pill">${m.move.name.replace(/-/g, ' ')}</span>`).join('');
-            document.getElementById('movepool').innerHTML = moves;
-
-            // 5. Links
+            // 4. Update External Links for Game
             const cn = data.name.split('-')[0];
-            document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${cn}/`;
+            const serebiiSuffix = activeGameKey === "sv" ? "pokedex-sv" : (activeGameKey === "swsh" ? "pokedex-swsh" : "pokedex-sm");
+            document.getElementById('linkSerebii').href = `https://www.serebii.net/${serebiiSuffix}/${cn}/`;
             document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${cn}_(Pokémon)`;
             document.getElementById('linkDB').href = `https://pokemondb.net/pokedex/${cn}`;
-            
-            document.getElementById('metaInfo').innerHTML = `<span style="background:var(--primary); color:#000; padding:4px 10px; border-radius:5px; font-weight:bold; font-size:0.8em;">${sData.egg_groups[0].name} Group</span>`;
 
         } catch (e) {
-            openRowan();
+            document.getElementById('rowanPopup').style.display = 'block';
         }
     }
 </script>
