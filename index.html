@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Evolution Master</title>
+    <title>PokeBreed Master | Training & Breeding Engine</title>
     <style>
-        :root { --primary: #ff1c1c; --secondary: #3b4cca; --bg: #0f1014; --card: #1c1d24; --text: #f0f0f0; --accent: #ffd700; --evolution: #00d4ff; }
+        :root { --primary: #ff1c1c; --secondary: #3b4cca; --bg: #0f1014; --card: #1c1d24; --text: #f0f0f0; --accent: #ffd700; --evolution: #00d4ff; --ev-color: #ff8c00; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.6); border: 1px solid #333; }
         h1 { color: var(--primary); text-align: center; font-size: 2.5em; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; font-weight: 800; }
@@ -19,6 +19,7 @@
         .badge { display: inline-block; background: var(--secondary); color: white; padding: 5px 14px; border-radius: 8px; font-size: 0.75em; font-weight: bold; margin: 0 8px 8px 0; }
         .step { margin-bottom: 12px; padding: 18px; background: #25262f; border-left: 6px solid var(--primary); border-radius: 0 12px 12px 0; line-height: 1.6; }
         .evo-box { background: rgba(0, 212, 255, 0.1); border: 1px solid var(--evolution); padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .ev-box { background: rgba(255, 140, 0, 0.1); border: 1px solid var(--ev-color); padding: 20px; border-radius: 15px; margin: 20px 0; }
         .location-box { background: #12131a; border: 1px solid #333; padding: 20px; border-radius: 15px; margin: 20px 0; }
         .ref-links { display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
         .ref-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 0.8em; text-decoration: none; color: white; font-weight: bold; }
@@ -30,11 +31,11 @@
 <body>
 
 <div class="container">
-    <h1>⚡ PokeBreed Pro</h1>
-    <p class="subtitle">Breeding & Evolution Intelligence Engine</p>
+    <h1>⚡ PokeBreed Master</h1>
+    <p class="subtitle">Ultimate Breeding, Evolution & EV Training Engine</p>
     
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="e.g. 'Jolly 5IV Garchomp in BDSP'">
+        <input type="text" id="userInput" placeholder="e.g. 'How to breed and EV train Garchomp in SV'">
         <button onclick="generateGuide()">Analyze</button>
     </div>
 
@@ -43,6 +44,9 @@
         <div id="metaInfo"></div>
         
         <div id="evolutionData"></div>
+
+        <div class="section-title">🏋️ EV Training (Effort Values)</div>
+        <div id="evData" class="ev-box"></div>
 
         <div class="section-title">📍 Wild Locations & References</div>
         <div id="locationData" class="location-box">
@@ -76,7 +80,7 @@
         const gameMap = { "bdsp": "BDSP", "sv": "Scarlet/Violet", "swsh": "Sword/Shield", "sword": "Sword", "shield": "Shield" };
         const activeKey = Object.keys(gameMap).find(k => input.includes(k)) || "default";
 
-        const noise = ["how", "to", "get", "find", "where", "is", "breed", "in", "the", "a", "an", "with", "of", "shiny", "jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish", "5iv", "6iv", "iv", "ha", "hidden", "ability", ...Object.keys(gameMap)];
+        const noise = ["how", "to", "get", "find", "where", "is", "breed", "in", "the", "a", "an", "with", "of", "shiny", "jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish", "5iv", "6iv", "iv", "ha", "hidden", "ability", "ev", "train", ...Object.keys(gameMap)];
         const targetWords = words.filter(w => !noise.includes(w) && w.length > 2);
 
         let data = null;
@@ -91,16 +95,23 @@
 
         const sRes = await fetch(data.species.url);
         const sData = await sRes.json();
-        
-        // --- EVOLUTION LOGIC ---
         const evoRes = await fetch(sData.evolution_chain.url);
         const evoData = await evoRes.json();
         
+        // --- EV LOGIC ---
+        let evYields = data.stats.filter(s => s.effort > 0).map(s => `${s.effort} ${format(s.stat.name)}`);
+        let evInstructions = `<strong>Defeating this Pokémon gives:</strong> ${evYields.join(', ')} EV points.<br><br>`;
+        evInstructions += `<strong>Fast Training Method:</strong><br>`;
+        evInstructions += `• <strong>Vitamins:</strong> Use 26 Vitamins (like Protein or Iron) to max a stat instantly (252 EVs).<br>`;
+        evInstructions += `• <strong>Power Items:</strong> Hold a <em>Power Weight/Bracer</em> while battling to gain +8 EVs per defeat.<br>`;
+        if(activeKey === "sv") evInstructions += `• <strong>Mochi/Feathers:</strong> In Paldea, use Fresh-Start Mochi to reset EVs or Feathers for precision tuning.`;
+        
+        document.getElementById('evData').innerHTML = evInstructions;
+
+        // --- EVOLUTION LOGIC ---
         let baseForm = evoData.chain.species.name;
         let evoNotes = "";
-
         if (baseForm !== data.name) {
-            // Traverse chain to find requirements for the target
             let current = evoData.chain;
             while(current) {
                 const match = current.evolves_to.find(e => e.species.name === data.name);
@@ -110,7 +121,7 @@
                     let req = details.min_level ? `Level ${details.min_level}` : 
                               details.item ? format(details.item.name) : 
                               details.min_happiness ? "High Friendship" : "Special Condition";
-                    evoNotes = `⚠️ <strong>Note:</strong> You cannot hatch ${format(data.name)}. You must breed <strong>${format(baseForm)}</strong> and evolve it via ${trigger} at ${req}.`;
+                    evoNotes = `⚠️ <strong>Note:</strong> You must breed <strong>${format(baseForm)}</strong> and evolve it via ${trigger} at ${req}.`;
                     break;
                 }
                 current = current.evolves_to[0];
@@ -121,36 +132,27 @@
         document.getElementById('pokeHeader').innerText = format(data.name);
         document.getElementById('evolutionData').innerHTML = evoNotes ? `<div class="evo-box">${evoNotes}</div>` : "";
 
-        // Meta & Links
+        // Meta & Reference Links
         const hatchSteps = (sData.hatch_counter + 1) * 255;
-        document.getElementById('metaInfo').innerHTML = `
-            ${sData.egg_groups.map(g => `<span class="badge">${format(g.name)}</span>`).join('')}
-            <span class="badge" style="background:#444">~${hatchSteps.toLocaleString()} Steps</span>
-        `;
+        document.getElementById('metaInfo').innerHTML = `${sData.egg_groups.map(g => `<span class="badge">${format(g.name)}</span>`).join('')} <span class="badge" style="background:#444">~${hatchSteps.toLocaleString()} Steps</span>`;
         
         const cleanBase = data.name.split('-')[0];
         document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${cleanBase}/`;
         document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${format(cleanBase)}_(Pokémon)`;
         document.getElementById('linkDB').href = `https://pokemondb.net/pokedex/${cleanBase}`;
 
-        // Locations
+        // Locations & Moves
         const locRes = await fetch(data.location_area_encounters);
         const locData = await locRes.json();
-        document.getElementById('locationList').innerHTML = locData.length > 0 ? 
-            "Commonly found in: " + locData.slice(0, 3).map(l => `<strong>${format(l.location_area.name)}</strong>`).join(', ') : 
-            "Check references for specific locations.";
+        document.getElementById('locationList').innerHTML = locData.length > 0 ? "Spawns in: " + locData.slice(0, 3).map(l => `<strong>${format(l.location_area.name)}</strong>`).join(', ') : "Check references for locations.";
 
-        // Instructions
         let steps = [];
-        if (input.includes("iv")) steps.push(`📊 <strong>IV Mapping:</strong> Use a Destiny Knot on the parent with best stats.`);
-        if (input.includes("shiny")) steps.push(`✨ <strong>Shiny odds:</strong> Use Masuda Method (Foreign Ditto).`);
-        
+        if (input.includes("iv")) steps.push(`📊 <strong>IVs:</strong> Use a Destiny Knot to pass 5 IVs from parents.`);
         const natures = ["jolly", "timid", "adamant", "modest", "bold", "calm", "careful", "impish"];
         const foundNature = natures.find(n => input.includes(n));
         if (foundNature) steps.push(`🧪 <strong>Everstone:</strong> Give to the ${format(foundNature)} parent.`);
 
-        document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('') || `<div class="step">Target reached. Ready for breeding ${format(baseForm)}.</div>`;
-        
+        document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('') || `<div class="step">Ready to begin breeding ${format(baseForm)}.</div>`;
         const eggMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg')).map(m => m.move.name);
         document.getElementById('movepoolSection').innerHTML = eggMoves.map(m => `<span class="move-pill">${format(m)}</span>`).join('');
     }
