@@ -5,122 +5,113 @@
     <title>PokeBreed Pro | ARCHITECT: LIME</title>
     <style>
         :root { --void: #010204; --ring: #00f2ff; --warn: #ff0055; --gold: #ffd700; --surface: #0a0f19; --sub: #64748b; }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.2s; }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; font-size: 13px; overflow-x: hidden; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 20px; font-size: 13px; line-height: 1.5; }
         
-        /* --- LEGAL SHIELD (MANDATORY) --- */
+        /* --- THE SHIELD --- */
         .overlay { position: fixed; inset: 0; background: #000; z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .legal-card { max-width: 650px; border: 2px solid var(--warn); padding: 40px; background: #050505; }
-        .shield-text { background: #111; padding: 15px; font-size: 11px; color: #888; border: 1px solid #222; margin: 15px 0; line-height: 1.5; }
+        .legal-card { max-width: 600px; border: 2px solid var(--warn); padding: 40px; background: #050505; }
 
-        /* --- THE FACULTY HUB --- */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 25px; background: #0d1421; border-left: 10px solid var(--ring); margin-bottom: 20px; border-radius: 0 12px 12px 0; }
-        .prof-pod { display: flex; align-items: center; gap: 20px; }
-        .p-img { width: 70px; height: 70px; border: 3px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; background: #000; }
-        
-        /* --- DYNAMIC STYLES --- */
-        .crash-oak { animation: shake 0.1s infinite; border-color: var(--warn) !important; color: var(--warn); }
-        .crash-rowan { filter: grayscale(1) contrast(2); transform: scale(1.1); border-color: #fff !important; }
-        .crash-elm { animation: panic 0.2s infinite; border-color: var(--gold) !important; }
-        @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(2px, 2px); } 75% { transform: translate(-2px, -2px); } }
-        @keyframes panic { 0% { transform: rotate(5deg); } 50% { transform: rotate(-5deg); } 100% { transform: rotate(5deg); } }
+        /* --- THE WIDE-TALK HEADER --- */
+        .header { display: flex; flex-direction: column; padding: 30px; background: #0d1421; border-left: 12px solid var(--ring); margin-bottom: 25px; border-radius: 0 15px 15px 0; min-height: 180px; position: relative; }
+        .prof-row { display: flex; gap: 25px; align-items: flex-start; }
+        .p-avatar { width: 90px; height: 90px; border: 4px solid var(--ring); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 35px; background: #000; flex-shrink: 0; }
+        .talk-bubble { flex-grow: 1; }
+        .p-name { font-weight: 900; color: var(--ring); letter-spacing: 3px; font-size: 11px; margin-bottom: 8px; }
+        .p-quote { font-style: italic; font-size: 15px; color: #fff; line-height: 1.6; }
 
-        /* --- DATA SLOTS --- */
-        #target { width: 100%; background: #000; border: 4px solid var(--ring); padding: 25px; color: var(--ring); font-size: 32px; text-align: center; outline: none; margin-bottom: 20px; border-radius: 8px; }
+        /* --- ANIMATIONS --- */
+        .crash-oak { animation: havoc 0.05s infinite; border-color: var(--warn) !important; color: var(--warn); }
+        .crash-elm { animation: panic 0.15s infinite; border-color: var(--gold) !important; }
+        @keyframes havoc { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -3px); } 100% { transform: translate(0,0); } }
+        @keyframes panic { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* --- CORE UI --- */
+        #target { width: 100%; background: #000; border: 4px solid var(--ring); padding: 30px; color: var(--ring); font-size: 35px; text-align: center; outline: none; margin-bottom: 20px; }
         .party { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px; }
-        .slot { background: #0d1421; border: 1px dashed #333; padding: 15px; text-align: center; cursor: pointer; border-radius: 6px; font-size: 10px; }
-        .slot.active { border: 2px solid var(--ring); background: rgba(0, 242, 255, 0.05); }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-        .panel { background: #0d1421; padding: 20px; border: 1px solid #1a2333; border-radius: 8px; }
-        .tag { font-size: 9px; color: var(--ring); letter-spacing: 2px; font-weight: 900; border-bottom: 1px solid #333; display: block; margin-bottom: 10px; }
+        .slot { background: #0d1421; border: 1px dashed #333; padding: 20px; text-align: center; cursor: pointer; border-radius: 8px; font-size: 11px; }
+        .slot.active { border: 3px solid var(--ring); background: rgba(0, 242, 255, 0.1); }
         
-        .drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 800px; height: 100%; background: #070a0f; z-index: 10000; padding: 40px; overflow-y: auto; border-left: 5px solid var(--ring); }
-        .open { right: 0 !important; }
-        .btn { padding: 12px 24px; font-weight: 900; cursor: pointer; text-transform: uppercase; border: none; border-radius: 4px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .panel { background: #0d1421; padding: 25px; border-radius: 12px; border: 1px solid #1a2333; }
+        .tag { font-size: 10px; color: var(--ring); font-weight: 900; border-bottom: 1px solid #333; display: block; margin-bottom: 15px; letter-spacing: 2px; }
+
+        .btn { padding: 15px 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; border: none; border-radius: 5px; }
+        .move-row { background: #000; padding: 10px; border: 1px solid #222; margin-bottom: 5px; font-size: 10px; display: flex; justify-content: space-between; }
     </style>
 </head>
-<body onload="init()">
+<body onload="boot()">
 
 <div id="pop" class="overlay">
     <div class="legal-card">
-        <h2 style="color:var(--warn); margin:0;">FAN-MADE PROJECT DISCLOSURE</h2>
-        <div class="shield-text">
-            <b>PokeBreed Pro</b> is an independent tool by <b>Architect Lime</b>. We are NOT affiliated with, endorsed by, or partnered with <b>Nintendo, Game Freak, or The Pokémon Company</b>. All trademarks belong to their respective owners. This is a non-commercial fan simulation. 
-        </div>
-        <p style="font-size:10px; color:var(--sub);">By clicking below, you acknowledge that <b>Lime</b> is the sole creator and this lab is a tribute project.</p>
-        <button class="btn" style="background:var(--gold); width:100%" onclick="document.getElementById('pop').style.display='none'">I ACKNOWLEDGE (ENTER LAB)</button>
+        <h2 style="color:var(--warn)">NON-AFFILIATION DISCLOSURE</h2>
+        <p style="font-size:12px; color:var(--sub); line-height:1.6;">
+            This lab is a <b>Fan-Made Project</b> by <b>Architect Lime</b>. It is NOT affiliated with Nintendo or Game Freak. No copyright infringement is intended. By entering, you indemnify Lime from all legal and RNG-based distress.
+        </p>
+        <button class="btn" style="background:var(--gold); width:100%" onclick="document.getElementById('pop').style.display='none'">AUTHORIZE LIME-CORE</button>
     </div>
-</div>
-
-<div id="bible" class="drawer">
-    <button onclick="toggleB()" class="btn" style="background:var(--warn); width:100%">CLOSE ARCHIVES</button>
-    <div id="b-content"></div>
 </div>
 
 <div class="header">
-    <div class="prof-pod">
-        <div id="pImg" class="p-img">O</div>
-        <div>
-            <div id="pName" style="font-weight:900; color:var(--ring); font-size:11px;">PROF. OAK</div>
-            <div id="pQuote" style="font-style:italic; font-size:13px;">"Select a slot and scan a subject, Lime."</div>
+    <div class="prof-row">
+        <div id="pImg" class="p-avatar">O</div>
+        <div class="talk-bubble">
+            <div id="pName" class="p-name">PROF. OAK</div>
+            <div id="pQuote" class="p-quote">"The lab is silent... too silent. Give me something to analyze, Lime. A genetic strand, a species name—anything but this void."</div>
         </div>
     </div>
-    <button onclick="toggleB()" class="btn" style="background:none; border:2px solid var(--ring); color:var(--ring)">BREEDING BIBLE</button>
 </div>
 
 <div class="party" id="party"></div>
-<input type="text" id="target" placeholder="SCAN GENETIC DATA" onkeypress="if(event.key==='Enter') scan()">
-<button onclick="location.reload()" class="btn" style="background:var(--warn); width:100%; margin-bottom:20px;">PURGE ALL DATA (ARCHITECT: LIME)</button>
+<input type="text" id="target" placeholder="SCAN DIRECTIVE" onkeypress="if(event.key==='Enter') scan()">
+<button onclick="location.reload()" class="btn" style="background:var(--warn); width:100%; margin-bottom:20px;">PURGE LAB (ARCHITECT: LIME)</button>
 
 <div class="grid">
-    <div class="panel"><span class="tag">Evolution & Eggs</span><div id="d1">--</div></div>
-    <div class="panel"><span class="tag">Base Stats</span><div id="d2">--</div></div>
-    <div class="panel"><span class="tag">Locations</span><div id="d3">--</div></div>
-    <div class="panel" style="grid-column: span 2;"><span class="tag">Movepool & Evolution Cutoffs</span><div id="d4" style="height:250px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:8px;"></div></div>
+    <div class="panel"><span class="tag">I. ORIGIN DATA</span><div id="d1">--</div></div>
+    <div class="panel"><span class="tag">II. STATS</span><div id="d2">--</div></div>
+    <div class="panel"><span class="tag">III. LOCATIONS</span><div id="d3">--</div></div>
+    <div class="panel" style="grid-column: span 2;"><span class="tag">IV. COMPREHENSIVE MOVEPOOL</span><div id="d4" style="height:300px; overflow-y:auto; display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div></div>
 </div>
 
-<footer style="text-align:center; padding:40px; color:var(--sub); font-size:10px; letter-spacing:5px;">
-    ARCHITECT: LIME | NOT AFFILIATED WITH NINTENDO/GAMEFREAK
+<footer style="text-align:center; padding:50px; color:var(--sub); font-size:10px; letter-spacing:10px;">
+    LIME-ARCHITECT | FAN-MADE | NOT AFFILIATED WITH NINTENDO
 </footer>
 
 <script>
     let active = 0;
-    const FACULTY = {
-        oak: { n: "PROF. OAK", i: "O", q: "Relationship & Ethics Expert.", c: "crash-oak", m: "DITTO CANNOT BREED DITTO! LIME, THE SIMULATION IS BREAKING!" },
-        elm: { n: "PROF. ELM", i: "E", q: "Egg & Breeding Specialist.", c: "crash-elm", m: "THE EVERSTONE! YOU FORGOT THE EVERSTONE! IT'S ALL RANDOM!" },
-        rowan: { n: "PROF. ROWAN", i: "R", q: "Evolutionary Authority.", c: "crash-rowan", m: "Legendaries do not breed. This is a waste of Sinnoh's resources." },
-        kukui: { n: "PROF. KUKUI", i: "K", q: "Move & Combat Specialist.", c: "crash-oak", m: "Woo! That's a 4x weakness, cousin! You're gonna get KO'd!" }
+    const ARCHIVES = {
+        oak: { n: "PROF. OAK", i: "O", c: "crash-oak", m: "DITTO CANNOT BREED DITTO! I've spent fifty years studying the biology of these creatures and you think you can just double-up on the Pink Blob? You're tearing the very fabric of the Kanto region apart, Lime! Staff, restrain the Architect immediately!" },
+        elm: { n: "PROF. ELM", i: "E", c: "crash-elm", m: "THE EVERSTONE! Where is the Everstone?! Do you have any idea how many generations it takes to fix a botched Nature? We're looking at a 1-in-25 failure rate now because you were in such a hurry! My laboratory... my beautiful eggs... all randomized!" },
+        rowan: { n: "PROF. ROWAN", i: "R", c: "crash-oak", m: "Legendary entities do not possess egg groups. They are singular forces of nature. To attempt to 'breed' a Mewtwo is not just a waste of Sinnoh's resources—it is an insult to evolution itself. Leave my sight before I have you removed." },
+        lime: { n: "ARCHITECT LIME", i: "L", c: "", m: "System stabilized. Legal shields are holding at 100%. The professors have been fed their medication and are ready to resume the scan. Proceed with caution." }
     };
 
-    function init() {
+    function boot() {
         let p = document.getElementById('party');
         for(let i=0; i<6; i++) p.innerHTML += `<div class="slot ${i==0?'active':''}" id="s${i}" onclick="setS(${i})">⚪ SLOT ${i+1}</div>`;
-        document.getElementById('b-content').innerHTML = `
-            <h2 style="color:var(--gold)">THE LIME ARCHIVES</h2>
-            <h3>The Incense Protocol</h3><p>Sea (Azurill), Full (Munchlax), Lax (Wynaut), Rose (Budew), Wave (Mantyke), Rock (Bonsly), Odd (Mime Jr).</p>
-            <h3>Genetic Mechanics</h3><p><b>Everstone:</b> Nature lock. <b>Destiny Knot:</b> 5-IV pass. <b>Flame Body:</b> 1/2 Egg Steps.</p>
-        `;
     }
 
-    function toggleB() { document.getElementById('bible').classList.toggle('open'); }
     function setS(i) { active=i; document.querySelectorAll('.slot').forEach((s,x)=>s.classList.toggle('active', x==i)); }
 
-    function crash(type) {
-        const p = FACULTY[type];
+    function crashout(who) {
+        const p = ARCHIVES[who];
         const img = document.getElementById('pImg');
-        img.className = "p-img " + p.c;
+        img.className = "p-avatar " + p.c;
         img.innerText = p.i;
         document.getElementById('pName').innerText = p.n;
-        document.getElementById('pQuote').innerHTML = `<span style="color:var(--warn)">"${p.m}"</span>`;
-        setTimeout(() => { img.className = "p-img"; img.innerText = "O"; document.getElementById('pName').innerText = "PROF. OAK"; document.getElementById('pQuote').innerText = '"Stabilized."'; }, 5000);
+        document.getElementById('pQuote').innerHTML = `<span style="color:var(--warn)">${p.m}</span>`;
+        setTimeout(() => { 
+            img.className = "p-avatar"; img.innerText = "O"; 
+            document.getElementById('pName').innerText = "PROF. OAK"; 
+            document.getElementById('pQuote').innerText = '"Deep breaths. The data is clear again."'; 
+        }, 8000);
     }
 
     async function scan() {
         const q = document.getElementById('target').value.toLowerCase();
-        if(q.includes("ditto ditto")) return crash('oak');
-        if(q.includes("legendary") || q.includes("mewtwo")) return crash('rowan');
-        if(q.includes("why")) return crash('elm');
+        if(q.includes("ditto ditto")) return crashout('oak');
+        if(q.includes("legendary") || q.includes("mewtwo")) return crashout('rowan');
+        if(q.includes("why") || q.includes("everstone")) return crashout('elm');
 
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
         const t = res.results.find(p => q.includes(p.name))?.name;
@@ -131,10 +122,10 @@
         const loc = await fetch(p.location_area_encounters).then(r=>r.json());
 
         document.getElementById(`s${active}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
-        document.getElementById('d1').innerHTML = `<b>Genesis:</b> ${evo.chain.species.name.toUpperCase()}<br><b>Hatch:</b> ${sp.hatch_counter} Cycles (${sp.hatch_counter*257} steps)`;
+        document.getElementById('d1').innerHTML = `<b>Genesis:</b> ${evo.chain.species.name.toUpperCase()}<br><b>Cycles:</b> ${sp.hatch_counter}<br><b>Steps:</b> ${sp.hatch_counter*257}`;
         document.getElementById('d2').innerHTML = p.stats.map(s => `<div>${s.stat.name.toUpperCase()}: ${s.base_stat}</div>`).join('');
-        document.getElementById('d3').innerHTML = loc.slice(0, 5).map(l => `• ${l.location_area.name.replace(/-/g,' ')}`).join('<br>') || "Hatch Only";
-        document.getElementById('d4').innerHTML = p.moves.slice(0, 60).map(m => `<div style="background:#000; padding:5px; border:1px solid #222; font-size:10px;">${m.move.name.toUpperCase()} (LV.${m.version_group_details[0].level_learned_at})</div>`).join('');
+        document.getElementById('d3').innerHTML = loc.slice(0, 5).map(l => `• ${l.location_area.name.replace(/-/g,' ')}`).join('<br>');
+        document.getElementById('d4').innerHTML = p.moves.slice(0, 80).map(m => `<div class="move-row"><span>${m.move.name.toUpperCase()}</span><span>LV.${m.version_group_details[0].level_learned_at}</span></div>`).join('');
     }
 </script>
 </body>
