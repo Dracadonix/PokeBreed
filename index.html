@@ -3,33 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Rowan's Lab</title>
+    <title>PokeBreed Pro | The Rowan Laboratory</title>
     <style>
-        :root { --bg: #0c0d10; --card: #16181d; --primary: #00e5ff; --text: #f0f0f0; --sub-text: #a0a8b5; --border: #2d333f; }
+        :root { --bg: #0c0d10; --card: #16181d; --primary: #00e5ff; --text: #f0f0f0; --border: #2d333f; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.6); margin-top: 40px; transition: opacity 0.5s; }
+        .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.6); margin-top: 40px; transition: all 0.5s ease; }
         h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 4px; font-weight: 900; }
         .input-group { display: flex; gap: 12px; margin-bottom: 30px; }
         input { flex: 1; padding: 18px; background: #1a1c23; border: 2px solid var(--border); border-radius: 12px; color: white; font-size: 1.1em; outline: none; }
         button { padding: 18px 30px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
         
-        /* THE ROWAN BOX */
+        /* ROWAN'S DS-STYLE DIALOGUE BOX */
         #rowanPopup {
             display: none; position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 650px; background: #fdfdfd; border: 6px double #333;
             padding: 30px; z-index: 9999; color: #222; font-family: 'Courier New', monospace;
-            box-shadow: 0 0 0 5000px rgba(0,0,0,0.8);
+            box-shadow: 0 0 0 5000px rgba(0,0,0,0.8); transition: all 0.1s;
         }
         .rowan-header { font-weight: 900; color: #b00; border-bottom: 3px solid #333; margin-bottom: 15px; font-size: 1.3em; }
         .rowan-btn { background: #333; color: white; border: none; padding: 10px 25px; float: right; cursor: pointer; font-weight: bold; margin-top: 15px; }
 
-        /* ANIMATIONS */
-        @keyframes shake { 0%, 100% { transform: translateX(-50%); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-52%); } 20%, 40%, 60%, 80% { transform: translateX(-48%); } }
-        @keyframes ultra-shake { 0% { transform: translate(-50%, 0); } 25% { transform: translate(-51%, 2%); } 50% { transform: translate(-49%, -2%); } 75% { transform: translate(-52%, 1%); } 100% { transform: translate(-50%, 0); } }
-        .crash-out { background: #600 !important; color: white !important; border-color: #f00 !important; animation: ultra-shake 0.1s infinite !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(-50%); } 25% { transform: translateX(-51%); } 75% { transform: translateX(-49%); } }
+        @keyframes ultra-rage { 0% { transform: translate(-50%, 0); } 10% { transform: translate(-53%, 3%); } 20% { transform: translate(-47%, -3%); } 100% { transform: translate(-50%, 0); } }
+        .intense-shake { animation: ultra-rage 0.05s infinite !important; }
+        .crash-bg { background: #a00 !important; color: #fff !important; border-color: #f00 !important; }
         
         #output { display: none; }
-        .move-pill { display: inline-block; padding: 5px 12px; background: var(--bg); border: 1px solid var(--border); margin: 4px; border-radius: 6px; font-size: 0.8em; color: var(--primary); text-transform: capitalize; }
         .suggestion-link { color: #0066cc; cursor: pointer; text-decoration: underline; font-weight: bold; }
     </style>
 </head>
@@ -37,29 +36,57 @@
 
 <div id="rowanPopup">
     <div id="rowanHeader" class="rowan-header">PROF. ROWAN</div><br>
-    <div id="rowanText">Hmm! Be precise!</div>
-    <div id="rowanSuggestions" style="margin-top: 10px; font-size: 0.85em; display:none;">
+    <div id="rowanText">...</div>
+    <div id="rowanSuggestions" style="margin-top: 10px; font-size: 0.85em; display:none; background: #eee; padding: 10px; border: 1px dashed #333; color: #333;">
         Did your pen slip? <span id="suggestionList"></span>?
     </div>
-    <button id="rowanBtn" class="rowan-btn" onclick="closeRowan()">SORRY...</button>
+    <button id="rowanBtn" class="rowan-btn" onclick="closeRowan()">SORRY, PROFESSOR...</button>
 </div>
 
 <div class="container" id="mainApp">
     <h1>⚡ PokeBreed Pro</h1>
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="e.g. 'Glibe SV'" onkeypress="if(event.key === 'Enter') generateGuide()">
+        <input type="text" id="userInput" placeholder="Search (e.g. 'Glibe SV')" onkeypress="if(event.key === 'Enter') generateGuide()">
         <button onclick="generateGuide()">Analyze</button>
     </div>
     <div id="output">
         <h2 id="pokeHeader" style="text-transform: capitalize; font-size: 2em; color: var(--primary);"></h2>
-        <div id="eggMoves" style="margin-top:20px;"></div>
+        <div id="breedingLogic" style="padding:15px; background:rgba(255,255,255,0.05); border-radius:10px;">Searching results...</div>
     </div>
 </div>
 
 <script>
-    let failedCount = 0;
     let pokemonNames = [];
-    
+    let failedCount = 0;
+    let rageThreshold = Math.floor(Math.random() * 11) + 5; // 5 to 15
+
+    const phrases = {
+        low: [
+            "Be precise with your data. Precision is the mark of a researcher.",
+            "Hmm. I don't recognize that name. Try again.",
+            "A Pokémon trainer should at least know how to spell their target's name.",
+            "My research notes have no mention of such a creature."
+        ],
+        mid: [
+            "Your handwriting is becoming illegible. Focus!",
+            "I've researched Pokémon for 60 years and NEVER heard of that species.",
+            "Is your Pokédex broken, or are you simply not using it?",
+            "Again? You're testing the limits of my afternoon, young one."
+        ],
+        high: [
+            "Grah! My patience is wearing thin! Look at the suggestions!",
+            "I am a busy man! Do not come into my lab with such sloppy data!",
+            "You are making a mockery of the scientific process!",
+            "SILENCE! Correct your spelling before I lose my composure!"
+        ],
+        crash: [
+            "GRAAAAAAH!!! I CANNOT TAKE ANOTHER SECOND OF THIS INCOMPETENCE!!",
+            "OUT!! GET OUT OF MY LABORATORY!! YOUR STUPIDITY IS CONTAMINATING THE SAMPLES!!",
+            "THATS IT!! I'M RETIRING!! I CAN'T TEACH SOMEONE WHO CAN'T SPELL 'GIBLE'!!",
+            "I HAVE HAD ENOUGH!! LEAVE BEFORE I CALL THE GALACTIC GRUNTS TO DRAG YOU OUT!!"
+        ]
+    };
+
     fetch('https://pokeapi.co/api/v2/pokemon?limit=2000').then(res => res.json()).then(data => {
         pokemonNames = data.results.map(p => p.name);
     });
@@ -76,6 +103,7 @@
         return m[a.length][b.length];
     }
 
+    const randomPhrase = (tier) => phrases[tier][Math.floor(Math.random() * phrases[tier].length)];
     function closeRowan() { document.getElementById('rowanPopup').style.display = 'none'; }
 
     async function generateGuide() {
@@ -87,7 +115,7 @@
             if(!res.ok) throw new Error();
             const data = await res.json();
             
-            failedCount = 0; // Reset
+            failedCount = 0; 
             document.getElementById('output').style.display = 'block';
             document.getElementById('pokeHeader').innerText = data.name;
         } catch (e) {
@@ -95,34 +123,42 @@
             const popup = document.getElementById('rowanPopup');
             const text = document.getElementById('rowanText');
             const app = document.getElementById('mainApp');
+            const suggestDiv = document.getElementById('rowanSuggestions');
             
             popup.style.display = 'block';
-            popup.style.animation = "shake 0.4s ease-in-out";
+            popup.style.animation = "shake 0.3s ease-in-out";
 
-            if (failedCount >= 10) {
-                // CRASH OUT PHASE
-                popup.classList.add('crash-out');
-                text.innerHTML = "GRAAAAAH!!! ENOUGH! I HAVE RESEARCH TO CONDUCT AND YOU ARE WASTING EVERY SECOND OF IT! GET OUT OF MY LAB! NOW!!";
+            if (failedCount >= rageThreshold) {
+                // THE CRASH OUT
+                popup.classList.add('crash-bg', 'intense-shake');
+                text.innerHTML = randomPhrase('crash');
                 document.getElementById('rowanBtn').style.display = 'none';
-                app.style.opacity = '0'; // Kick out
-                
+                app.style.opacity = '0';
+                app.style.transform = "scale(0.5) rotate(5deg)";
+
                 setTimeout(() => {
-                    // COOLDOWN PHASE
-                    popup.classList.remove('crash-out');
-                    popup.style.animation = "none";
-                    text.innerHTML = "...*huff*... *puff*... My apologies. I lost my composure. Let us start over from the beginning. Please... be more careful.";
+                    popup.classList.remove('crash-bg', 'intense-shake');
+                    text.innerHTML = "...*huff*... *huff*... Forgive me. I am 60 years old. My heart can only take so much. Let us reset and try to be... better.";
                     document.getElementById('rowanBtn').style.display = 'block';
                     document.getElementById('rowanBtn').innerText = "YES, PROFESSOR.";
                     failedCount = 0;
+                    rageThreshold = Math.floor(Math.random() * 11) + 5;
                     app.style.opacity = '1';
-                    document.getElementById('userInput').value = "";
-                }, 5000);
+                    app.style.transform = "scale(1) rotate(0deg)";
+                }, 6000);
             } else {
-                text.innerText = `Attempt ${failedCount}/10: "${pokemonName}" is NOT a Pokémon. Do you even have a Pokédex?!`;
-                const suggestions = pokemonNames.map(n => ({n, d: getDistance(pokemonName, n)})).filter(x => x.d <= 2).sort((a,b)=>a.d-b.d).slice(0,3);
+                let tier = 'low';
+                if (failedCount > (rageThreshold * 0.7)) tier = 'high';
+                else if (failedCount > (rageThreshold * 0.3)) tier = 'mid';
+                
+                text.innerText = `[Attempt ${failedCount}] ` + randomPhrase(tier);
+                
+                const suggestions = pokemonNames.map(n => ({n, d: getDistance(pokemonName || "", n)})).filter(x => x.d <= 2).sort((a,b)=>a.d-b.d).slice(0,3);
                 if(suggestions.length > 0) {
-                    document.getElementById('rowanSuggestions').style.display = "block";
+                    suggestDiv.style.display = "block";
                     document.getElementById('suggestionList').innerHTML = suggestions.map(s => `<span class="suggestion-link" onclick="document.getElementById('userInput').value='${s.n}'; generateGuide(); closeRowan();">${s.n}</span>`).join(', ');
+                } else {
+                    suggestDiv.style.display = "none";
                 }
             }
         }
