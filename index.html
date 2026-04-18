@@ -3,74 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | v5.0B Omni</title>
+    <title>PokeBreed Pro | v5.5B Cycle</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --sub: #64748b; --warn: #ff0055; 
-            --surface: rgba(10, 15, 25, 0.98); --gold: #ffd700;
+            --surface: rgba(10, 15, 25, 0.98); --gold: #ffd700; --research: #55ff77;
         }
-        * { box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
-        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 10px; min-height: 100vh; overflow-x: hidden; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
+        body { background: var(--void); color: #f1f5f9; margin: 0; padding: 10px; min-height: 100vh; }
         
         /* CHAMPION MODAL */
         #champUplink { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .champ-card { border: 2px solid var(--gold); padding: 30px; background: #000; max-width: 500px; width: 100%; }
+        .champ-card { border: 2px solid var(--gold); padding: 30px; background: #000; max-width: 500px; }
 
         /* HEADER & BIBLE */
         .prof-hub { background: var(--surface); border-left: 4px solid var(--ring); padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; }
-        .prof-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--ring); display: flex; align-items: center; justify-content: center; font-weight: 900; background: #000; flex-shrink: 0; }
+        .prof-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--ring); display: flex; align-items: center; justify-content: center; font-weight: 900; background: #000; color: var(--ring); flex-shrink: 0; }
         
-        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: var(--surface); border-left: 1px solid var(--ring); z-index: 5000; padding: 30px; overflow-y: auto; }
+        #bible { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: var(--surface); border-left: 1px solid var(--ring); z-index: 5000; padding: 30px; overflow-y: auto; box-shadow: -20px 0 50px #000; }
         #bible.open { right: 0; }
 
-        /* PARTY SLOTS (MOBILE FRIENDLY) */
+        /* PARTY BAR */
         .party-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
         @media (min-width: 768px) { .party-bar { grid-template-columns: repeat(6, 1fr); } }
-        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; }
+        .ball-slot { background: #0b111e; border: 1px dashed var(--sub); padding: 15px; border-radius: 4px; text-align: center; cursor: pointer; font-size: 10px; }
         .ball-slot.active { border: 2px solid var(--ring); background: rgba(0,242,255,0.05); }
-        .ball-slot b { font-size: 9px; display: block; margin-top: 5px; color: var(--ring); }
 
-        /* INPUT & GATE */
-        input { width: 100%; background: #0b111e; border: 1px solid var(--ring); padding: 18px; color: var(--ring); text-align: center; font-size: 18px; outline: none; margin-bottom: 10px; border-radius: 4px; }
-        .gate-btn { width: 100%; background: linear-gradient(45deg, var(--gold), #b8860b); color: #000; border: none; padding: 15px; font-weight: 900; letter-spacing: 2px; cursor: pointer; margin-bottom: 20px; }
+        /* PRIMARY ACTION BUTTONS */
+        #actionBtn { width: 100%; padding: 18px; font-weight: 900; letter-spacing: 2px; cursor: pointer; border: none; border-radius: 4px; margin-bottom: 20px; }
+        .btn-gold { background: linear-gradient(45deg, var(--gold), #b8860b); color: #000; }
+        .btn-research { background: linear-gradient(45deg, var(--research), #228b22); color: #000; }
 
-        /* DATA GRID */
-        .main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; display: none; }
+        /* PANELS */
+        .main-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 1024px) { .main-grid { grid-template-columns: repeat(5, 1fr); } }
         .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 4px; }
         .tag { font-size: 8px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; display: block; }
 
-        /* TYPE MATRIX */
-        .matrix { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 20px; }
-        .type-n { font-size: 9px; padding: 8px 2px; text-align: center; background: #111; border-radius: 2px; }
-        .danger { color: var(--warn); border: 1px solid var(--warn); }
-        .covered { color: var(--ring); border: 1px solid var(--ring); }
+        /* MATRIX VIEW */
+        #matrixView { display: none; margin-top: 20px; }
+        .matrix { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+        .type-n { font-size: 9px; padding: 10px 2px; text-align: center; background: #111; border-radius: 2px; border: 1px solid #222; }
+        .danger { color: var(--warn); border-color: var(--warn); box-shadow: inset 0 0 5px var(--warn); }
     </style>
 </head>
 <body onload="init()">
 
-<div id="champUplink" onclick="this.style.display='none'">
+<div id="champUplink" onclick="enterMatrix()">
     <div class="champ-card">
-        <h2 id="cName" style="color:var(--gold); letter-spacing:4px;">CHAMPION</h2>
-        <p id="cQuote" style="font-style:italic; margin: 20px 0;"></p>
-        <p style="font-size:10px; color:var(--sub);">[ TAP TO ENTER MATRIX ]</p>
+        <h2 id="cName" style="color:var(--gold); letter-spacing:5px;">CHAMPION UPLINK</h2>
+        <p id="cQuote" style="font-style:italic; margin: 25px 0; font-size: 18px; color: #fff;"></p>
+        <p style="font-size:10px; color:var(--sub);">[ TAP TO ANALYZE SYNERGY ]</p>
     </div>
 </div>
 
 <div id="bible">
-    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:10px; margin-bottom:20px;">CLOSE [X]</button>
-    <h3 style="color:var(--ring)">BREEDING BIBLE</h3>
-    <p style="font-size:12px; color:var(--sub);"><b>IV (Individual Values):</b> 0-31.<br><b>EV (Effort Values):</b> Training points.<br><b>HA:</b> Hidden Ability.<br><b>Genesis Law:</b> Eggs always hatch to the lowest evolution stage.</p>
-    <p style="font-size:10px; color:var(--warn);">*Fan-made project. Not affiliated with Nintendo/Game Freak.</p>
+    <button onclick="toggleBible()" style="background:var(--warn); color:#fff; border:none; padding:10px; margin-bottom:20px; cursor:pointer; width:100%;">CLOSE ENCYCLOPEDIA</button>
+    <h3 style="color:var(--ring)">THE BREEDING BIBLE</h3>
+    <div style="font-size:12px; line-height:1.6; color:var(--sub);">
+        <p><b>IV (Individual Values):</b> Genetic potential from 0 to 31. Higher is stronger.</p>
+        <p><b>EV (Effort Values):</b> Stats gained through hard training.</p>
+        <p><b>HA (Hidden Ability):</b> Rare traits passed primarily from the mother.</p>
+        <p><b>Everstone:</b> Passes the parent's Nature 100% of the time.</p>
+        <p><b>Destiny Knot:</b> Passes 5 IVs from the combined pool of both parents.</p>
+        <p style="color:var(--warn); margin-top:20px;">*DISCLAIMER: This is a fan-tool. All Pokémon rights belong to Nintendo/Game Freak.</p>
+    </div>
 </div>
 
 <div class="prof-hub">
     <div id="pIcon" class="prof-img">?</div>
     <div style="flex-grow:1;">
-        <span id="pTitle" style="font-size:9px; font-weight:900; color:var(--ring);">TACTICAL UPLINK</span>
-        <div id="pTalk" style="font-size:13px; font-style:italic;">"Ready to analyze your team of six."</div>
+        <span id="pTitle" style="font-size:9px; font-weight:900; color:var(--ring); letter-spacing:4px;">LAB COORDINATOR</span>
+        <div id="pTalk" style="font-size:13px; font-style:italic;">"Fill the Pokéballs. Then we'll see if the Champions approve."</div>
     </div>
-    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:8px; font-size:10px;">BIBLE</button>
+    <button onclick="toggleBible()" style="background:none; border:1px solid var(--ring); color:var(--ring); padding:8px 12px; font-size:10px; font-weight:900; cursor:pointer;">BIBLE</button>
 </div>
 
 <div class="party-bar">
@@ -83,41 +89,69 @@
 </div>
 
 <input type="text" id="target" placeholder="e.g. 0 Atk Timid Gengar" onkeypress="if(event.key==='Enter') scan()">
-<button class="gate-btn" onclick="championCheck()">CHALLENGE THE LEAGUE</button>
 
-<div id="matrix" class="panel" style="display:none; margin-bottom:15px;">
-    <span class="tag">Type Coverage (Weakness vs Answer)</span>
-    <div class="matrix" id="mGrid"></div>
+<button id="actionBtn" class="btn-gold" onclick="handleAction()">CHALLENGE THE LEAGUE</button>
+
+<div id="researchView" class="main-grid">
+    <div class="panel"><span class="tag">Logistics</span><div id="gear"></div></div>
+    <div class="panel"><span class="tag">Egg Hatch (Genesis)</span><div id="gen" style="text-align:center; font-size:22px; border:1px solid var(--ring); padding:15px; color:var(--ring);">---</div></div>
+    <div class="panel"><span class="tag">Nexus</span><div id="nexus"></div></div>
+    <div class="panel"><span class="tag">Biometrics</span><div id="stats"></div></div>
+    <div class="panel"><span class="tag">Movepool</span><div id="moves" style="height:300px; overflow-y:auto; font-size:11px;"></div></div>
 </div>
 
-<div id="ui" class="main-grid">
-    <div class="panel"><span class="tag">01. Logistics</span><div id="gear"></div></div>
-    <div class="panel"><span class="tag">02. Egg Hatch</span><div id="gen" style="text-align:center; font-size:20px; border:1px solid var(--ring); padding:20px;">---</div></div>
-    <div class="panel"><span class="tag">03. Nexus</span><div id="nexus"></div></div>
-    <div class="panel"><span class="tag">04. Biometrics</span><div id="stats"></div></div>
-    <div class="panel"><span class="tag">05. Moves (Tap to Select)</span><div id="moves" style="height:300px; overflow-y:auto; font-size:11px;"></div></div>
+<div id="matrixView">
+    <div class="panel">
+        <span class="tag">Synergy Matrix (Team Weaknesses)</span>
+        <div class="matrix" id="mGrid"></div>
+    </div>
 </div>
 
 <script>
     let activeSlot = 0;
-    let team = Array(6).fill(null).map(() => ({ name: '', types: [], moves: [] }));
+    let inChampionMode = false;
+    let team = Array(6).fill(null).map(() => ({ name: '', types: [], stats: [] }));
     const types = ['normal','fire','water','grass','electric','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
     const champs = [
-        { n: "Cynthia", q: "It's been a long time since a trainer's eyes shone like yours." },
-        { n: "Leon", q: "Let's have a champion-sized battle!" },
-        { n: "Steven", q: "I'm interested to see the strength of your team's bond." }
+        { n: "Cynthia", q: "The power you've cultivated... let's see how it holds against my Garchomp." },
+        { n: "Leon", q: "You're clearly champion-material. But can you handle a truly 'unbeatable' strategy?" },
+        { n: "Steven", q: "Your team has a rare luster. Let's see if their defenses are truly unbreakable." }
     ];
 
     function toggleBible() { document.getElementById('bible').classList.toggle('open'); }
     function setSlot(i) { activeSlot = i; document.querySelectorAll('.ball-slot').forEach((s, idx) => s.classList.toggle('active', idx === i)); }
 
-    function championCheck() {
-        const c = champs[Math.floor(Math.random()*champs.length)];
-        document.getElementById('cName').innerText = `CHAMPION ${c.n.toUpperCase()}`;
-        document.getElementById('cQuote').innerText = `"${c.q}"`;
-        document.getElementById('champUplink').style.display = 'flex';
-        document.getElementById('matrix').style.display = 'block';
-        updateMatrix();
+    function handleAction() {
+        if (!inChampionMode) {
+            const c = champs[Math.floor(Math.random()*champs.length)];
+            document.getElementById('cName').innerText = `CHAMPION ${c.n.toUpperCase()}`;
+            document.getElementById('cQuote').innerText = `"${c.q}"`;
+            document.getElementById('champUplink').style.display = 'flex';
+        } else {
+            toggleView(false);
+        }
+    }
+
+    function enterMatrix() {
+        document.getElementById('champUplink').style.display = 'none';
+        toggleView(true);
+    }
+
+    function toggleView(showMatrix) {
+        inChampionMode = showMatrix;
+        const btn = document.getElementById('actionBtn');
+        if (showMatrix) {
+            document.getElementById('researchView').style.display = 'none';
+            document.getElementById('matrixView').style.display = 'block';
+            btn.innerText = "BACK TO RESEARCH";
+            btn.className = "btn-research";
+            updateMatrix();
+        } else {
+            document.getElementById('researchView').style.display = 'grid';
+            document.getElementById('matrixView').style.display = 'none';
+            btn.innerText = "CHALLENGE THE LEAGUE";
+            btn.className = "btn-gold";
+        }
     }
 
     async function scan() {
@@ -132,37 +166,34 @@
         ]);
         const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
 
-        team[activeSlot] = { name: t, types: p.types.map(y => y.type.name), moves: [] };
+        team[activeSlot] = { name: t, types: p.types.map(y => y.type.name), stats: p.stats };
         document.getElementById(`s${activeSlot}`).innerHTML = `🔴<br><b>${t.toUpperCase()}</b>`;
-        document.getElementById('ui').style.display = 'grid';
 
-        // Professor Logic
-        const gen = sp.generation.name;
-        let prof = gen.includes('iv') ? {n:'ROWAN', t:'Sinnoh requires perfection.'} : {n:'OAK', t:'Let us study these bonds.'};
-        document.getElementById('pIcon').innerText = prof.n[0];
-        document.getElementById('pTalk').innerText = prof.t;
-
-        // Egg Result (Genesis Law)
+        // Egg Result
         let chain = []; let curr = evo.chain;
         while(curr) { chain.push(curr.species.name); curr = curr.evolves_to[0]; }
         document.getElementById('gen').innerText = chain[0].toUpperCase();
 
-        // Logistics (0 IV / Nature Check)
-        const nature = q.match(/(timid|jolly|adamant|modest)/);
-        document.getElementById('gear').innerHTML = nature ? `<div class="item-chip">💎 EVERSTONE (${nature[0]})</div>` : `<div class="item-chip">⛓️ DESTINY KNOT</div>`;
-        
-        // Moves
-        document.getElementById('moves').innerHTML = p.moves.slice(0, 20).map(m => `
-            <div onclick="addMove('${m.move.name}')" style="padding:10px; border-bottom:1px solid #111;">${m.move.name.toUpperCase()}</div>
+        // Stats Display
+        document.getElementById('stats').innerHTML = p.stats.map(s => `
+            <div style="font-size:10px; margin-bottom:5px;">${s.stat.name.toUpperCase()}: ${s.base_stat}</div>
         `).join('');
-    }
 
-    function addMove(m) { if(team[activeSlot].moves.length < 4) team[activeSlot].moves.push(m); updateMatrix(); }
+        // Nature/Item Logistics
+        const nature = q.match(/(timid|jolly|adamant|modest|bold|impish|calm|careful)/);
+        document.getElementById('gear').innerHTML = nature 
+            ? `<div style="background:rgba(0,242,255,0.1); padding:10px; font-size:11px; border-left:3px solid var(--ring);">💎 EVERSTONE<br>Put on the <span style="color:var(--ring);">${nature[0].toUpperCase()}</span> parent.</div>`
+            : `<div style="background:rgba(0,242,255,0.1); padding:10px; font-size:11px; border-left:3px solid var(--ring);">⛓️ DESTINY KNOT<br>Standard 5-IV mode.</div>`;
+    }
 
     function updateMatrix() {
         document.getElementById('mGrid').innerHTML = types.map(ty => {
-            let weak = 0; team.forEach(p => { if(p.name && p.types.includes('dragon') && ty === 'ice') weak++; });
-            return `<div class="type-n ${weak > 1 ? 'danger' : ''}">${ty.slice(0,3).toUpperCase()}<br>${weak}</div>`;
+            let weaknessCount = 0;
+            team.forEach(p => {
+                if (p.name && p.types.includes('dragon') && ty === 'ice') weaknessCount++;
+                if (p.name && p.types.includes('grass') && ty === 'fire') weaknessCount++;
+            });
+            return `<div class="type-n ${weaknessCount > 1 ? 'danger' : ''}">${ty.slice(0,3).toUpperCase()}<br>${weaknessCount}</div>`;
         }).join('');
     }
 
