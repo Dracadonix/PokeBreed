@@ -3,108 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | Apex v50M</title>
+    <title>PokeBreed Pro | v60M Full Apex</title>
     <style>
         :root { 
             --void: #020408; --ring: #00f2ff; --ring-glow: rgba(0, 242, 255, 0.3);
-            --sub: #475569; --warn: #ff0055; --surface: rgba(15, 23, 42, 0.9);
+            --sub: #475569; --warn: #ff0055; --surface: rgba(15, 23, 42, 0.95);
         }
-        * { box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; cursor: crosshair; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; cursor: crosshair; }
         body { 
-            background: var(--void); background-image: radial-gradient(circle at 50% -20%, #0f172a 0%, var(--void) 85%);
+            background: var(--void); background-image: radial-gradient(circle at 50% 0%, #0f172a 0%, var(--void) 90%);
             color: #f1f5f9; margin: 0; padding: 40px 20px; min-height: 100vh;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1300px; margin: 0 auto; }
 
-        /* SIX CHAMBERS - PROFESSIONAL UTILITY */
-        .rack { display: flex; gap: 12px; margin-bottom: 50px; justify-content: center; }
+        /* SIX BALL STORAGE */
+        .rack { display: flex; gap: 15px; margin-bottom: 50px; justify-content: center; }
         .ball { 
-            flex: 1; max-width: 160px; background: var(--surface); border: 1px solid rgba(0, 242, 255, 0.1);
-            border-radius: 4px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s;
+            flex: 1; max-width: 180px; background: var(--surface); border: 1px solid rgba(0, 242, 255, 0.1);
+            padding: 20px; border-radius: 4px; text-align: center; cursor: pointer; transition: 0.3s;
         }
-        .ball.active { border-color: var(--ring); box-shadow: 0 0 25px var(--ring-glow); background: rgba(0, 242, 255, 0.03); }
-        .ball-name { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
+        .ball.active { border-color: var(--ring); box-shadow: 0 0 25px var(--ring-glow); background: rgba(0, 242, 255, 0.05); }
+        .ball-name { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* NEURAL SEARCH CONSOLE */
-        .console-wrap { max-width: 800px; margin: 0 auto 50px; position: relative; }
+        /* SEARCH CONSOLE */
+        .console-wrap { max-width: 800px; margin: 0 auto 50px; }
         input { 
             width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(0,242,255,0.2);
-            padding: 20px; color: var(--ring); font-size: 18px; font-family: 'Fira Code', monospace; outline: none; text-align: center;
+            padding: 20px; color: var(--ring); font-size: 20px; font-family: 'Fira Code', monospace; outline: none; text-align: center;
         }
-        input:focus { border-bottom-color: var(--ring); text-shadow: 0 0 10px var(--ring-glow); }
+        input:focus { border-bottom-color: var(--ring); }
 
-        /* ROWAN'S DIRECTIVE (THE RAGE) */
+        /* THE REPRIMAND */
         .breach { 
             background: rgba(255, 0, 85, 0.05); border: 1px solid var(--warn); 
-            padding: 25px; margin-bottom: 40px; display: none; border-radius: 2px;
+            padding: 25px; margin-bottom: 40px; display: none;
         }
-        .breach-label { color: var(--warn); font-size: 10px; font-weight: 900; letter-spacing: 4px; display: block; margin-bottom: 10px; }
 
-        /* CORE DISPLAY */
+        /* GRID SYSTEM */
         .display { display: grid; grid-template-columns: 1fr; gap: 30px; display: none; }
-        @media (min-width: 1000px) { .display { grid-template-columns: 1.4fr 0.6fr; } }
+        @media (min-width: 1100px) { .display { grid-template-columns: 1.4fr 0.6fr; } }
 
-        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 40px; border-radius: 2px; position: relative; }
-        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 25px; display: block; }
+        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 45px; border-radius: 2px; }
+        .tag { font-size: 9px; font-weight: 900; color: var(--ring); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 25px; display: block; }
 
-        /* PROFESSIONAL STAT ARCHITECTURE */
-        .stat-line { margin-bottom: 20px; }
-        .stat-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--sub); }
-        .stat-bar-bg { height: 2px; background: rgba(255,255,255,0.05); margin-top: 10px; position: relative; }
-        .stat-bar-fill { height: 100%; background: var(--ring); box-shadow: 0 0 12px var(--ring); transition: width 1.2s cubic-bezier(0.1, 0, 0, 1); }
-        .delta-pos { color: #22c55e; margin-left: 5px; }
-        .delta-neg { color: var(--warn); margin-left: 5px; }
+        /* DATA VISUALS */
+        .stat-line { margin-bottom: 22px; }
+        .stat-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--sub); }
+        .stat-bar-bg { height: 2px; background: rgba(255,255,255,0.05); margin-top: 10px; }
+        .stat-bar-fill { height: 100%; background: var(--ring); box-shadow: 0 0 15px var(--ring); transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .delta { font-size: 10px; margin-left: 5px; font-weight: 900; }
+        .plus { color: #22c55e; } .minus { color: var(--warn); }
 
-        /* MOVESET DATA */
-        .move-row { 
-            display: flex; justify-content: space-between; padding: 18px; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px;
+        /* EQUIPMENT MODULE */
+        .gear-card { 
+            background: rgba(0, 242, 255, 0.03); border: 1px solid var(--ring-dim); 
+            padding: 20px; margin-top: 20px; border-left: 3px solid var(--ring);
         }
-        .move-cat { font-size: 9px; font-weight: 900; color: var(--sub); text-transform: uppercase; border: 1px solid var(--sub); padding: 2px 6px; border-radius: 3px; }
+        .gear-title { font-size: 11px; font-weight: 900; color: var(--ring); letter-spacing: 2px; }
+        .gear-desc { font-size: 12px; color: var(--sub); margin-top: 5px; line-height: 1.5; }
     </style>
 </head>
 <body onload="init()">
 
 <div class="container">
     <header style="text-align: center; margin-bottom: 60px;">
-        <span style="font-size: 10px; letter-spacing: 8px; color: var(--sub); font-weight: 800;">BIOLOGICAL SYSTEMS INTERFACE</span>
-        <h1 style="margin: 10px 0; font-size: 30px; font-weight: 200; letter-spacing: 14px;">OBSIDIAN <span style="color:var(--ring); font-weight: 900;">APEX</span></h1>
+        <span style="font-size: 10px; letter-spacing: 10px; color: var(--sub); font-weight: 900;">GENETIC CALIBRATION SUITE</span>
+        <h1 style="margin: 10px 0; font-size: 32px; font-weight: 200; letter-spacing: 16px;">OBSIDIAN <span style="color:var(--ring); font-weight: 900;">CORE</span></h1>
     </header>
 
     <div class="rack" id="rack">
         <script>
-            for(let i=0; i<6; i++) document.write(`<div class="ball" id="b${i}" onclick="sel(${i})"><span class="ball-name" id="n${i}">unassigned</span><br><span style="font-size:7px; color:var(--sub); letter-spacing:1px;">CHAMBER_0${i+1}</span></div>`);
+            for(let i=0; i<6; i++) document.write(`<div class="ball" id="b${i}" onclick="sel(${i})"><span class="ball-name" id="n${i}">unassigned</span><br><span style="font-size:7px; color:var(--sub); letter-spacing:1px; margin-top:5px; display:block;">CHAMBER_0${i+1}</span></div>`);
         </script>
     </div>
 
     <div class="console-wrap">
-        <input type="text" id="neural" placeholder="ENTER SPECIMEN DIRECTIVE (e.g. 'Modest Gardevoir')..." onkeypress="if(event.key==='Enter') process()">
+        <input type="text" id="inp" placeholder="SPECIMEN DIRECTIVE (e.g. '0 Atk Modest Sylveon')..." onkeypress="if(event.key==='Enter') execute()">
     </div>
 
     <div id="breach" class="breach">
-        <span class="breach-label">DIRECTIVE ERROR</span>
-        <div id="reprimand" style="font-size: 15px; line-height: 1.6; color: #fff;"></div>
+        <span style="color:var(--warn); font-size:10px; font-weight:900; letter-spacing:4px;">SYSTEM BREACH DETECTED</span>
+        <div id="rowanTalk" style="margin-top: 15px; font-size: 16px; line-height: 1.6; color: #fff;"></div>
     </div>
 
     <div id="display" class="display">
         <div class="panel">
-            <span class="tag">Specimen Overview</span>
-            <h2 id="nameDisplay" style="font-size: 48px; font-weight: 200; margin: 0; letter-spacing: -1px;"></h2>
-            <p id="flavor" style="color: var(--sub); line-height: 1.8; margin: 30px 0; font-size: 15px; border-left: 1px solid var(--ring); padding-left: 25px;"></p>
+            <span class="tag">Biological Abstract</span>
+            <h2 id="name" style="font-size: 52px; font-weight: 200; margin: 0; letter-spacing: -2px;"></h2>
+            <p id="bio" style="color: var(--sub); line-height: 1.8; margin: 35px 0; font-size: 15px;"></p>
             
-            <span class="tag">Optimal Move Calibration</span>
-            <div id="moveGrid"></div>
+            <span class="tag">Logistics & Equipment</span>
+            <div id="gearBox"></div>
         </div>
 
         <div class="side">
             <div class="panel">
-                <span class="tag">Base Performance Metrics</span>
-                <div id="statGrid"></div>
+                <span class="tag">Performance Metrics</span>
+                <div id="stats"></div>
                 
-                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);">
-                    <span class="tag">System Status</span>
-                    <div id="summary" style="font-size: 12px; color: var(--sub); line-height: 2; font-family: 'Fira Code', monospace;"></div>
-                    <button onclick="save()" style="width:100%; margin-top: 30px; background: var(--ring); color: var(--void); border: none; padding: 18px; font-weight: 900; font-size: 11px; text-transform: uppercase; cursor: pointer; letter-spacing: 2px;">Commit DNA to Ball</button>
+                <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <span class="tag">Laboratory Roadmap</span>
+                    <div id="roadmap" style="font-size: 12px; color: var(--sub); line-height: 2.2; font-family: 'Fira Code', monospace;"></div>
+                    <button onclick="commit()" style="width:100%; margin-top: 30px; background: var(--ring); color: var(--void); border: none; padding: 20px; font-weight: 900; font-size: 11px; text-transform: uppercase; cursor: pointer; letter-spacing: 2px;">Commit Specimen</button>
                 </div>
             </div>
         </div>
@@ -112,12 +112,12 @@
 </div>
 
 <script>
-    let activeBall = 0; let currentData = null;
+    let activeBall = 0; let cur = null;
     const clean = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     function init() {
         for(let i=0; i<6; i++) {
-            const d = localStorage.getItem('apex50m_'+i);
+            const d = localStorage.getItem('apex60m_'+i);
             if(d) document.getElementById('n'+i).innerText = JSON.parse(d).name;
         }
         sel(0);
@@ -127,89 +127,76 @@
         activeBall = i;
         document.querySelectorAll('.ball').forEach(b => b.classList.remove('active'));
         document.getElementById('b'+i).classList.add('active');
-        const d = localStorage.getItem('apex50m_'+i);
+        const d = localStorage.getItem('apex60m_'+i);
         if(d) render(JSON.parse(d));
         else document.getElementById('display').style.display = 'none';
     }
 
-    function save() {
-        if(!currentData) return;
-        localStorage.setItem('apex50m_'+activeBall, JSON.stringify(currentData));
-        document.getElementById('n'+activeBall).innerText = currentData.name;
+    function commit() {
+        if(!cur) return;
+        localStorage.setItem('apex60m_'+activeBall, JSON.stringify(cur));
+        document.getElementById('n'+activeBall).innerText = cur.name;
     }
 
-    async function process() {
-        const q = document.getElementById('neural').value.toLowerCase();
+    async function execute() {
+        const q = document.getElementById('inp').value.toLowerCase();
         const list = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
-        const target = list.results.find(p => q.includes(p.name))?.name;
-        if(!target) return;
+        const t = list.results.find(p => q.includes(p.name))?.name;
+        if(!t) return;
 
         const [p, sp] = await Promise.all([
-            fetch(`https://pokeapi.co/api/v2/pokemon/${target}`).then(r=>r.json()),
-            fetch(`https://pokeapi.co/api/v2/pokemon-species/${target}`).then(r=>r.json())
+            fetch(`https://pokeapi.co/api/v2/pokemon/${t}`).then(r=>r.json()),
+            fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
         ]);
 
-        const flavor = sp.flavor_text_entries.find(e => e.language.name === 'en').flavor_text.replace(/\f/g, ' ');
-        const moves = await Promise.all(p.moves.slice(0, 40).map(m => fetch(m.move.url).then(r=>r.json())));
-        
-        let best = moves.filter(m => m.power).sort((a,b) => b.power - a.power).slice(0, 4);
-        let reprimand = "";
-        
-        const isSpecial = p.stats[3].base_stat > p.stats[1].base_stat;
+        const bio = sp.flavor_text_entries.find(e => e.language.name === 'en').flavor_text.replace(/\f/g, ' ');
+        let talk = "";
+        const isSpec = p.stats[3].base_stat > p.stats[1].base_stat;
         const nature = q.match(/(modest|timid|adamant|jolly)/);
 
-        if (nature && (nature[0] === 'adamant' || nature[0] === 'jolly') && isSpecial) {
-            reprimand = `CRITICAL ANALYSIS FAILURE: Specimen ${target.toUpperCase()} is a Special Attack specialist. By assigning a Physical-biased nature, you are actively degrading the biological output of its primary stats. Correct the directive.`;
+        if (nature && (nature[0] === 'adamant') && isSpec) {
+            talk = `This is unacceptable. ${clean(t)} is a Special Specialist. Forcing an Adamant nature on it is biological sabotage. Start over!`;
         }
 
-        currentData = { name: clean(target), stats: p.stats, moves: best, flavor, reprimand, q };
-        render(currentData);
+        // GEAR LOGIC
+        let gear = { name: "DESTINY KNOT", desc: "Locks 5 inherited genetic traits (IVs) from the parental line." };
+        if (nature) gear = { name: "EVERSTONE", desc: "Locks the Specimen's Personality (Nature) to the next generation." };
+        if (q.includes('0')) gear = { name: "POWER WEIGHT/ANKLET", desc: "Forces the specific synchronization of a low-potential stat." };
+
+        cur = { name: clean(t), stats: p.stats, bio, gear, talk, q };
+        render(cur);
     }
 
     function render(d) {
         document.getElementById('display').style.display = 'grid';
-        const bBox = document.getElementById('breach');
-        if (d.reprimand) {
-            bBox.style.display = 'block';
-            document.getElementById('reprimand').innerText = d.reprimand;
-        } else { bBox.style.display = 'none'; }
+        const b = document.getElementById('breach');
+        if (d.talk) { b.style.display = 'block'; document.getElementById('rowanTalk').innerText = d.talk; }
+        else { b.style.display = 'none'; }
 
-        document.getElementById('nameDisplay').innerText = d.name;
-        document.getElementById('flavor').innerText = d.flavor;
+        document.getElementById('name').innerText = d.name;
+        document.getElementById('bio').innerText = d.bio;
+        document.getElementById('gearBox').innerHTML = `
+            <div class="gear-card">
+                <div class="gear-title">REQUIRED GEAR: ${d.gear.name}</div>
+                <div class="gear-desc">${d.gear.desc}</div>
+            </div>`;
 
         const sMap = {'hp':'HP', 'attack':'Attack', 'defense':'Defense', 'special-attack':'Special Attack', 'special-defense':'Special Defense', 'speed':'Speed'};
-        document.getElementById('statGrid').innerHTML = d.stats.map((st, i) => {
-            let delta = "";
-            if(d.q.includes('modest')) {
-                if(i === 3) delta = '<span class="delta-pos">(+)</span>';
-                if(i === 1) delta = '<span class="delta-neg">(-)</span>';
-            }
-            if(d.q.includes('adamant')) {
-                if(i === 1) delta = '<span class="delta-pos">(+)</span>';
-                if(i === 3) delta = '<span class="delta-neg">(-)</span>';
-            }
+        document.getElementById('stats').innerHTML = d.stats.map((st, i) => {
+            let dlt = "";
+            if(d.q.includes('modest')) { if(i===3) dlt='<span class="delta plus">(+)</span>'; if(i===1) dlt='<span class="delta minus">(-)</span>'; }
+            if(d.q.includes('adamant')) { if(i===1) dlt='<span class="delta plus">(+)</span>'; if(i===3) dlt='<span class="delta minus">(-)</span>'; }
             return `
             <div class="stat-line">
-                <div class="stat-header">
-                    <span>${sMap[st.stat.name]} ${delta}</span><span>${st.base_stat}</span>
-                </div>
+                <div class="stat-header"><span>${sMap[st.stat.name]} ${dlt}</span><span>${st.base_stat}</span></div>
                 <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(st.base_stat/255)*100}%"></div></div>
             </div>`;
         }).join('');
 
-        document.getElementById('moveGrid').innerHTML = d.moves.map(m => `
-            <div class="move-row">
-                <span style="font-weight:700;">${clean(m.name)}</span>
-                <div>
-                    <span class="move-cat">${m.damage_class.name}</span>
-                    <span style="margin-left:15px; color:var(--ring); font-weight:800; font-size:12px;">PWR ${m.power}</span>
-                </div>
-            </div>`).join('');
-
-        document.getElementById('summary').innerHTML = `
-            > SPECIMEN_ID: ${d.name.toUpperCase()}<br>
-            > PRIMARY_CORE: ${d.stats[3].base_stat > d.stats[1].base_stat ? 'SPECIAL' : 'PHYSICAL'}<br>
-            > ANALYSIS: ${d.reprimand ? 'REJECTED' : 'CALIBRATED'}
+        document.getElementById('roadmap').innerHTML = `
+            > SPECIMEN: ${d.name.toUpperCase()}<br>
+            > GEAR_CHECK: ${d.gear.name}<br>
+            > STATUS: ${d.talk ? 'ERROR_REJECTED' : 'SYNCHRONIZED'}
         `;
     }
 </script>
