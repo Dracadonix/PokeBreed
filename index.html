@@ -3,237 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | v5000</title>
+    <title>My Pokémon Lab</title>
     <style>
         :root { 
-            --bg: #030712; --card: rgba(17, 24, 39, 0.7); --primary: #38bdf8; 
-            --accent: #818cf8; --text: #f3f4f6; --border: rgba(255,255,255,0.1); 
-            --warn: #ef4444; --lime: #4ade80; --pivot: #fbbf24;
+            --bg: #f0f9ff; --card: #ffffff; --primary: #0ea5e9; --text: #0f172a;
+            --sub: #64748b; --lime: #22c55e; --warn: #ef4444; --border: #e2e8f0;
         }
-        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
-        body { 
-            background: radial-gradient(circle at top right, #1e1b4b, #030712); 
-            color: var(--text); margin: 0; min-height: 100vh; padding: 20px; 
-            display: flex; justify-content: center;
-        }
-        .container { max-width: 1200px; width: 100%; animation: fadeIn 0.8s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .container { max-width: 900px; width: 100%; }
+        
+        /* THE TEACHER'S DESK (LAB BENCH) */
+        .bench { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .slot { background: #fff; border: 2px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .slot.active { border-color: var(--primary); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2); }
+        .slot-title { font-size: 0.7rem; color: var(--sub); font-weight: bold; text-transform: uppercase; }
+        .slot-name { font-weight: bold; font-size: 0.9rem; display: block; }
 
-        /* LAB BENCH SIDEBAR (DESKTOP) / HEADER (MOBILE) */
-        .bench { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-            gap: 15px; margin-bottom: 30px; 
-        }
-        .slot { 
-            background: var(--card); backdrop-filter: blur(12px); border: 1px solid var(--border); 
-            padding: 15px; border-radius: 16px; cursor: pointer; text-align: center;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .slot.active { border-color: var(--primary); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); transform: translateY(-5px); }
-        .slot-pk { font-weight: 800; font-size: 0.85rem; color: #fff; }
+        /* SIMPLE SEARCH */
+        .search-box { background: #fff; padding: 15px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; gap: 10px; margin-bottom: 30px; border: 2px solid #fff; }
+        .search-box:focus-within { border-color: var(--primary); }
+        input { flex: 1; border: none; outline: none; font-size: 1.1rem; padding-left: 10px; }
+        button { background: var(--primary); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
-        /* NEON CONSOLE */
-        .console-wrap { 
-            background: rgba(0,0,0,0.4); border: 1px solid var(--border); 
-            border-radius: 24px; padding: 8px; display: flex; align-items: center; 
-            margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        input { 
-            flex: 1; background: transparent; border: none; padding: 15px 25px; 
-            color: var(--primary); font-size: 1.1rem; outline: none; font-weight: 500;
-        }
-        .btn-exe { 
-            background: var(--primary); color: #000; border: none; padding: 15px 35px; 
-            border-radius: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase;
-        }
+        /* THE ROWAN SLAM */
+        @keyframes slam { 0% { transform: scale(1); } 20% { transform: translateY(10px); } 40% { transform: rotate(1deg); } 100% { transform: translate(0); } }
+        .rage-alert { animation: slam 0.3s ease; border: 3px solid var(--warn) !important; background: #fef2f2 !important; color: var(--warn); padding: 20px; border-radius: 15px; font-weight: bold; margin-bottom: 20px; }
 
-        /* GRID SYSTEM */
-        #output { display: none; }
-        .layout { display: grid; grid-template-columns: 1fr; gap: 25px; }
-        @media (min-width: 1024px) { .layout { grid-template-columns: 1.3fr 0.7fr; } }
+        /* CARDS */
+        .layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .layout { grid-template-columns: 1.5fr 1fr; } }
+        .card { background: #fff; padding: 25px; border-radius: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border: 1px solid var(--border); position: relative; }
+        .card-tag { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; display: block; }
 
-        .card { 
-            background: var(--card); backdrop-filter: blur(16px); 
-            border: 1px solid var(--border); border-radius: 28px; padding: 30px; 
-            position: relative; overflow: hidden;
-        }
-        .tag { 
-            font-size: 0.65rem; font-weight: 900; text-transform: uppercase; 
-            letter-spacing: 3px; color: var(--primary); margin-bottom: 20px; display: block;
-        }
+        /* STAT BARS FOR KIDS */
+        .stat-line { margin-bottom: 12px; }
+        .bar-bg { height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; margin-top: 5px; }
+        .bar-fill { height: 100%; border-radius: 5px; }
 
-        /* THE ROWAN CRASH-OUT */
-        @keyframes desk-slam {
-            0%, 100% { transform: scale(1); }
-            10%, 30%, 50% { transform: scale(1.02) rotate(0.5deg); }
-            20%, 40% { transform: scale(0.98) rotate(-0.5deg); }
-        }
-        .rage-mode { animation: desk-slam 0.4s ease-in-out; border-color: var(--warn) !important; }
-        .rage-banner { 
-            background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), transparent); 
-            border-left: 4px solid var(--warn); padding: 20px; border-radius: 12px; 
-            margin-bottom: 25px; color: #ff8888; font-weight: 800; font-family: monospace;
-        }
-
-        /* STAT BARS */
-        .stat-bar { margin-bottom: 15px; }
-        .bar-bg { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 8px; overflow: hidden; }
-        .bar-fill { height: 100%; background: var(--primary); border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
-
-        /* PILLS */
-        .pill { 
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 18px; 
-            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .pill.pivot { border-left: 4px solid var(--pivot); background: rgba(251, 191, 36, 0.05); }
+        /* HELP BUTTON */
+        .help-tip { font-size: 0.75rem; color: var(--sub); background: #f8fafc; padding: 10px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--primary); }
     </style>
 </head>
 <body onload="init()">
 
 <div class="container">
-    <div class="header" style="text-align: center; margin-bottom: 40px;">
-        <h1 style="margin:0; font-size: 2.5rem; letter-spacing: -1px;">PokeBreed <span style="color:var(--primary)">Pro</span></h1>
-        <p style="opacity: 0.4; font-size: 0.7rem; font-weight: 900; letter-spacing: 5px;">SINGULARITY v5000.0 // LIME LABS</p>
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="margin:0; color: var(--primary);">Pokémon Helper</h1>
+        <p style="color: var(--sub); font-weight: 500;">Type a Pokémon name below to start your project!</p>
     </div>
 
     <div class="bench" id="bench">
-        <div class="slot" id="s0" onclick="switchSlot(0)"><span class="slot-pk" id="n0">EMPTY SLOT 1</span></div>
-        <div class="slot" id="s1" onclick="switchSlot(1)"><span class="slot-pk" id="n1">EMPTY SLOT 2</span></div>
-        <div class="slot" id="s2" onclick="switchSlot(2)"><span class="slot-pk" id="n2">EMPTY SLOT 3</span></div>
-        <div class="slot" id="s3" onclick="switchSlot(3)"><span class="slot-pk" id="n3">EMPTY SLOT 4</span></div>
+        <div class="slot" id="s0" onclick="swap(0)"><span class="slot-title">Folder 1</span><span class="slot-name" id="n0">Empty</span></div>
+        <div class="slot" id="s1" onclick="swap(1)"><span class="slot-title">Folder 2</span><span class="slot-name" id="n1">Empty</span></div>
+        <div class="slot" id="s2" onclick="swap(2)"><span class="slot-title">Folder 3</span><span class="slot-name" id="n2">Empty</span></div>
+        <div class="slot" id="s3" onclick="swap(3)"><span class="slot-title">Folder 4</span><span class="slot-name" id="n3">Empty</span></div>
     </div>
 
-    <div class="console-wrap">
-        <input type="text" id="cmd" placeholder="Directive (e.g. '0 Speed Quiet Hatterene with Trick Room')" onkeypress="if(event.key==='Enter') execute()">
-        <button class="btn-exe" onclick="execute()">Process</button>
+    <div class="search-box">
+        <input type="text" id="inp" placeholder="Try 'Pikachu' or 'Charizard'...">
+        <button onclick="go()">Find Pokémon</button>
     </div>
 
-    <div id="output">
-        <div id="rageZone"></div>
+    <div id="output" style="display:none;">
+        <div id="rage"></div>
         <div class="layout">
-            <div class="main-col">
+            <div class="main">
                 <div class="card">
-                    <span class="tag">Species Intelligence & Biological Data</span>
-                    <h2 id="pkName" style="margin:0; font-size: 1.8rem; color: #fff;"></h2>
-                    <p id="bioNotes" style="font-style: italic; opacity: 0.7; line-height: 1.6; margin: 20px 0; border-left: 3px solid var(--primary); padding-left: 20px;"></p>
-                    <div id="evoLine" style="display:flex; gap:10px; font-weight: 900; color: var(--accent); font-size: 0.8rem;"></div>
+                    <span class="card-tag">Meet Your Pokémon</span>
+                    <h2 id="nameDisplay" style="margin:0 0 10px 0;"></h2>
+                    <p id="bio" style="line-height:1.6; color: #475569;"></p>
+                    <div class="help-tip"><strong>💡 Pro Tip:</strong> This Pokémon belongs to a family! Their path is: <span id="family" style="color:var(--primary); font-weight:bold;"></span></div>
                 </div>
-                <div class="card" style="margin-top: 25px;">
-                    <span class="tag">Tactical Move Pivot</span>
-                    <div id="moveGrid"></div>
+                <div class="card" style="margin-top:20px;">
+                    <span class="card-tag">Best Moves</span>
+                    <div id="moves"></div>
                 </div>
             </div>
-            <div class="side-col">
+            <div class="side">
                 <div class="card">
-                    <span class="tag">Optimized Stat Aura</span>
-                    <div id="statGrid"></div>
+                    <span class="card-tag">Natural Talents</span>
+                    <div id="stats"></div>
+                    <div class="help-tip" style="margin-top:20px;">The longer the bar, the better they are at that skill!</div>
                 </div>
-                <div class="card" style="margin-top: 25px;">
-                    <span class="tag">Strategic Roadmap</span>
-                    <div id="roadmap" style="font-size: 0.8rem; line-height: 2.2;"></div>
-                    <button class="btn-exe" style="width: 100%; margin-top: 20px; background: transparent; color: var(--lime); border: 1px solid var(--lime);" onclick="commit()">Commit to Bench</button>
-                </div>
+                <button onclick="save()" style="width:100%; margin-top:20px; background:var(--lime); color:#fff; padding:15px; border-radius:15px; border:none; font-weight:bold; cursor:pointer;">Save to My Folders</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    let activeSlot = 0; let currentData = null;
-    const fmt = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    const snz = (s) => s.toLowerCase().replace(/[\s-]/g, '');
+    let activeFolder = 0; let currentData = null;
+    const clean = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     function init() {
         for(let i=0; i<4; i++) {
-            const d = localStorage.getItem('sing_v5_'+i);
-            if(d) document.getElementById('n'+i).innerText = JSON.parse(d).name;
+            const saved = localStorage.getItem('pokedex_v10_'+i);
+            if(saved) document.getElementById('n'+i).innerText = JSON.parse(saved).name;
         }
-        switchSlot(0);
+        swap(0);
     }
 
-    function switchSlot(i) {
-        activeSlot = i;
+    function swap(i) {
+        activeFolder = i;
         document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
         document.getElementById('s'+i).classList.add('active');
-        const d = localStorage.getItem('sing_v5_'+i);
-        if(d) render(JSON.parse(d));
+        const saved = localStorage.getItem('pokedex_v10_'+i);
+        if(saved) render(JSON.parse(saved));
         else document.getElementById('output').style.display = 'none';
     }
 
-    function commit() {
+    function save() {
         if(!currentData) return;
-        localStorage.setItem('sing_v5_'+activeSlot, JSON.stringify(currentData));
-        document.getElementById('n'+activeSlot).innerText = currentData.name;
+        localStorage.setItem('pokedex_v10_'+activeFolder, JSON.stringify(currentData));
+        document.getElementById('n'+activeFolder).innerText = currentData.name;
     }
 
-    async function execute() {
-        const q = document.getElementById('cmd').value.toLowerCase();
-        const list = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010').then(r=>r.json());
-        const tName = list.results.find(x => q.includes(x.name))?.name;
-        if(!tName) return;
+    async function go() {
+        const query = document.getElementById('inp').value.toLowerCase();
+        const list = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000').then(r=>r.json());
+        const target = list.results.find(p => query.includes(p.name))?.name;
+        
+        if(!target) return alert("Hmm, I couldn't find that Pokémon. Check the spelling!");
 
         const [p, sp] = await Promise.all([
-            fetch(`https://pokeapi.co/api/v2/pokemon/${tName}`).then(r=>r.json()),
-            fetch(`https://pokeapi.co/api/v2/pokemon-species/${tName}`).then(r=>r.json())
+            fetch(`https://pokeapi.co/api/v2/pokemon/${target}`).then(r=>r.json()),
+            fetch(`https://pokeapi.co/api/v2/pokemon-species/${target}`).then(r=>r.json())
         ]);
 
         const eR = await fetch(sp.evolution_chain.url).then(r=>r.json());
-        let ch = []; let c = eR.chain; while(c){ ch.push(c.species.name); c = c.evolves_to[0]; }
+        let family = []; let c = eR.chain; while(c){ family.push(c.species.name); c = c.evolves_to[0]; }
 
-        const flavor = sp.flavor_text_entries.find(x => x.language.name === 'en').flavor_text.replace(/\f/g, ' ');
-        const moves = await Promise.all(p.moves.slice(0, 40).map(x=>fetch(x.move.url).then(r=>r.json())));
+        const story = sp.flavor_text_entries.find(e => e.language.name === 'en').flavor_text.replace(/\f/g, ' ');
+        const moves = await Promise.all(p.moves.slice(0, 4).map(m => fetch(m.move.url).then(r=>r.json())));
+
+        // THE SECRET ROWAN RAGE (v10,000)
+        let rowanText = "";
+        const natureWords = ["jolly", "adamant", "modest", "timid"];
+        const natureInQuery = natureWords.find(w => query.includes(w));
         
-        let pivotMove = moves.find(x => snz(q).includes(snz(x.name)));
-        let kit = pivotMove ? [{...pivotMove, isPivot: true}] : [];
-        kit = [...kit, ...moves.filter(x => x.power && (!pivotMove || x.name !== pivotMove.name)).slice(0, 3)];
-
-        // THE ROWAN SINGULARITY RAGE
-        let rage = "";
-        const nature = q.match(/(jolly|adamant|modest|timid|bold|calm|quiet|brave|sassy|relaxed)/);
-        if(nature && pivotMove) {
-            const isSpec = pivotMove.damage_class.name === 'special';
-            const bad = isSpec ? ['jolly', 'adamant', 'brave', 'relaxed'] : ['modest', 'timid', 'quiet'];
-            if(bad.includes(nature[0])) {
-                const lines = [
-                    `CRITICAL FAILURE! A ${nature[0].toUpperCase()} nature with ${pivotMove.name.toUpperCase()}? You're insulting the very concept of biology!`,
-                    `DESK SLAM! I didn't spend 50 years in the field for you to pair a ${nature[0].toUpperCase()} nature with a ${pivotMove.damage_class.name.toUpperCase()} move!`,
-                    `ABSOLUTE INCOMPETENCE! Look at ${fmt(tName)}'s stats! Your directive is a genetic disaster!`
-                ];
-                rage = lines[Math.floor(Math.random()*lines.length)];
-            }
+        // This is where he crashes out if a beginner tries to do something "silly"
+        if(natureInQuery === "jolly" && p.stats[3].base_stat > p.stats[1].base_stat) {
+            rowanText = "WAIT! I CAN'T WATCH THIS! You're giving a JOLLY personality to a Pokémon that uses Special magic? That's like giving a swimsuit to someone going to the North Pole! DO IT RIGHT!";
         }
 
-        currentData = { name: fmt(tName), ch, stats: p.stats, kit, flavor, rage, q, nature: nature?nature[0]:'None' };
+        currentData = { name: clean(target), family, stats: p.stats, moves, story, rowan: rowanText };
         render(currentData);
     }
 
     function render(d) {
-        const out = document.getElementById('output');
-        out.style.display = 'block';
-        if(d.rage) out.classList.add('rage-mode'); else out.classList.remove('rage-mode');
-
-        document.getElementById('rageZone').innerHTML = d.rage ? `<div class="rage-banner">${d.rage}</div>` : "";
-        document.getElementById('pkName').innerText = d.name;
-        document.getElementById('bioNotes').innerText = `Rowan's Field Entry: "${d.flavor}"`;
-        document.getElementById('evoLine').innerText = d.ch.map(n => fmt(n)).join(' ⟫ ');
+        document.getElementById('output').style.display = 'block';
+        const rBox = document.getElementById('rage');
+        rBox.innerHTML = d.rowan ? `<div class="rage-alert">${d.rowan}</div>` : "";
         
-        document.getElementById('moveGrid').innerHTML = d.kit.map(m => `
-            <div class="pill ${m.isPivot?'pivot':''}">
-                <b>${fmt(m.name)}</b> <span>${m.power||'--'} BP | ${m.damage_class.name.toUpperCase()}</span>
+        document.getElementById('nameDisplay').innerText = d.name;
+        document.getElementById('bio').innerText = d.story;
+        document.getElementById('family').innerText = d.family.map(n => clean(n)).join(' → ');
+
+        document.getElementById('moves').innerHTML = d.moves.map(m => `
+            <div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
+                <strong>${clean(m.name)}</strong> <span>Power: ${m.power || '??'}</span>
             </div>`).join('');
 
-        document.getElementById('statGrid').innerHTML = d.stats.map(st => `
-            <div class="stat-bar">
-                <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:800; opacity:0.8;"><span>${fmt(st.stat.name)}</span><span>${st.base_stat}</span></div>
-                <div class="bar-bg"><div class="bar-fill" style="width:${(st.base_stat/255)*100}%"></div></div>
-            </div>`).join('');
+        const statMap = {
+            'hp': 'Health', 'attack': 'Physical Strength', 'defense': 'Physical Armor',
+            'special-attack': 'Magic Strength', 'special-defense': 'Magic Armor', 'speed': 'Quickness'
+        };
 
-        document.getElementById('roadmap').innerHTML = `
-            • FOUNDER: ${fmt(d.ch[0])}<br>
-            • OPTIMIZATION: ${d.q.includes('0 speed') ? 'Min-Speed Trick Room' : 'Standard Speed'}<br>
-            • NATURE: ${fmt(d.nature)} (Everstone Required)<br>
-            • DNA INTEGRITY: ${d.rage ? 'COMPROMISED' : 'STABLE'}
-        `;
+        document.getElementById('stats').innerHTML = d.stats.map(st => {
+            const color = st.base_stat > 100 ? '#22c55e' : (st.base_stat > 60 ? '#38bdf8' : '#f59e0b');
+            return `
+            <div class="stat-line">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                    <strong>${statMap[st.stat.name]}</strong> <span>${st.base_stat}</span>
+                </div>
+                <div class="bar-bg"><div class="bar-fill" style="width:${(st.base_stat/200)*100}%; background:${color};"></div></div>
+            </div>`;
+        }).join('');
     }
 </script>
 </body>
