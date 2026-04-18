@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PokeBreed Pro | v500M Omni-Archive</title>
+    <title>PokeBreed Pro | v600M Nexus</title>
     <style>
         :root { 
             --void: #010204; --ring: #00f2ff; --ring-glow: rgba(0, 242, 255, 0.4);
@@ -11,99 +11,69 @@
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; cursor: crosshair; }
         body { 
             background: var(--void); background-image: radial-gradient(circle at 50% 0%, #0f172a 0%, var(--void) 90%);
-            color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh; overflow-x: hidden;
+            color: #f1f5f9; margin: 0; padding: 20px; min-height: 100vh;
         }
         
-        /* PROFESSOR HUB */
-        .prof-hub { 
-            display: flex; align-items: center; gap: 20px; background: var(--surface);
-            padding: 20px; border-left: 4px solid var(--ring); margin-bottom: 30px;
-        }
-        .prof-avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--ring); display: flex; align-items: center; justify-content: center; font-weight: 900; }
-
-        /* DATA GRID */
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; display: none; }
-        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 4px; position: relative; }
+        /* DATA GRID - 5 PANELS */
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 15px; display: none; }
+        .panel { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 4px; overflow: hidden; }
         .tag { font-size: 8px; font-weight: 900; color: var(--ring); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; }
         
-        /* INHERITANCE VISUAL */
-        .dna-bridge { background: rgba(0,0,0,0.3); border: 1px dashed var(--sub); padding: 15px; text-align: center; margin-bottom: 15px; }
-        .dna-step { font-size: 11px; margin-bottom: 10px; color: var(--sub); text-align: left; }
+        /* EVOLUTION NEXUS VISUAL */
+        .nexus-flow { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .nexus-node { padding: 10px; border: 1px solid rgba(0,242,255,0.2); width: 100%; text-align: center; font-size: 12px; background: rgba(0,0,0,0.2); position: relative; }
+        .nexus-arrow { color: var(--sub); font-size: 14px; }
+        .nexus-node.active { border-color: var(--ring); box-shadow: 0 0 15px var(--ring-glow); color: var(--ring); font-weight: 900; }
 
-        /* ITEM CHIPS */
-        .item-chip { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.1); padding: 10px; font-size: 11px; margin-bottom: 8px; border-radius: 2px; }
-        .incense-alert { border-color: var(--warn); background: rgba(255,0,85,0.05); color: var(--warn); font-weight: 800; }
-
-        /* MOVE TIMELINE */
-        .scroll { height: 400px; overflow-y: auto; padding-right: 5px; }
-        .scroll::-webkit-scrollbar { width: 2px; }
-        .scroll::-webkit-scrollbar-thumb { background: var(--ring); }
-        .move-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 12px; }
-        .legacy-tag { color: var(--warn); font-size: 8px; border: 1px solid var(--warn); padding: 1px 4px; }
+        .item-chip { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.1); padding: 10px; font-size: 11px; margin-bottom: 8px; }
+        .scroll { height: 450px; overflow-y: auto; font-size: 12px; }
+        .move-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .legacy { color: var(--warn); font-size: 8px; border: 1px solid var(--warn); padding: 1px 4px; }
 
         input { width: 100%; background: transparent; border: none; border-bottom: 2px solid var(--ring); padding: 20px; color: var(--ring); text-align: center; font-size: 24px; outline: none; margin-bottom: 40px; }
         
-        /* TUTORIAL OVERLAY */
-        #help { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .help-card { background: var(--surface); border: 1px solid var(--ring); padding: 40px; max-width: 600px; }
+        .prof-hub { display: flex; align-items: center; gap: 20px; background: var(--surface); padding: 20px; border-left: 4px solid var(--ring); margin-bottom: 30px; }
     </style>
 </head>
-<body onload="init()">
-
-<div id="help">
-    <div class="help-card">
-        <span class="tag">Breeding Manual</span>
-        <h2 style="font-weight: 200;">How to <span style="color:var(--ring); font-weight: 900;">Breed Perfection</span></h2>
-        <p style="font-size: 13px; color: var(--sub); line-height: 1.6;">
-            1. <b>Nature:</b> Find a parent with the Nature you want. Give them the <b>Everstone</b>.<br><br>
-            2. <b>Stats:</b> Give the other parent the <b>Destiny Knot</b> to pass down 5 stats.<br><br>
-            3. <b>Moves:</b> Look at the <b>Legacy</b> tags. Do not evolve until those moves are learned!<br><br>
-            4. <b>Special:</b> Some babies need <b>Incense</b>. Check the Logistics panel.
-        </p>
-        <button onclick="toggleHelp()" style="width: 100%; background: var(--ring); border: none; padding: 15px; font-weight: 900; cursor: pointer; margin-top: 20px;">I UNDERSTAND</button>
-    </div>
-</div>
+<body>
 
 <div class="container">
     <div class="prof-hub">
-        <div class="prof-avatar" id="pAvatar">?</div>
+        <div id="pAvatar" style="width:50px; height:50px; border-radius:50%; border:2px solid var(--ring); display:flex; align-items:center; justify-content:center; font-weight:900;">?</div>
         <div>
-            <span id="pTitle" style="font-size: 9px; font-weight: 900; letter-spacing: 3px; color: var(--sub);">SYSTEM READY</span>
-            <div id="pTalk" style="font-size: 14px; font-style: italic;">"Input a Directive to begin genetic synchronization."</div>
+            <span id="pTitle" style="font-size: 9px; font-weight: 900; color: var(--sub); letter-spacing: 3px;">LABORATORY UPLINK</span>
+            <div id="pTalk" style="font-size: 14px; font-style: italic;">"Ready for phylogenetic analysis. Enter a specimen directive."</div>
         </div>
-        <button onclick="toggleHelp()" style="margin-left: auto; background: transparent; border: 1px solid var(--sub); color: var(--sub); padding: 5px 15px; font-size: 10px; cursor: pointer;">MANUAL</button>
     </div>
 
-    <input type="text" id="query" placeholder="DIRECTIVE (e.g. '0 Atk Timid Munchlax')" onkeypress="if(event.key==='Enter') execute()">
+    <input type="text" id="query" placeholder="DIRECTIVE (e.g. '0 Atk Timid Budew')" onkeypress="if(event.key==='Enter') execute()">
 
     <div id="ui" class="main-grid">
         <div class="panel">
-            <span class="tag">01. Inheritance Engine</span>
-            <div class="dna-bridge">
-                <div style="font-size: 9px; color: var(--ring);">PARENT A + PARENT B</div>
-                <div style="font-size: 18px; margin: 5px 0;">🧬</div>
-                <div id="eggSpecies" style="font-size: 12px; font-weight: 900;">EGG</div>
-            </div>
-            <div id="dnaSteps"></div>
-        </div>
-
-        <div class="panel">
-            <span class="tag">02. Logistic Gear</span>
+            <span class="tag">01. Logistic Gear</span>
             <div id="gearList"></div>
             <div id="incenseList"></div>
         </div>
 
         <div class="panel">
-            <span class="tag">03. Specimen Biometrics</span>
-            <h2 id="specName" style="font-size: 32px; margin: 0; font-weight: 200;"></h2>
-            <div id="stats" style="margin-top: 20px;"></div>
-            <div id="rowanAlert" style="margin-top: 20px; padding: 15px; border-left: 2px solid var(--warn); background: rgba(255,0,85,0.05); display: none;">
-                <p id="rowanText" style="font-size: 12px; margin: 0;"></p>
-            </div>
+            <span class="tag">02. Inheritance Path</span>
+            <div id="dnaSteps" style="font-size: 12px; color: var(--sub); line-height: 1.8;"></div>
         </div>
 
         <div class="panel">
-            <span class="tag">04. Legacy Timeline</span>
+            <span class="tag">03. Evolution Nexus</span>
+            <div id="nexus" class="nexus-flow"></div>
+        </div>
+
+        <div class="panel">
+            <span class="tag">04. Specimen Biometrics</span>
+            <h2 id="specName" style="font-size: 28px; margin: 0 0 15px 0; font-weight: 200;"></h2>
+            <div id="stats"></div>
+            <div id="rowanAlert" style="margin-top:20px; padding:10px; border-left:2px solid var(--warn); background:rgba(255,0,85,0.05); display:none; font-size:11px;"></div>
+        </div>
+
+        <div class="panel">
+            <span class="tag">05. Legacy Timeline</span>
             <div class="scroll" id="movePool"></div>
         </div>
     </div>
@@ -111,13 +81,6 @@
 
 <script>
     const clean = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    const toggleHelp = () => { const h = document.getElementById('help'); h.style.display = h.style.display === 'flex' ? 'none' : 'flex'; };
-
-    const profData = {
-        'kanto': { n: 'Oak', c: '#22c55e', t: 'A wonderful specimen! Let us ensure its upbringing is perfect.' },
-        'sinnoh': { n: 'Rowan', c: '#00f2ff', t: 'Focus! If you evolve this too early, you waste years of research.' },
-        'hoenn': { n: 'Birch', c: '#3b82f6', t: 'This Pokémon is built for the rugged wild. Check those stats!' }
-    };
 
     const incense = {
         'azurill': 'Sea Incense', 'wynaut': 'Lax Incense', 'budew': 'Rose Incense', 'happiny': 'Luck Incense', 
@@ -135,62 +98,56 @@
             fetch(`https://pokeapi.co/api/v2/pokemon-species/${t}`).then(r=>r.json())
         ]);
 
+        const evo = await fetch(sp.evolution_chain.url).then(r=>r.json());
+        
         document.getElementById('ui').style.display = 'grid';
         document.getElementById('specName').innerText = clean(t);
-        document.getElementById('eggSpecies').innerText = clean(t) + " EGG";
 
-        // PROFESSOR UPLINK
-        const reg = sp.generation.name.split('-')[1] || 'kanto';
-        const prof = profData[reg] || profData['kanto'];
-        document.getElementById('pAvatar').innerText = prof.n[0];
-        document.getElementById('pAvatar').style.borderColor = prof.c;
-        document.getElementById('pTitle').innerText = `PROFESSOR ${prof.n.toUpperCase()} // UPLINK`;
-        document.getElementById('pTalk').innerText = prof.t;
-
-        // DIRECTIVE DECODER & GEAR
+        // 01 & 02: GEAR & DNA
         const nature = q.match(/(modest|timid|adamant|jolly|bold|impish|calm|careful)/);
-        let gearHtml = `<div class="item-chip">⛓️ <b>DESTINY KNOT</b> (Inherit 5 IVs)</div>`;
-        if(nature) gearHtml += `<div class="item-chip">💎 <b>EVERSTONE</b> (Lock ${clean(nature[0])})</div>`;
-        if(q.includes('0')) gearHtml += `<div class="item-chip">⚡ <b>POWER ITEM</b> (Force 0 IV Pass)</div>`;
+        let gearHtml = `<div class="item-chip">⛓️ <b>DESTINY KNOT</b></div>`;
+        if(nature) gearHtml += `<div class="item-chip">💎 <b>EVERSTONE</b> (Locks ${clean(nature[0])})</div>`;
+        if(q.includes('0')) gearHtml += `<div class="item-chip">⚡ <b>POWER ITEM</b></div>`;
         document.getElementById('gearList').innerHTML = gearHtml;
+        document.getElementById('incenseList').innerHTML = incense[t] ? `<div class="item-chip" style="color:var(--warn); border-color:var(--warn);">🔥 ${incense[t]} REQ.</div>` : '';
 
-        const inc = incense[t];
-        document.getElementById('incenseList').innerHTML = inc ? `<div class="item-chip incense-alert">🔥 ${inc.toUpperCase()} REQUIRED</div>` : '';
+        document.getElementById('dnaSteps').innerHTML = `1. Hold <b>Everstone</b> on ${nature ? clean(nature[0]) : 'Nature'} Parent.<br>2. Hold <b>Destiny Knot</b> on Partner.<br>3. Hatch <b>${clean(t)}</b>.`;
 
-        // INHERITANCE STEPS
-        document.getElementById('dnaSteps').innerHTML = `
-            <div class="dna-step">1. Find <b>${nature ? clean(nature[0]) : 'Target'}</b> Nature Parent.</div>
-            <div class="dna-step">2. Apply <b>Everstone</b> to Nature Parent.</div>
-            <div class="dna-step">3. Apply <b>Destiny Knot</b> to High-IV Parent.</div>
-            <div class="dna-step">4. Incubate <b>${clean(t)}</b> Egg.</div>
-        `;
+        // 03: NEXUS (EVO LINE)
+        let chain = [];
+        let curr = evo.chain;
+        while(curr) {
+            chain.push(curr.species.name);
+            curr = curr.evolves_to[0];
+        }
+        document.getElementById('nexus').innerHTML = chain.map((name, i) => `
+            <div class="nexus-node ${name === t ? 'active' : ''}">${clean(name)}</div>
+            ${i < chain.length - 1 ? '<div class="nexus-arrow">↓</div>' : ''}
+        `).join('');
 
-        // STATS & ROWAN
+        // 04: STATS & ROWAN
         document.getElementById('stats').innerHTML = p.stats.map(s => `
-            <div style="margin-bottom:12px;">
-                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800;">
+            <div style="margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:800; color:var(--sub);">
                     <span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span>
                 </div>
-                <div style="height:2px; background:rgba(255,255,255,0.05); margin-top:5px;"><div style="height:100%; background:var(--ring); width:${(s.base_stat/255)*100}%"></div></div>
+                <div style="height:2px; background:rgba(255,255,255,0.05); margin-top:3px;"><div style="height:100%; background:var(--ring); width:${(s.base_stat/255)*100}%"></div></div>
             </div>`).join('');
 
-        const isSpec = p.stats[3].base_stat > p.stats[1].base_stat;
         const alert = document.getElementById('rowanAlert');
-        if(nature && (nature[0] === 'adamant' || nature[0] === 'jolly') && isSpec) {
+        if(nature && (nature[0] === 'adamant' || nature[0] === 'jolly') && p.stats[3].base_stat > p.stats[1].base_stat) {
             alert.style.display = 'block';
-            document.getElementById('rowanText').innerText = `Rowan: You are assigning a physical nature to a specialist. Scientific suicide!`;
+            alert.innerText = "Rowan: Assigning physical growth to a special specialist? Unacceptable.";
         } else alert.style.display = 'none';
 
-        // MOVES
+        // 05: MOVES
         const moves = p.moves.map(m => ({name: m.move.name, lvl: m.version_group_details[0].level_learned_at})).sort((a,b)=>a.lvl-b.lvl);
         document.getElementById('movePool').innerHTML = moves.map(m => `
             <div class="move-row">
                 <span>Lv.${m.lvl} ${clean(m.name)}</span>
-                ${m.lvl > 35 ? '<span class="legacy-tag">LEGACY</span>' : ''}
+                ${m.lvl > 35 ? '<span class="legacy">LEGACY</span>' : ''}
             </div>`).join('');
     }
-
-    function init() { if(!localStorage.getItem('v500_seen')) { toggleHelp(); localStorage.setItem('v500_seen', 'true'); } }
 </script>
 </body>
 </html>
