@@ -3,27 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBreed Pro | National Dex Verified</title>
+    <title>PokeBreed Pro | Rowan's Lab</title>
     <style>
         :root { --bg: #0c0d10; --card: #16181d; --primary: #00e5ff; --text: #f0f0f0; --sub-text: #a0a8b5; --border: #2d333f; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
-        
         .container { max-width: 850px; width: 100%; background: var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.6); margin-top: 40px; height: fit-content; }
-        
         h1 { color: var(--primary); text-align: center; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 4px; font-weight: 900; }
         .subtitle { text-align: center; color: var(--sub-text); margin-bottom: 35px; font-size: 0.85em; }
-        
         .input-group { display: flex; gap: 12px; margin-bottom: 30px; }
         input { flex: 1; padding: 18px; background: #1a1c23; border: 2px solid var(--border); border-radius: 12px; color: white; font-size: 1.1em; outline: none; }
-        input:focus { border-color: var(--primary); }
-        
         button { padding: 18px 30px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-        
-        #output { display: none; }
-        .section-title { color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-top: 35px; text-transform: uppercase; font-size: 0.85em; font-weight: 800; }
-        
-        .step { padding: 18px; background: rgba(255,255,255,0.02); border-left: 5px solid var(--primary); margin-top: 12px; line-height: 1.6; border-radius: 0 10px 10px 0; border: 1px solid var(--border); border-left-width: 5px; }
-        .location-box { background: #111216; padding: 25px; border-radius: 15px; border: 1px solid var(--border); margin-top: 12px; }
         
         /* ROWAN POPUP */
         #rowanPopup {
@@ -35,21 +24,15 @@
         }
         .rowan-header { font-weight: 900; color: #b00; border-bottom: 3px solid #333; margin-bottom: 15px; font-size: 1.3em; display: inline-block; }
         .rowan-btn { background: #333; color: white; border: none; padding: 10px 25px; float: right; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(-50%); }
-            20% { transform: translateX(-52%); }
-            40% { transform: translateX(-48%); }
-            60% { transform: translateX(-51%); }
-            80% { transform: translateX(-49%); }
-        }
+        .suggestion-link { color: #0066cc; cursor: pointer; text-decoration: underline; font-weight: bold; }
 
-        .move-pill { display: inline-block; padding: 5px 12px; background: var(--bg); border: 1px solid var(--border); margin: 4px; border-radius: 6px; font-size: 0.8em; color: var(--primary); text-transform: capitalize; }
-        .egg-pill { border: 1px solid #ff00ff; color: #ff00ff; box-shadow: 0 0 5px rgba(255, 0, 255, 0.2); }
+        @keyframes shake { 0%, 100% { transform: translateX(-50%); } 20% { transform: translateX(-52%); } 40% { transform: translateX(-48%); } }
         
-        .ref-links { display: flex; gap: 12px; margin-top: 18px; }
-        .ref-btn { flex: 1; padding: 12px; text-align: center; text-decoration: none; color: white; border-radius: 10px; font-weight: 800; font-size: 0.85em; }
-        .serebii { background: #0e7a3a; } .bulbapedia { background: #60298a; } .pokemondb { background: #cf4a10; }
+        #output { display: none; }
+        .section-title { color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-top: 35px; text-transform: uppercase; font-size: 0.85em; font-weight: 800; }
+        .step { padding: 18px; background: rgba(255,255,255,0.02); border-left: 5px solid var(--primary); margin-top: 12px; border-radius: 0 10px 10px 0; border: 1px solid var(--border); border-left-width: 5px; }
+        .move-pill { display: inline-block; padding: 5px 12px; background: var(--bg); border: 1px solid var(--border); margin: 4px; border-radius: 6px; font-size: 0.8em; color: var(--primary); text-transform: capitalize; }
+        .ref-btn { flex: 1; padding: 12px; text-align: center; text-decoration: none; color: white; border-radius: 10px; font-weight: 800; font-size: 0.85em; display: block; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -57,116 +40,96 @@
 <div id="rowanPopup">
     <div class="rowan-header">PROF. ROWAN</div><br>
     <div id="rowanText">Hmm! I've been researching Pokémon for 60 years, and I've never heard of a species spelled that way! Are you quite finished wasting my time?</div>
+    <div id="rowanSuggestions" style="margin-top: 15px; font-size: 0.9em; display: none; background: #eee; padding: 10px; border: 1px dashed #333;">
+        Did your pen slip? Did you mean: <span id="suggestionList"></span>?
+    </div>
     <button class="rowan-btn" onclick="closeRowan()">SORRY, PROFESSOR...</button>
 </div>
 
 <div class="container">
     <h1>⚡ PokeBreed Pro</h1>
-    <p class="subtitle">Complete National Dex Genetic Database</p>
-    
     <div class="input-group">
-        <input type="text" id="userInput" placeholder="Enter Name (e.g. Timid Greninja SV)" onkeypress="if(event.key === 'Enter') generateGuide()">
+        <input type="text" id="userInput" placeholder="e.g. 'Gyarados SV'" onkeypress="if(event.key === 'Enter') generateGuide()">
         <button onclick="generateGuide()">Analyze</button>
     </div>
 
     <div id="output">
         <h2 id="pokeHeader" style="text-transform: capitalize; font-size: 2.5em; color: var(--primary); margin: 0;"></h2>
-        <div id="gameBadge" style="margin-top: 5px; margin-bottom: 15px;"></div>
-
-        <div class="section-title">📍 Regional Habitat Data</div>
-        <div id="locationList" class="location-box"></div>
-        
-        <div class="ref-links">
-            <a id="linkSerebii" class="ref-btn serebii" target="_blank">Serebii</a>
-            <a id="linkBulba" class="ref-btn bulbapedia" target="_blank">Bulbapedia</a>
-            <a id="linkDB" class="ref-btn pokemondb" target="_blank">PokemonDB</a>
-        </div>
-
-        <div class="section-title">⚔️ Inherited Egg Moves (Genetic)</div>
-        <div id="eggMovepool" style="margin-top: 12px;"></div>
-
-        <div class="section-title">🛠️ Professional Breeding Strategy</div>
         <div id="stepsList"></div>
-
-        <div class="section-title">📖 Learned Movepool (TM/Level)</div>
-        <div id="standardMovepool" style="margin-top: 12px;"></div>
+        <div class="section-title">⚔️ Inherited Egg Moves</div>
+        <div id="eggMovepool"></div>
+        <div class="section-title">📖 Standard Moves</div>
+        <div id="standardMovepool"></div>
+        <a id="linkSerebii" class="ref-btn" style="background: #0e7a3a;" target="_blank">View Detailed Serebii Entry</a>
     </div>
 </div>
 
 <script>
-    const format = (str) => str.replace(/-/g, ' ');
+    let failedAttempts = 0;
+    let pokemonList = [];
+
+    // Fetch full list of names once for suggestions
+    fetch('https://pokeapi.co/api/v2/pokemon?limit=2000').then(res => res.json()).then(data => {
+        pokemonList = data.results.map(p => p.name);
+    });
+
+    // Simple string similarity (Levenshtein distance lite)
+    function getSuggestions(target) {
+        return pokemonList
+            .filter(name => name.includes(target) || (target.length > 3 && name.startsWith(target.substring(0,3))))
+            .slice(0, 3);
+    }
+
     function closeRowan() { document.getElementById('rowanPopup').style.display = 'none'; }
 
     async function generateGuide() {
         const input = document.getElementById('userInput').value.toLowerCase().trim();
         if(!input) return;
 
-        // Detect specified game
-        const games = { "sv": "scarlet-violet", "swsh": "sword-shield", "bdsp": "brilliant-diamond-shining-pearl" };
-        const activeGameKey = Object.keys(games).find(k => input.includes(k)) || "default";
-
-        // Advanced filter: removes keywords to isolate the Pokemon name
-        const noise = ["get", "find", "breed", "need", "iv", "5iv", "shiny", "jolly", "adamant", "timid", "modest", "bold", "calm", "careful", "impish", "in", "the", "sv", "swsh", "bdsp", "best", "perfect"];
+        const noise = ["get", "find", "breed", "iv", "5iv", "shiny", "jolly", "adamant", "timid", "modest", "sv", "swsh", "bdsp"];
         const pokemonName = input.split(/\s+/).find(w => w.length > 2 && !noise.includes(w));
 
         try {
-            // STEP 1: Main Data Fetch
             const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
             if(!res.ok) throw new Error();
             const data = await res.json();
             
+            failedAttempts = 0; // Reset patience
             document.getElementById('output').style.display = 'block';
             document.getElementById('pokeHeader').innerText = data.name;
-            document.getElementById('gameBadge').innerHTML = activeGameKey !== "default" ? `<span style="background:var(--primary); color:#000; padding:3px 8px; border-radius:4px; font-weight:bold; font-size:0.75em;">LOG: ${activeGameKey.toUpperCase()}</span>` : "";
 
-            // STEP 2: Location Logic (Filters by Game if available)
-            const lRes = await fetch(data.location_area_encounters);
-            const lData = await lRes.json();
-            let locText = "No wild encounter data. Check external links for Raid or Event info.";
-            if (lData.length > 0) {
-                const filtered = activeGameKey === "default" ? lData : lData.filter(loc => loc.version_details.some(v => v.version.name.includes(activeGameKey)));
-                const source = filtered.length > 0 ? filtered : lData;
-                locText = `Detected Habitat: <strong>${format(source[0].location_area.name)}</strong>.`;
-            }
-            document.getElementById('locationList').innerHTML = locText;
-
-            // STEP 3: Genetic Move Filter
+            // Strategy & Moves Logic
             const eggMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'egg'));
             const stdMoves = data.moves.filter(m => m.version_group_details.some(v => v.move_learn_method.name === 'level-up' || v.move_learn_method.name === 'machine'));
 
-            document.getElementById('eggMovepool').innerHTML = eggMoves.length > 0 ? eggMoves.slice(0, 10).map(m => `<span class="move-pill egg-pill">${format(m.move.name)}</span>`).join('') : "No Egg Moves found.";
-            document.getElementById('standardMovepool').innerHTML = stdMoves.slice(0, 12).map(m => `<span class="move-pill">${format(m.move.name)}</span>`).join('');
+            document.getElementById('eggMovepool').innerHTML = eggMoves.slice(0, 8).map(m => `<span class="move-pill" style="border-color:#ff00ff; color:#ff00ff;">${m.move.name.replace(/-/g, ' ')}</span>`).join('');
+            document.getElementById('standardMovepool').innerHTML = stdMoves.slice(0, 10).map(m => `<span class="move-pill">${m.move.name.replace(/-/g, ' ')}</span>`).join('');
 
-            // STEP 4: Advanced Strategy Generation
-            let steps = [];
-            const evs = data.stats.filter(s => s.effort > 0).map(s => s.effort + " " + s.stat.name).join(', ');
-            steps.push(`<strong>EV Analysis:</strong> Yields <strong>${evs}</strong> upon defeat.`);
-
-            const natures = ["jolly", "adamant", "timid", "modest", "bold", "calm", "careful", "impish"];
-            const n = natures.find(x => input.includes(x));
-            if(n) steps.push(`🧪 <strong>Genetic Lock:</strong> To maintain <strong>${n.toUpperCase()}</strong>, the parent must hold an <strong>Everstone</strong>.`);
-            
-            if(input.includes("iv")) steps.push(`📊 <strong>IV Transfer:</strong> Use the <strong>Destiny Knot</strong> to transfer parent stats to offspring.`);
-
-            // Species & Evolution Chain Check
-            const sRes = await fetch(data.species.url);
-            const sData = await sRes.json();
-            const eRes = await fetch(sData.evolution_chain.url);
-            const eData = await eRes.json();
-            const baseForm = eData.chain.species.name;
-            if(baseForm !== data.name) steps.push(`🧬 <strong>Note:</strong> Hatch the base species <strong>${baseForm.toUpperCase()}</strong> for breeding.`);
-
+            let steps = [`<strong>EVs:</strong> ${data.stats.filter(s => s.effort > 0).map(s => s.effort + " " + s.stat.name).join(', ')}` ];
+            if(input.includes("iv")) steps.push("📊 Use <strong>Destiny Knot</strong> to transfer 5 IVs.");
             document.getElementById('stepsList').innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('');
 
-            // STEP 5: Serebii/Bulba/DB Dynamic Links
-            const cn = data.name.split('-')[0];
-            const serebiiBase = activeGameKey === "sv" ? "pokedex-sv" : (activeGameKey === "swsh" ? "pokedex-swsh" : "pokedex-bw");
-            document.getElementById('linkSerebii').href = `https://www.serebii.net/${serebiiBase}/${cn}/`;
-            document.getElementById('linkBulba').href = `https://bulbapedia.bulbagarden.net/wiki/${cn}_(Pokémon)`;
-            document.getElementById('linkDB').href = `https://pokemondb.net/pokedex/${cn}`;
+            document.getElementById('linkSerebii').href = `https://www.serebii.net/pokedex-sv/${data.name.split('-')[0]}/`;
 
         } catch (e) {
-            document.getElementById('rowanPopup').style.display = 'block';
+            failedAttempts++;
+            const popup = document.getElementById('rowanPopup');
+            const text = document.getElementById('rowanText');
+            const suggestionsDiv = document.getElementById('rowanSuggestions');
+            
+            popup.style.display = 'block';
+            
+            if (failedAttempts >= 3) {
+                text.innerText = "...Grah! Your handwriting is nearly illegible! Are you even trying? If you can't be precise, at least look at these species and tell me if one matches!";
+                const suggestions = getSuggestions(pokemonName || "");
+                if (suggestions.length > 0) {
+                    suggestionsDiv.style.display = 'block';
+                    document.getElementById('suggestionList').innerHTML = suggestions.map(s => `<span class="suggestion-link" onclick="document.getElementById('userInput').value='${s}'; generateGuide(); closeRowan();">${s}</span>`).join(', ');
+                }
+            } else {
+                text.innerText = "Hmm! I've been researching Pokémon for 60 years, and I've never heard of a species spelled that way! Be precise!";
+                suggestionsDiv.style.display = 'none';
+            }
         }
     }
 </script>
