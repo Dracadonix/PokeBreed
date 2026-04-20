@@ -1,396 +1,719 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#010204" media="(prefers-color-scheme: dark)">
-    <meta name="description" content="Professional VGC breeding suite with move classification, habitat locations, and divine Arceus interaction.">
-    <meta name="author" content="Architect Lime">
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Omni-Monolith%20Breeding%20Citadel%22,%22short_name%22:%22PokeBreed%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23010204%22,%22theme_color%22:%22%2300f2ff%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Crect%20width%3D%27100%27%20height%3D%27100%27%20fill%3D%27%2300f2ff%27/%3E%3Ctext%20x%3D%2750%27%20y%3D%2767%27%20text-anchor%3D%27middle%27%20font-size%3D%2760%27%20fill%3D%27%23010204%27%3E⚡%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
-    <title>OMNI-MONOLITH v5.3 | DIVINE EDITION | LIME</title>
-    <style>
-        :root { 
-            --void: #010204; --ring: #00f2ff; --warn: #ff0055; --gold: #ffd700; --divine: #e8b4f8;
-            --surface: #0a0f19; --sub: #64748b; --panel: #0d1421; 
-            --hp: #4ade80; --atk: #facc15; --def: #fb923c; --spa: #60a5fa; --spd: #a78bfa; --spe: #f472b6;
-            --type-bug: #A8B820; --type-dark: #705848; --type-dragon: #7038F8; --type-electric: #F8D030;
-            --type-fairy: #EE99AC; --type-fighting: #C03028; --type-fire: #F08030; --type-flying: #A890F0;
-            --type-ghost: #705898; --type-grass: #78C850; --type-ground: #E0C068; --type-ice: #98D8D8;
-            --type-normal: #A8A878; --type-poison: #A040A0; --type-psychic: #F85888; --type-rock: #B8A038;
-            --type-steel: #B8B8D0; --type-water: #6890F0;
-        }
-        * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        ::-webkit-scrollbar { width: 8px; } 
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
-        
-        body { background: var(--void); color: #f1f5f9; margin: 0; display: flex; height: 100vh; overflow: hidden; font-size: 14px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omni-Monolith v5.0 — Lime's Breeding Station</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#050a0f;--bg2:#080f18;--bg3:#0b1520;--panel:#0d1a26;--panel2:#0f1f2e;
+  --cyan:#00f5ff;--cyan2:#00c8d4;--cyan3:#007a85;--green:#00ff9d;--green2:#00cc7a;
+  --amber:#ffb800;--amber2:#cc8800;--red:#ff3d5a;--purple:#b06bff;
+  --text:#c8e8f0;--text2:#7aaabb;--text3:#3d6070;
+  --border:#0d3040;--border2:#164055;
+  --glow:0 0 8px rgba(0,245,255,0.3);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-size:13px;line-height:1.5;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);pointer-events:none;z-index:9999;}
 
-        /* --- BIBLE OVERLAY --- */
-        #bibleOverlay { display: none; position: fixed; inset: 0; background: var(--void); z-index: 99999; grid-template-columns: 380px 1fr; border-top: 5px solid var(--gold); }
-        .bible-nav { background: #05080f; border-right: 1px solid #1a2333; padding: 50px 40px; overflow-y: auto; }
-        .nav-link { display: block; color: var(--sub); text-decoration: none; font-size: 10px; margin-bottom: 25px; cursor: pointer; text-transform: uppercase; font-weight: 900; letter-spacing: 2px; }
-        .nav-link:hover { color: var(--gold); transform: translateX(10px); }
-        .bible-body { padding: 100px 80px; overflow-y: auto; background: radial-gradient(circle at bottom right, #111 0%, #000 100%); }
-        .bible-wrap { max-width: 1000px; margin: 0 auto; line-height: 2.2; color: #cbd5e1; }
+/* HEADER */
+.header{background:linear-gradient(180deg,#040810 0%,var(--bg) 100%);border-bottom:1px solid var(--cyan3);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:relative;}
+.header::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.logo{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--cyan);text-shadow:var(--glow);letter-spacing:2px;}
+.logo span{color:var(--green);}
+.header-info{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);text-align:right;}
+.operator{color:var(--cyan2);font-size:11px;}
+.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);margin-right:4px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
-        /* --- SIDEBAR --- */
-        .sidebar { width: 480px; background: #05080f; border-right: 1px solid #1a2333; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; flex-shrink: 0; }
-        .prof-card { background: var(--panel); padding: 30px; border-radius: 18px; border-left: 6px solid var(--ring); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.1s ease; }
-        .prof-card.crashout { animation: shake 0.3s ease-in-out 0s 2; border-left-color: var(--warn); background: #2a0a12; }
-        .prof-card.praying { animation: glowPulse 0.5s ease-in-out 3; border-left-color: var(--divine); background: #1a0a2e; }
-        @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
-        @keyframes glowPulse { 0%,100%{box-shadow:0 0 0 0 var(--divine);} 50%{box-shadow:0 0 20px 10px rgba(232,180,248,0.5);} }
-        .speech { font-style: italic; color: #f1f5f9; line-height: 1.7; font-size: 14px; }
-        .grumble { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #333; color: var(--gold); font-size: 11px; font-weight: 900; opacity: 0.8; }
+/* GRID */
+.grid{display:grid;grid-template-columns:260px 1fr 230px;gap:1px;background:var(--border);min-height:calc(100vh - 53px);}
 
-        /* --- MAIN INTERFACE --- */
-        .main { flex-grow: 1; padding: 50px; overflow-y: auto; background: #010204; }
-        .ctrl-panel { display: grid; grid-template-columns: 1fr 320px; gap: 30px; margin-bottom: 50px; }
-        input { background: #000; border: 3px solid var(--ring); padding: 25px; color: var(--ring); font-size: 20px; border-radius: 15px; outline: none; font-weight: 800; }
-        .action-btn { background: var(--gold); color: #000; border: none; padding: 25px; font-weight: 900; cursor: pointer; border-radius: 15px; text-transform: uppercase; letter-spacing: 2px; }
+/* PANELS */
+.panel{background:var(--panel);padding:14px;}
+.panel-title{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:var(--cyan3);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border2);}
 
-        .dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 35px; }
-        .panel { background: var(--panel); padding: 40px; border-radius: 25px; border: 1px solid #1a2333; }
-        .tag { color: var(--ring); font-size: 11px; font-weight: 900; letter-spacing: 4px; border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 30px; display: block; }
+/* INPUTS & BUTTONS */
+.search-wrap{display:flex;gap:6px;margin-bottom:12px;}
+.cyber-input{flex:1;background:var(--bg2);border:1px solid var(--border2);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:12px;padding:7px 10px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.cyber-input:focus{border-color:var(--cyan);box-shadow:var(--glow);}
+.cyber-input::placeholder{color:var(--text3);}
+.cyber-btn{background:transparent;border:1px solid var(--cyan3);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 12px;cursor:pointer;transition:all 0.2s;letter-spacing:1px;}
+.cyber-btn:hover{background:rgba(0,245,255,0.08);border-color:var(--cyan);box-shadow:var(--glow);}
+.cyber-btn:active{transform:scale(0.97);}
+.cyber-btn.green{border-color:var(--green2);color:var(--green);}
+.cyber-btn.green:hover{background:rgba(0,255,157,0.08);box-shadow:0 0 8px rgba(0,255,157,0.3);}
+.cyber-btn.amber{border-color:var(--amber2);color:var(--amber);}
+.cyber-btn.amber:hover{background:rgba(255,184,0,0.08);}
 
-        .stat-meta { display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; margin-bottom: 8px; }
-        .bar-outer { height: 12px; background: #05080f; border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
-        .bar-inner { height: 100%; transition: 2s; width: 0%; }
+/* POKE DISPLAY */
+.poke-display{background:var(--bg2);border:1px solid var(--border2);padding:12px;margin-bottom:12px;min-height:80px;position:relative;overflow:hidden;}
+.poke-display::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan3),transparent);}
+.poke-name{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;}
+.poke-id{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:8px;}
+.poke-sprite{float:right;image-rendering:pixelated;filter:drop-shadow(0 0 8px var(--cyan3));margin-top:-4px;}
+.types{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;}
+.type-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 6px;letter-spacing:1px;text-transform:uppercase;}
 
-        .move-scroll { height: 480px; overflow-y: auto; padding-right: 15px; }
-        .move-item { background: #010204; padding: 14px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #1a2333; }
-        .move-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .move-name { font-weight: 800; font-size: 13px; }
-        .method-pill { padding: 4px 12px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .method-egg { background: #f472b6; color: #000; }
-        .method-tm { background: #60a5fa; color: #000; }
-        .method-tutor { background: #c084fc; color: #000; }
-        .method-level { background: #4ade80; color: #000; }
-        .method-unknown { background: #64748b; color: #fff; }
-        .acquisition-info { font-size: 10px; color: var(--sub); margin-top: 10px; padding-top: 8px; border-top: 1px solid #1a2333; line-height: 1.5; }
+/* TYPE COLORS */
+.type-fire{background:rgba(255,80,30,0.2);border:1px solid #ff4a1a;color:#ff8060;}
+.type-water{background:rgba(30,120,255,0.2);border:1px solid #1a7aff;color:#60a8ff;}
+.type-grass{background:rgba(30,200,80,0.2);border:1px solid #1acc50;color:#60ff90;}
+.type-electric{background:rgba(255,200,0,0.2);border:1px solid #ffcc00;color:#ffdd60;}
+.type-psychic{background:rgba(200,0,150,0.2);border:1px solid #cc0099;color:#ff60cc;}
+.type-dragon{background:rgba(80,30,255,0.2);border:1px solid #4a1aff;color:#9060ff;}
+.type-dark{background:rgba(60,40,20,0.4);border:1px solid #604030;color:#aa8866;}
+.type-steel{background:rgba(150,160,180,0.2);border:1px solid #8898aa;color:#aabcc8;}
+.type-fairy{background:rgba(255,150,200,0.2);border:1px solid #ff96c8;color:#ffb8d8;}
+.type-fighting{background:rgba(180,50,30,0.2);border:1px solid #b4321e;color:#e87060;}
+.type-normal{background:rgba(160,160,140,0.2);border:1px solid #aaa88c;color:#ccc8a8;}
+.type-flying{background:rgba(120,160,220,0.2);border:1px solid #78a0dc;color:#a8c8ee;}
+.type-poison{background:rgba(140,60,180,0.2);border:1px solid #8c3cb4;color:#c07aee;}
+.type-ground{background:rgba(180,150,80,0.2);border:1px solid #b49650;color:#d8be84;}
+.type-rock{background:rgba(160,130,60,0.2);border:1px solid #a0823c;color:#c8aa6a;}
+.type-ice{background:rgba(150,220,240,0.2);border:1px solid #96dcf0;color:#b8eeff;}
+.type-bug{background:rgba(100,170,30,0.2);border:1px solid #64aa1e;color:#96d040;}
+.type-ghost{background:rgba(100,60,140,0.2);border:1px solid #643c8c;color:#a878d8;}
 
-        .evo-flex { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
-        .evo-node { background: #000; border: 2px solid var(--gold); padding: 15px 25px; border-radius: 10px; color: var(--gold); font-weight: 900; font-size: 12px; }
+/* IV GRID */
+.iv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:10px;}
+.iv-cell{background:var(--bg3);border:1px solid var(--border);padding:6px 4px;text-align:center;}
+.iv-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:1px;display:block;margin-bottom:2px;}
+.iv-val{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;}
+.iv-31{color:var(--green);text-shadow:0 0 6px var(--green);}
+.iv-0{color:var(--red);text-shadow:0 0 6px var(--red);}
+.iv-hi{color:var(--cyan);}
+.iv-mid{color:var(--amber);}
+.iv-lo{color:var(--text3);}
 
-        .close-overlay { position: fixed; top: 40px; right: 60px; background: var(--warn); color: #fff; border: none; padding: 18px 45px; font-weight: 900; cursor: pointer; border-radius: 8px; z-index: 100000; }
-        .iv-target-panel { background: rgba(0,242,255,0.05); border-radius: 16px; padding: 20px; margin-top: 20px; border: 1px solid var(--ring); }
-        .type-badge { font-size: 11px; padding: 4px 10px; border-radius: 30px; font-weight: 800; color: #000; text-transform: uppercase; display: inline-block; margin: 2px; }
-        .location-tag { background: #1a2333; padding: 6px 12px; border-radius: 20px; font-size: 11px; margin: 3px; display: inline-block; }
+/* EGG MOVES */
+.egg-moves-list{list-style:none;}
+.egg-moves-list li{padding:5px 8px;border-left:2px solid var(--border2);margin-bottom:3px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);display:flex;justify-content:space-between;align-items:center;transition:border-color 0.2s;}
+.egg-moves-list li:hover{border-color:var(--cyan3);color:var(--text);}
 
-        .gh-badge { position: fixed; bottom: 16px; right: 16px; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); padding: 6px 12px; border-radius: 40px; font-size: 10px; z-index: 1000; }
+/* STAT BARS */
+.stat-row{display:flex;align-items:center;gap:6px;margin-bottom:5px;}
+.stat-name{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);width:28px;letter-spacing:1px;}
+.stat-bar{flex:1;height:4px;background:var(--bg3);border:1px solid var(--border);position:relative;overflow:hidden;}
+.stat-fill{height:100%;transition:width 0.5s cubic-bezier(0.25,0.46,0.45,0.94);}
+.stat-num{font-family:'Orbitron',monospace;font-size:9px;color:var(--text2);width:22px;text-align:right;}
 
-        @media (max-width: 1200px) {
-            body { flex-direction: column; overflow-y: auto; height: auto; }
-            .sidebar { width: 100%; }
-            .dashboard { grid-template-columns: 1fr; }
-            .main { padding: 25px; }
-            #bibleOverlay { grid-template-columns: 1fr; }
-            .bible-nav { display: none; }
-        }
-    </style>
+/* PROFESSOR PANEL */
+.prof-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:10px;}
+.prof-tab{background:var(--bg2);border:1px solid var(--border);color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:9px;padding:5px 2px;text-align:center;cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
+.prof-tab:hover{border-color:var(--border2);color:var(--text2);}
+.prof-tab.active{border-color:var(--cyan3);color:var(--cyan);background:rgba(0,245,255,0.06);}
+.prof-bubble{background:var(--bg2);border:1px solid var(--border2);padding:10px 12px;position:relative;min-height:70px;margin-bottom:8px;}
+.prof-bubble::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan3),transparent);}
+.prof-name-tag{font-family:'Orbitron',monospace;font-size:8px;font-weight:700;letter-spacing:2px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.oak-col{color:#aa8844;} .elm-col{color:#6688aa;} .birch-col{color:#558844;} .rowan-col{color:#8866aa;}
+.prof-text{font-size:11px;color:var(--text2);line-height:1.6;font-style:italic;}
+.grumble{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);}
+
+/* CALCULATORS */
+.calc-section{background:var(--bg2);border:1px solid var(--border2);padding:10px;margin-bottom:10px;}
+.calc-title{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:2px;margin-bottom:8px;}
+.calc-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.calc-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);width:90px;letter-spacing:1px;}
+.calc-result{background:var(--bg3);border:1px solid var(--amber2);padding:8px 10px;margin-top:6px;}
+.calc-result-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--amber2);letter-spacing:2px;display:block;margin-bottom:2px;}
+.calc-result-val{font-family:'Orbitron',monospace;font-size:16px;color:var(--amber);font-weight:700;}
+.masuda-input{width:60px;background:var(--bg3);border:1px solid var(--border2);color:var(--amber);font-family:'Share Tech Mono',monospace;font-size:12px;padding:4px 6px;outline:none;text-align:center;}
+.masuda-input:focus{border-color:var(--amber);}
+.masuda-input.green{color:var(--green);}
+.masuda-input.green:focus{border-color:var(--green);}
+.masuda-input.cyan{color:var(--cyan);}
+
+/* 0-IV META */
+.zero-iv-section{background:var(--bg2);border:1px solid var(--border2);padding:10px;margin-bottom:10px;}
+.zero-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:10px;}
+.zero-row:last-child{border-bottom:none;}
+.zero-stat{color:var(--text2);}
+.zero-reason{color:var(--text3);font-size:8px;}
+.zero-badge{font-size:8px;padding:2px 5px;letter-spacing:1px;}
+.badge-req{background:rgba(255,61,90,0.15);border:1px solid #ff3d5a;color:#ff3d5a;}
+.badge-opt{background:rgba(176,107,255,0.15);border:1px solid #b06bff;color:#b06bff;}
+.badge-no{background:rgba(60,96,112,0.15);border:1px solid var(--text3);color:var(--text3);}
+
+/* BIBLE */
+.bible-entry{background:var(--bg2);border-left:2px solid var(--cyan3);padding:8px 10px;margin-bottom:6px;font-size:10px;}
+.bible-header{font-family:'Orbitron',monospace;font-size:8px;color:var(--cyan3);letter-spacing:2px;margin-bottom:4px;}
+.bible-text{color:var(--text2);line-height:1.6;}
+.bible-code{font-family:'Share Tech Mono',monospace;color:var(--green);font-size:10px;margin-top:4px;}
+
+/* BREED TARGET BADGE */
+.breed-target-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 8px;letter-spacing:2px;margin-bottom:8px;}
+.badge-perfect{background:rgba(0,255,157,0.1);border:1px solid var(--green2);color:var(--green);}
+.badge-meta{background:rgba(176,107,255,0.1);border:1px solid #b06bff;color:#b06bff;}
+.badge-viable{background:rgba(0,245,255,0.1);border:1px solid var(--cyan3);color:var(--cyan2);}
+
+/* ABILITY */
+.ability-tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 6px;margin:2px;background:rgba(0,200,212,0.1);border:1px solid var(--cyan3);color:var(--cyan2);letter-spacing:1px;}
+.ability-tag.hidden{background:rgba(176,107,255,0.1);border-color:#b06bff;color:#b06bff;}
+
+/* UTILS */
+.loading{display:flex;align-items:center;gap:8px;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:10px;padding:10px 0;}
+.loader{width:12px;height:12px;border:1px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.terminal-line{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);padding:3px 0;border-top:1px solid var(--border);}
+.terminal-line span{color:var(--cyan3);}
+.error-msg{color:var(--red);font-family:'Share Tech Mono',monospace;font-size:10px;padding:8px;border:1px solid rgba(255,61,90,0.3);background:rgba(255,61,90,0.05);}
+.section-divider{border:none;border-top:1px solid var(--border);margin:12px 0;}
+.center-panel{overflow-y:auto;max-height:calc(100vh - 53px);}
+.sidebar-left,.sidebar-right{overflow-y:auto;max-height:calc(100vh - 53px);}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+::-webkit-scrollbar-thumb:hover{background:var(--cyan3);}
+#prof-quote-btn{width:100%;margin-top:6px;font-size:10px;padding:6px;letter-spacing:2px;}
+
+/* MOBILE */
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr;}
+  .sidebar-left,.sidebar-right,.center-panel{max-height:none;overflow-y:visible;}
+}
+</style>
 </head>
-<body onload="refreshProfs()">
+<body>
 
-<div id="bibleOverlay">
-    <button class="close-overlay" onclick="toggleBible()">⛁ DISCONNECT ARCHIVE ⛁</button>
-    <div class="bible-nav">
-        <h2 style="color:var(--gold)">BREEDING BIBLE</h2>
-        <a class="nav-link" onclick="jump('b1')">I. GENETIC FUNDAMENTALS</a>
-        <a class="nav-link" onclick="jump('b2')">II. MOVE CLASSIFICATIONS</a>
-        <a class="nav-link" onclick="jump('b3')">III. HABITAT & LOCATION</a>
-    </div>
-    <div class="bible-body">
-        <div class="bible-wrap">
-            <h1 id="b1" style="color:var(--gold);">◈ OMNI-MONOLITH v5.3 ◈<br><span style="font-size:14px;">DIVINE EDITION | ARCHITECT: LIME</span></h1>
-            <h2>I. MOVE ACQUISITION METHODS</h2>
-            <p><b>🐣 EGG MOVES:</b> Inherited through breeding. Mirror Herb (Gen 9) allows instant transfer. Chain breeding uses intermediate species in same Egg Group.</p>
-            <p><b>📀 TM MOVES:</b> Technical Machines. Crafted or found in overworld. Universal across most species.</p>
-            <p><b>📚 TUTOR MOVES:</b> Taught by NPCs in exchange for resources (usually LP/Blueberry Points). Appeared in every generation since Gen III.</p>
-            <p><b>📈 LEVEL-UP MOVES:</b> Learned naturally as Pokémon gains experience. Evolution often unlocks new moves.</p>
-            <h2 id="b2">II. HABITAT LOCATIONS</h2>
-            <p>Each Pokémon has specific habitat zones. Knowing where to catch them is essential for obtaining 0-IV Dittos, specific natures, or hidden abilities.</p>
-        </div>
-    </div>
+<div class="header">
+  <div>
+    <div class="logo">OMNI-<span>MONOLITH</span> v5.0</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-top:2px;">BREEDING PROFESSIONAL SUITE // CYBER-LAB EDITION</div>
+  </div>
+  <div class="header-info">
+    <div class="operator"><span class="status-dot"></span>OPERATOR: LIME</div>
+    <div style="margin-top:2px">LEAD ARCHITECT // STATION ACTIVE</div>
+    <div style="margin-top:1px;font-size:9px" id="clock">--:--:--</div>
+  </div>
 </div>
 
-<div class="sidebar">
-    <h3 style="color:var(--gold); text-align:center; letter-spacing:10px; margin-bottom:30px;">⚔ ELDER COUNCIL ⚔</h3>
-    <div id="oak" class="prof-card"><b>PROF. OAK</b><div class="speech"></div><div class="grumble"></div></div>
-    <div id="elm" class="prof-card"><b>PROF. ELM</b><div class="speech"></div><div class="grumble"></div></div>
-    <div id="birch" class="prof-card"><b>PROF. BIRCH</b><div class="speech"></div><div class="grumble"></div></div>
-    <div id="rowan" class="prof-card"><b>PROF. ROWAN</b><div class="speech"></div><div class="grumble"></div></div>
-</div>
+<div class="grid">
 
-<div class="main">
-    <div class="ctrl-panel">
-        <input type="text" id="pikaInput" placeholder="ENTER POKEMON NAME (try 'arceus' for divine secret)..." onkeypress="if(event.key==='Enter') startAnalysis()">
-        <button class="action-btn" onclick="toggleBible()">📖 OPEN COMPENDIUM</button>
+  <!-- LEFT: GENETIC SEQUENCER -->
+  <div class="sidebar-left panel">
+    <div class="panel-title">// GENETIC SEQUENCER</div>
+    <div class="search-wrap">
+      <input class="cyber-input" id="poke-search" placeholder="enter pokémon name or id..." type="text">
+      <button class="cyber-btn" onclick="lookupPokemon()">SCAN</button>
+    </div>
+    <div class="poke-display" id="poke-display">
+      <div style="color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:10px;padding-top:8px">
+        &gt; AWAITING TARGET SPECIMEN...<br>&gt; ENTER POKÉMON NAME OR ID<br>&gt; PRESS SCAN TO INITIATE
+      </div>
     </div>
 
-    <div class="dashboard">
-        <div class="panel">
-            <span class="tag">I. BIOLOGICAL LINEAGE</span>
-            <div id="incenseAlert"></div>
-            <div id="bioData" style="font-size:12px; color:var(--sub); margin-bottom:25px;"></div>
-            <div id="evoTree" class="evo-flex"></div>
-            <div id="habitatLocation" class="iv-target-panel" style="margin-top:25px;"></div>
-        </div>
-        <div class="panel">
-            <span class="tag">II. DNA STAT AUDIT</span>
-            <div id="statGrid"></div>
-            <div class="tag" style="margin-top:35px;">⚡ IV TARGET ENGINE ⚡</div>
-            <div id="stratOutput" style="font-size:12px; color:var(--gold); line-height:1.6;"></div>
-            <div id="defensiveCoverage" class="iv-target-panel"></div>
-        </div>
-        <div class="panel">
-            <span class="tag">III. MOVEPOOL & ACQUISITION</span>
-            <div id="moveGrid" class="move-scroll"></div>
-        </div>
+    <div class="panel-title">// IV AUDIT — GENETIC MATRIX</div>
+    <div class="iv-grid" id="iv-grid">
+      <div class="iv-cell"><span class="iv-label">HP</span><span class="iv-val iv-hi">--</span></div>
+      <div class="iv-cell"><span class="iv-label">ATK</span><span class="iv-val iv-hi">--</span></div>
+      <div class="iv-cell"><span class="iv-label">DEF</span><span class="iv-val iv-hi">--</span></div>
+      <div class="iv-cell"><span class="iv-label">SP.A</span><span class="iv-val iv-hi">--</span></div>
+      <div class="iv-cell"><span class="iv-label">SP.D</span><span class="iv-val iv-hi">--</span></div>
+      <div class="iv-cell"><span class="iv-label">SPE</span><span class="iv-val iv-hi">--</span></div>
     </div>
+
+    <div class="panel-title">// 0-IV META ANALYSIS</div>
+    <div class="zero-iv-section" id="zero-iv-section">
+      <div style="color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:9px">&gt; SCAN TARGET TO POPULATE MATRIX</div>
+    </div>
+
+    <div class="panel-title" style="margin-top:10px">// BASE STAT PROFILE</div>
+    <div id="stat-bars">
+      <div style="color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:9px">&gt; NO DATA</div>
+    </div>
+  </div>
+
+  <!-- CENTER: OMNI-REDOX BIBLE + EGG MOVES -->
+  <div class="center-panel panel">
+    <div class="panel-title">// OMNI-REDOX BREEDING BIBLE</div>
+
+    <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="cyber-btn green" onclick="setBreedTarget('perfect')">5IV PERFECT</button>
+      <button class="cyber-btn amber" onclick="setBreedTarget('meta')">5IV + 0 TRICK</button>
+      <button class="cyber-btn" onclick="setBreedTarget('masuda')">MASUDA CHAIN</button>
+      <button class="cyber-btn" onclick="setBreedTarget('egg')">EGG MOVE PASS</button>
+    </div>
+
+    <div id="breed-target-display" style="margin-bottom:14px">
+      <div class="bible-entry">
+        <div class="bible-header">// PROTOCOL STANDBY</div>
+        <div class="bible-text">Select a breeding protocol above or scan a Pokémon to receive contextual guidance from the Omni-Redox archive. The Elder Council stands by at their stations.</div>
+      </div>
+    </div>
+
+    <div class="panel-title">// DOCTRINE — MATHEMATICAL PROTOCOLS</div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 1 — THE NATURE OF IV PERFECTION</div>
+      <div class="bible-text">A "perfect" IV spread in VGC is contextual, not absolute. The naïve definition—31 in every stat—is functionally incorrect for most competitive builds. IV perfection is the alignment of a Pokémon's genetic values with its intended role and the mechanical demands of its matchups. A Trick Room setter with 31 Speed is not perfect—it is broken.</div>
+      <div class="bible-code">&gt; TARGET_IVs = ROLE_REQUIREMENTS ∩ MATCHUP_DEMANDS</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 2 — THE 0-IV DOCTRINE</div>
+      <div class="bible-text">The 0-IV is not a flaw—it is a weapon. A Pokémon with 0 Speed IVs in Trick Room operates at maximum efficiency. A physical attacker with 0 Special Attack minimizes confusion self-damage. The Foul Play interaction—where a lower Attack IV reduces reflected damage—is standard professional preparation. Never breed a Trick Room setter with 31 Speed. This is architectural malpractice.</div>
+      <div class="bible-code">&gt; TRICK_ROOM_SPEED_IV = 0 // MANDATORY<br>&gt; FOUL_PLAY_TARGET: ATK_IV = 0 // REQUIRED<br>&gt; CONFUSION_IMMUNE: SPATK_IV = 0 // OPTIMAL</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 3 — EGG MOVE INHERITANCE CHAIN</div>
+      <div class="bible-text">Egg moves cascade through lineage. A Pokémon can carry up to 4 egg moves, and via Nursery mechanics, these transfer through generations without losing purity. The critical error most breeders make is failing to audit egg move compatibility before beginning the chain. Discovering an incompatibility at step 7 of a 12-step chain is catastrophic and entirely preventable.</div>
+      <div class="bible-code">&gt; PRE_BREED_AUDIT: egg_moves.intersect(target_moves)<br>&gt; IF result.length &lt; target.length: ABORT_AND_REPLAN</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 4 — THE MASUDA PROTOCOL</div>
+      <div class="bible-text">The Masuda Method (1/682.7 base, 1/512 with Shiny Charm) is mathematically straightforward but strategically complex. The primary error is not in the calculation—it is in the opportunity cost. The correct approach: breed the perfect IV specimen first, then hunt shinies from that specimen as the breeding parent. Inverting this sequence wastes approximately 87% of session time.</div>
+      <div class="bible-code">&gt; PHASE_1: breed_perfect_ivs(target_mon)<br>&gt; PHASE_2: masuda_hunt(parent=perfect_specimen)<br>&gt; EFFICIENCY_DELTA: +340% vs naive_approach</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 5 — DESTINY KNOT MATHEMATICS</div>
+      <div class="bible-text">The Destiny Knot transmits 5 of the 12 combined parental IVs (6 from each parent) to offspring. The remaining 1 IV is randomly generated. This creates C(12,5) = 792 possible IV inheritance patterns per egg. A 5IV parent paired with a perfect Ditto yields 5/6 of the IV slots filled deterministically—the target stat becomes the sole variable. Plan for a minimum of 40 eggs.</div>
+      <div class="bible-code">&gt; KNOT_YIELD: C(12,5) = 792 patterns<br>&gt; P(perfect_5IV | 5IV_parent + 31_parent) ≈ 2.6%<br>&gt; MINIMUM_BATCH_SIZE: 40 eggs</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 6 — NATURE INHERITANCE & EVERSTONE LOCK</div>
+      <div class="bible-text">The Everstone guarantees 100% nature inheritance from the holding parent. Female parent Everstone takes priority. Nature and IV breeding must never be conflated without Everstone—random nature variance across a 5IV hunt is the most common source of wasted eggs in amateur operations. A 4% nature hit rate without locking is not a workflow. It is chaos.</div>
+      <div class="bible-code">&gt; EVERSTONE_HOLDER = female_parent (priority)<br>&gt; P(nature_lock | Everstone) = 1.0<br>&gt; P(nature_lock | no_Everstone) = 0.04 // REJECT</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 7 — THE HIDDEN ABILITY PIPELINE</div>
+      <div class="bible-text">Hidden Abilities (HA) transmit through the female parent at a 60% rate. The male pathway requires an Ability Patch or a male HA specimen bred against a Ditto. A common oversight: breeding a HA female with a non-HA male results in 60% HA offspring, 40% base ability discard. If base ability is non-viable, factor the discard rate into total egg count projections.</div>
+      <div class="bible-code">&gt; HA_FEMALE → HA_OFFSPRING: P = 0.60<br>&gt; COMBINED_TARGET (HA + 5IV + nature) ≈ 1.3% per egg<br>&gt; EXPECTED_EGGS_TO_TARGET: ~77</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 8 — SPECIES COMPATIBILITY MATRIX</div>
+      <div class="bible-text">Egg groups define the compatibility matrix. Ditto is the universal donor, existing outside the standard matrix—it breeds with any species that produces eggs. Pokémon in the Undiscovered egg group (legendaries, baby forms) cannot breed. Evolved forms share egg groups with pre-evolutions, making pre-evolution breeding the efficiency standard. Smaller sprite, same genetics, faster egg cycles.</div>
+      <div class="bible-code">&gt; BREED_AT: lowest_evolution_in_chain<br>&gt; EXCEPTION: egg_moves requiring higher_evo_donor<br>&gt; DITTO: universal_donor (egg_group = NULL)</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 9 — THE EV ORTHOGONALITY PRINCIPLE</div>
+      <div class="bible-text">EV investment and IV breeding are orthogonal processes that must not be conflated. A freshly bred 5IV specimen begins with 0 EVs. EV training occurs post-breeding via battle, vitamins, feathers, or Pokérus. The professional error is attempting to compensate for IV deficiency with EV investment—the formulas are additive, not substitutable. A 0-IV stat cannot be rescued by EV points.</div>
+      <div class="bible-code">&gt; STAT = floor((2×BASE + IV + floor(EV/4)) × LVL/100 + ...)<br>&gt; EV_MAX_CONTRIBUTION: +63 at LV100<br>&gt; IV_MAX_CONTRIBUTION: +31 // NON-SUBSTITUTABLE</div>
+    </div>
+
+    <div class="bible-entry">
+      <div class="bible-header">§ 10 — SPEED TIER ENGINEERING</div>
+      <div class="bible-text">Speed tier engineering is the most consequential IV decision in competitive breeding. Before finalizing Speed IVs, map the relevant speed tiers: what does this Pokémon need to outspeed, tie with, or undercut? Undercutting—intentionally running slightly slower than a benchmark to outspeed after a single Speed drop—is a legal and strategic IV manipulation. Document your tier targets before breeding begins.</div>
+      <div class="bible-code">&gt; OUTSPEED: target_speed + 1<br>&gt; TIE: target_speed exactly (coin-flip)<br>&gt; UNDERCUT_TR: target_speed - 1 (wins TR matchup)</div>
+    </div>
+
+    <hr class="section-divider">
+    <div class="panel-title">// EGG MOVE INHERITANCE LOG</div>
+    <ul class="egg-moves-list" id="egg-moves-list">
+      <li style="border-left-color:var(--text3);color:var(--text3)">
+        <span>SCAN A POKÉMON TO POPULATE LOG</span><span style="font-size:8px">--</span>
+      </li>
+    </ul>
+
+    <hr class="section-divider">
+    <div class="panel-title">// ABILITY REGISTRY</div>
+    <div id="ability-registry" style="padding:4px 0">
+      <span style="color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:9px">&gt; NO DATA</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: ELDER COUNCIL + CALCULATORS -->
+  <div class="sidebar-right panel">
+    <div class="panel-title">// ELDER COUNCIL</div>
+
+    <div class="prof-tabs">
+      <div class="prof-tab active" onclick="selectProf('oak',this)">OAK</div>
+      <div class="prof-tab" onclick="selectProf('elm',this)">ELM</div>
+      <div class="prof-tab" onclick="selectProf('birch',this)">BIRCH</div>
+      <div class="prof-tab" onclick="selectProf('rowan',this)">ROWAN</div>
+    </div>
+
+    <div class="prof-bubble" id="prof-bubble">
+      <div class="prof-name-tag">
+        <span id="prof-portrait">🔬</span>
+        <span class="oak-col" id="prof-name-tag">PROFESSOR OAK</span>
+        <span style="color:var(--text3);font-size:8px" id="prof-gen">// GEN 1</span>
+      </div>
+      <div class="prof-text" id="prof-quote">"Lime. You've returned to the station. Good. The genetics don't audit themselves, and frankly, most trainers wouldn't know a Destiny Knot interaction if it bred them a 0-Speed Ditto."</div>
+      <div class="grumble" id="prof-grumble">&gt; GRUMBLE: "Back in Pallet, we bred by hand. Uphill. Both ways."</div>
+    </div>
+    <button class="cyber-btn" id="prof-quote-btn" onclick="cycleQuote()">GET COUNCIL ADVICE ↻</button>
+
+    <hr class="section-divider">
+    <div class="panel-title">// MASUDA METHOD CALC</div>
+    <div class="calc-section">
+      <div class="calc-title">&gt; PROBABILITY ENGINE</div>
+      <div class="calc-row">
+        <div class="calc-label">SHINY CHARM</div>
+        <input type="checkbox" id="charm-check" onchange="calcMasuda()" style="accent-color:var(--amber);width:14px;height:14px;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-left:2px">ACTIVE</span>
+      </div>
+      <div class="calc-row">
+        <div class="calc-label">EGGS BRED</div>
+        <input class="masuda-input" type="number" id="egg-count" value="0" min="0" oninput="calcMasuda()">
+      </div>
+      <div class="calc-result">
+        <span class="calc-result-label">P(SHINY FOUND)</span>
+        <div class="calc-result-val" id="masuda-prob">0.00%</div>
+      </div>
+      <div class="calc-result" style="margin-top:4px;border-color:var(--cyan3)">
+        <span class="calc-result-label" style="color:var(--cyan3)">EXPECTED EGGS</span>
+        <div class="calc-result-val" style="color:var(--cyan);font-size:13px" id="masuda-expected">~683</div>
+      </div>
+    </div>
+
+    <div class="panel-title">// IV CHAIN EFFICIENCY</div>
+    <div class="calc-section">
+      <div class="calc-title">&gt; EXPECTED EGGS CALC</div>
+      <div class="calc-row">
+        <div class="calc-label">TARGET IVs</div>
+        <input class="masuda-input green" type="number" id="target-ivs" value="5" min="1" max="6" oninput="calcIVchain()">
+      </div>
+      <div class="calc-row">
+        <div class="calc-label">PARENT IVs</div>
+        <input class="masuda-input cyan" type="number" id="parent-ivs" value="5" min="0" max="6" oninput="calcIVchain()">
+      </div>
+      <div class="calc-result" style="border-color:var(--green2)">
+        <span class="calc-result-label" style="color:var(--green2)">EXPECTED EGGS</span>
+        <div class="calc-result-val" style="color:var(--green);font-size:13px" id="iv-expected">~25</div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+    <div class="panel-title">// TERMINAL LOG</div>
+    <div id="terminal-log" style="max-height:150px;overflow-y:auto">
+      <div class="terminal-line"><span>&gt;</span> OMNI-MONOLITH v5.0 BOOT SEQUENCE</div>
+      <div class="terminal-line"><span>&gt;</span> OPERATOR LIME IDENTIFIED — WELCOME BACK</div>
+      <div class="terminal-line"><span>&gt;</span> POKEAPI HANDSHAKE: READY</div>
+      <div class="terminal-line"><span>&gt;</span> ELDER COUNCIL: ONLINE (4 PROFESSORS)</div>
+      <div class="terminal-line"><span>&gt;</span> BIBLE LOADED: 10 DOCTRINES</div>
+      <div class="terminal-line"><span>&gt;</span> AWAITING SPECIMEN INPUT...</div>
+    </div>
+  </div>
+
 </div>
-<div class="gh-badge">🙏 ARCEUS BLESSES THIS MONOLITH | v5.3</div>
 
 <script>
-    // Type chart for defensive coverage
-    const typeChart = {
-        normal: { weak: ['fighting'], resist: [], immune: ['ghost'] },
-        fire: { weak: ['water','ground','rock'], resist: ['fire','grass','ice','bug','steel','fairy'], immune: [] },
-        water: { weak: ['electric','grass'], resist: ['fire','water','ice','steel'], immune: [] },
-        electric: { weak: ['ground'], resist: ['electric','flying','steel'], immune: [] },
-        grass: { weak: ['fire','ice','poison','flying','bug'], resist: ['water','electric','grass','ground'], immune: [] },
-        ice: { weak: ['fire','fighting','rock','steel'], resist: ['ice'], immune: [] },
-        fighting: { weak: ['flying','psychic','fairy'], resist: ['bug','rock','dark'], immune: [] },
-        poison: { weak: ['ground','psychic'], resist: ['grass','fighting','poison','bug','fairy'], immune: [] },
-        ground: { weak: ['water','grass','ice'], resist: ['poison','rock'], immune: ['electric'] },
-        flying: { weak: ['electric','ice','rock'], resist: ['grass','fighting','bug'], immune: ['ground'] },
-        psychic: { weak: ['bug','ghost','dark'], resist: ['fighting','psychic'], immune: [] },
-        bug: { weak: ['fire','flying','rock'], resist: ['grass','fighting','ground'], immune: [] },
-        rock: { weak: ['water','grass','fighting','ground','steel'], resist: ['normal','fire','poison','flying'], immune: [] },
-        ghost: { weak: ['ghost','dark'], resist: ['poison','bug'], immune: ['normal','fighting'] },
-        dragon: { weak: ['ice','dragon','fairy'], resist: ['fire','water','electric','grass'], immune: [] },
-        dark: { weak: ['fighting','bug','fairy'], resist: ['ghost','dark'], immune: ['psychic'] },
-        steel: { weak: ['fire','fighting','ground'], resist: ['normal','grass','ice','flying','psychic','bug','rock','dragon','steel','fairy'], immune: ['poison'] },
-        fairy: { weak: ['poison','steel'], resist: ['fighting','bug','dark'], immune: ['dragon'] }
-    };
+// ============================================================
+// ELDER COUNCIL — 80-QUOTE ENGINE
+// ============================================================
+const COUNCIL = {
+  oak:{
+    name:'PROFESSOR OAK',gen:'GEN 1',col:'oak-col',portrait:'🔬',
+    quotes:[
+      ["Lime. You've returned to the station. Good. The genetics don't audit themselves, and frankly, most trainers wouldn't know a Destiny Knot interaction if it bred them a 0-Speed Ditto.","Back in Pallet, we bred by hand. Uphill. Both ways."],
+      ["A 31 Speed IV on a Trick Room setter is not a 'safe default.' It is evidence of someone who has not read the Bible. The station has the Bible. Read it.","In my day, we called it a mistake. Now it's called a 'meta choice.' It's still a mistake."],
+      ["The Destiny Knot passes 5 of 12 IVs. That is not magic—it is combinatorics. C(12,5) = 792 possible patterns. Study the math before you touch the Nursery.","I wrote the original IV probability tables on a napkin. An actual napkin. With a pen. It held up."],
+      ["Lime's methodology is correct: breed the perfect specimen first, hunt the shiny from that stock. Inverting the order wastes approximately 87% of session time.","The number of perfect shinies I've seen ruined by wrong natures is a tragedy I carry daily."],
+      ["The Everstone does not 'help'—it guarantees. There is a critical difference between those two words. Learn it before breeding a single egg.","Young trainers act like a 4% nature hit rate is acceptable. It is not. It has never been. It will never be."],
+      ["Research is the foundation. Even I do not trust memory alone when the genomic database exists. Lime built this station to prevent that category of error.","There are 151 original species. I know all of them. I still look things up. Humility is a professional virtue."],
+      ["A breeding chain without documentation is not a chain. It is a prayer. This station is documentation infrastructure. Use it accordingly.","I have filled forty-seven notebooks with breeding records. My handwriting has deteriorated. The data has not."],
+      ["The physical/special split in generation four was not optional to understand—it was foundational. A physical attacker running 31 Special Attack IVs in Gen 4 onward is carrying dead weight.","Some things change the game entirely. The split was one of them. You adapt or you lose. Simple."],
+      ["Egg groups are not arbitrary taxonomy. They encode the biological reality of reproductive compatibility. Memorize them or use the scanner. Both are acceptable.","I classified the first egg groups in 1996. Some people still get them wrong. I find this simultaneously baffling and deeply personal."],
+      ["Hidden Abilities represent the frontier of competitive breeding. The 60% transmission rate is a hard constraint, not a suggestion. Plan your discard rate before you begin.","I discovered the existence of Hidden Abilities in field research. The paperwork to get it recognized took three years. Science moves slowly when bureaucracy is involved."],
+    ]
+  },
+  elm:{
+    name:'PROFESSOR ELM',gen:'GEN 2',col:'elm-col',portrait:'🧬',
+    quotes:[
+      ["The egg move inheritance chain is a lineage document. Every move has a biological history. Audit it before you breed—not after.","I discovered egg moves and some people still don't use them correctly. It's... fine. I'm fine."],
+      ["When I say 'pre-breed audit,' I mean it as a commandment. An incompatible egg move discovered at step 7 of 12 is a career-defining regret.","I once watched a trainer breed 200 eggs before checking compatibility. I aged ten years that day. I was already tired."],
+      ["The breeding mechanics I documented are still the substrate of modern competitive preparation. Lime understands this lineage, which is why this station was built correctly.","Nobody reads the primary research anymore. They watch a four-minute video. The video is usually wrong about something important."],
+      ["Egg groups are the taxonomy of compatibility. Ditto sits outside this system as a universal donor—that exception is not a loophole, it is a designed affordance.","The Ditto exception was not in the original spec. It emerged from the mechanics. We kept it. The community never forgave us for how useful it became."],
+      ["The 60% Hidden Ability transmission rate is not a bug—it is deliberate balance. Factor the 40% discard into your egg count projections before you begin a chain.","We argued about that percentage for six months internally. The 60% camp won. Statistically, they made the correct argument. I was in the 75% camp. I still think I was right."],
+      ["Chain breeding requires you to hold the entire dependency graph in working memory. Lime uses this station to externalize that graph. This is correct cognitive architecture.","My own research notes are color-coded by egg group. Seventeen colors. My spouse does not understand why. The data does not care about understanding."],
+      ["A Pokémon bred for egg moves but with incorrect IVs is not a product—it is a prototype. Prototypes are not released into competition.","I have a drawer of prototypes. They have incorrect natures, wrong abilities, suboptimal IVs. I keep them because discarding them felt unkind. This is not rational. I know."],
+      ["The Breeding Bible in this station operationalizes the core principles I established in generation two research. Reading it is not optional for a professional operation.","Primary sources matter. I am a primary source. Please cite me when you win your regional. I have never been cited at a regional. This is a documented grievance."],
+      ["Move compatibility auditing is the single highest-leverage pre-chain investment. One hour of audit saves forty hours of re-breeding. The math is not close.","I audited a trainer's chain once, found three incompatibilities, and prevented approximately sixteen hours of wasted effort. They thanked me. Then forgot to use an Everstone. I wept."],
+      ["The Nursery mechanics allow up to four egg moves to stack on a single carrier. This carrier paradigm is the correct approach for complex multi-move inheritance chains.","Stacking four egg moves on a carrier before introducing to the target species is generation two methodology that still applies today. The fundamentals do not expire."],
+    ]
+  },
+  birch:{
+    name:'PROFESSOR BIRCH',gen:'GEN 3',col:'birch-col',portrait:'🌿',
+    quotes:[
+      ["Field data confirms it: trainers who skip the 0-IV audit lose 23% more Trick Room matches than those who don't. I have this data. Lime has this data. Act on it.","I catalogued 386 species. By hand. In the field. In rain. You can run one probability calculation before breeding."],
+      ["Nature interacts with IV investment in ways most players still misattribute. The modifier is fixed—0.9x or 1.1x—but the IV baseline it multiplies is your engineering constraint.","Some days I miss when stats were just numbers. Then I remember the data is richer now. Then I remember how long the data took to collect. Mixed feelings."],
+      ["Lime's insistence on pre-chain auditing reflects the correct field methodology: characterize your target completely before beginning collection. This is not caution—it is professionalism.","Three hours of planning prevents thirty hours of re-breeding. I have proven this empirically. In the field. Multiple times. With mud on my shoes."],
+      ["The Move Tutor and TM system expands the legal move pool significantly. Always cross-reference before concluding an egg move is the only acquisition path for a target move.","I once hiked 40 kilometers to verify a move tutor location. The data was worth it. My knees are not fully recovered. This was fifteen years ago."],
+      ["A Pokémon's field viability and its competitive viability are not the same optimization target. The Omni-Redox Bible addresses competitive utility exclusively. Do not conflate them.","I study field populations. Competitive breeding is almost the opposite of field observation. I find both fascinating. Most people find one or the other. Lime understands both."],
+      ["Documentation is not bureaucracy—it is the mechanism by which knowledge survives the individual practitioner. The Monolith is documentation infrastructure. Its value compounds over time.","My field notes from 2002 are still referenced in contemporary research. I did not know they would be valuable when I wrote them. Write everything down. Always."],
+      ["The EV and IV systems are orthogonal. A 0-IV stat cannot be compensated by EV investment. The formulas are additive within each domain, not substitutable across domains.","I explain this distinction to new researchers regularly. It takes about twelve minutes. The confusion usually stems from not reading the base formula carefully. Read the formula."],
+      ["Speed tier engineering is the most consequential IV decision in a competitive build. Map your target tiers before breeding. The station's scan output gives you the baseline data.","In the field, speed determines survival. In competition, speed determines initiative. The mathematics are different but the principle is the same: know your tiers or lose them."],
+      ["The Ability system introduced in generation three added a layer of strategic depth that breeding operations must account for. Hidden Abilities in particular require dedicated pipeline planning.","I was part of the team that proposed the Ability system. In hindsight, Hidden Abilities were the most impactful design decision in that proposal. The competitive scene proved it."],
+      ["Consistency in methodology is not rigidity—it is the prevention of variance-induced errors. Lime's station enforces consistent methodology across all breeding operations. This is its core value.","Field research and competitive breeding both require repeatable protocols. Ad hoc approaches produce ad hoc results. The Monolith exists to prevent ad hoc approaches."],
+    ]
+  },
+  rowan:{
+    name:'PROFESSOR ROWAN',gen:'GEN 4',col:'rowan-col',portrait:'📐',
+    quotes:[
+      ["The Sinnoh breeding documentation established the modern EV and IV interaction model. That work was not casual. Neither should your preparation be.","I have a very specific look I give to trainers who breed without planning. Lime does not receive this look. This is a significant professional distinction."],
+      ["Physical/Special split changed everything. A 0 Special Attack IV on a physical attacker is not optional—it is the professional standard post-Diamond and Pearl.","The split was the most significant mechanical change in competitive history. Many practitioners still haven't fully adjusted. It has been years. Adjust."],
+      ["Competitive breeding is applied mathematics. The poetic element—the bond with the Pokémon—is real but orthogonal to the genetic calculation. Both can coexist.","Sentiment and science are not enemies. They should not interfere with each other during the breeding calculation phase. That is all I ask."],
+      ["A chain without documentation is not a chain—it is guesswork. Lime uses this station as a documentation layer. This is correct professional practice and I endorse it completely.","I keep breeding logs dating back to 2007. They are indexed. Cross-referenced. Stored in archival binders. This is not excessive. This is how knowledge survives."],
+      ["The Destiny Knot's 5-IV inheritance mechanic was the pivotal efficiency unlock in breeding history. Without it, competitive breeding timelines extend by an order of magnitude.","Before the Destiny Knot mechanic was properly understood by the community, the expected egg count for a 6IV specimen was... substantial. We do not discuss those timelines openly."],
+      ["I do not make predictions without evidence. The 0-IV meta that Lime documents here is supported by match outcome data across thousands of VGC games. It is not theory. It is observation.","Theories become doctrine when they survive enough rounds of contradiction. The 0-IV doctrine has survived every round. It is doctrine. Treat it accordingly."],
+      ["The Everstone mechanic is the single most underutilized tool in amateur breeding operations. 100% nature lock at zero additional cost. There is no reason to breed without it.","I included the Everstone analysis in three separate research papers. It received twelve citations. Twelve. The breeding community numbers in the millions. Twelve citations. I reflect on this."],
+      ["Speed tier architecture requires knowing your benchmark targets before a single egg is produced. The station's scan output provides the base stats. The tier math is yours to do.","I constructed a complete speed tier chart in 2007. It required six months of data collection. It was immediately superseded by a new game release. Science. Beautiful, frustrating science."],
+      ["The Hidden Ability transmission pipeline is a resource allocation problem. Ability Patches represent a premium shortcut. Factor cost-benefit before choosing the patch versus breeding path.","Resource allocation in research is the same as resource allocation in breeding. You have finite time and materials. Optimize the allocation or accept suboptimal outcomes."],
+      ["Lime's station integrates the Elder Council not as decoration, but as a pedagogical layer. The character-driven guidance reinforces doctrine retention. This was a correct design decision.","I was initially skeptical of the 'personality engine' concept. I have revised this position. Data retention improves with narrative context. The Elder Council is pedagogically sound."],
+    ]
+  }
+};
 
-    // Crash out dialogues
-    const CRASH_OUTS = {
-        oak: ["🔥 OAK SNAPS: 'I'VE HAD IT WITH THESE LAZY TRAINERS! BACK IN MY DAY WE BREED WITHOUT DESTINY KNOTS!'", "💢 OAK: 'GARY WAS RIGHT ABOUT EVERYTHING! I'M GOING TO BURN THE POKEDEX!'"],
-        elm: ["😭 ELM: 'THE EGGS... THEY'RE ALL CRACKED! NOTHING WORKS ANYMORE! *SOBS*'", "⚡ ELM: 'I CAN'T TAKE THE HATCH CYCLES! MAKE IT STOP!'"],
-        birch: ["🌲 BIRCH: 'THE WILD POKEMON ARE TAKING OVER! RUN FOR YOUR LIVES!'", "👟 BIRCH: 'I LOST MY SHOES AGAIN AND I JUST CAN'T ANYMORE!'"],
-        rowan: ["📊 ROWAN: 'THE DATA... IT MEANS NOTHING! ALL OF IT! NOTHING!'", "❄️ ROWAN: '0-SPEED IVS WERE A LIE! I'M RETIRING TO SINNOH!'"]
-    };
-    
-    // Divine prayer texts for Arceus
-    const PRAYERS = {
-        oak: "🙏 'By Arceus's grace, we seek the Original One's wisdom... May the Alpha guide our breeding.' 🙏",
-        elm: "✨ 'Praise be to the Creator of all Pokémon. Hallowed be thy plates, Arceus.' ✨",
-        birch: "🌿 'From the beginning, Arceus shaped the universe. We bow before the Original Spirit.' 🌿",
-        rowan: "📜 'In reverence to the Alpha Pokémon — the source of all evolutionary truth.' 📜"
-    };
+let currentProf = 'oak';
+const quoteIdx = {oak:0,elm:0,birch:0,rowan:0};
 
-    const QUOTES = {
-        oak: { s: ["Foreign Dittos are key to legendary lineage.", "The Pokédex is a map of potential.", "0 Attack IVs save lives from Foul Play.", "Destiny Knot changed everything."], g: ["OAK: Gary still thinks he knows everything.", "OAK: Where is my afternoon tea?", "OAK: I miss the original 151."] },
-        elm: { s: ["The Egg is Johto's pride.", "Hatch cycles are the heartbeat.", "Patience yields 6-IV jewels."], g: ["ELM: Oak gets all the funding!", "ELM: Togepi is impossible to hatch.", "ELM: My assistants are useless."] },
-        birch: { s: ["Everstone protocol preserves nature.", "Hoenn's biomes create strong genes.", "Jolly nature signals physical sweeper."], g: ["BIRCH: Chased by Poochyena daily.", "BIRCH: My running shoes are gone."] },
-        rowan: { s: ["0-Speed IVs are tactical genius.", "Evolution is profound change.", "Data is absolute."], g: ["ROWAN: Mirror Herbs are shortcuts!", "ROWAN: Your box organization is a disaster."] }
-    };
+function selectProf(prof, el) {
+  currentProf = prof;
+  document.querySelectorAll('.prof-tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderProfQuote();
+}
 
-    let isArceusMode = false;
+function renderProfQuote() {
+  const p = COUNCIL[currentProf];
+  const idx = quoteIdx[currentProf] % p.quotes.length;
+  const [quote, grumble] = p.quotes[idx];
+  document.getElementById('prof-portrait').textContent = p.portrait;
+  const nameEl = document.getElementById('prof-name-tag');
+  nameEl.textContent = p.name;
+  nameEl.className = p.col;
+  document.getElementById('prof-gen').textContent = '// ' + p.gen;
+  document.getElementById('prof-quote').textContent = '"' + quote + '"';
+  document.getElementById('prof-grumble').textContent = '> GRUMBLE: "' + grumble + '"';
+}
 
-    function refreshProfs(isArceus = false) {
-        const professors = ['oak', 'elm', 'birch', 'rowan'];
-        professors.forEach(p => {
-            const card = document.getElementById(p);
-            if(!card) return;
-            card.classList.remove('crashout', 'praying');
-            
-            if(isArceus) {
-                // Divine mode: all professors pray
-                card.classList.add('praying');
-                card.querySelector('.speech').innerHTML = `<span style="color:var(--divine); font-weight:900;">✨ DIVINE REVERENCE ✨</span><br>"${PRAYERS[p]}"`;
-                card.querySelector('.grumble').innerHTML = `🙇 BOWING TO ARCEUS 🙇`;
-                return;
-            }
-            
-            // Normal mode with 12% crash out chance
-            const willCrash = Math.random() < 0.12;
-            if(willCrash) {
-                const crashText = CRASH_OUTS[p][Math.floor(Math.random() * CRASH_OUTS[p].length)];
-                card.querySelector('.speech').innerHTML = `<span style="color:var(--warn); font-weight:900;">💢 SYSTEM MELTDOWN 💢</span><br>"${crashText}"`;
-                card.querySelector('.grumble').innerHTML = `<span style="background:var(--warn); padding:2px 8px; border-radius:12px;">⚠️ CRASH OUT ⚠️</span>`;
-                card.classList.add('crashout');
-                setTimeout(() => {
-                    if(card && !isArceusMode) {
-                        card.classList.remove('crashout');
-                        card.querySelector('.speech').innerHTML = `"${QUOTES[p].s[Math.floor(Math.random() * QUOTES[p].s.length)]}"`;
-                        card.querySelector('.grumble').innerHTML = QUOTES[p].g[Math.floor(Math.random() * QUOTES[p].g.length)];
-                    }
-                }, 4000);
-            } else {
-                card.querySelector('.speech').innerHTML = `"${QUOTES[p].s[Math.floor(Math.random() * QUOTES[p].s.length)]}"`;
-                card.querySelector('.grumble').innerHTML = QUOTES[p].g[Math.floor(Math.random() * QUOTES[p].g.length)];
-            }
-        });
-    }
+function cycleQuote() {
+  quoteIdx[currentProf] = (quoteIdx[currentProf] + 1) % COUNCIL[currentProf].quotes.length;
+  renderProfQuote();
+  addLog('COUNCIL QUERY: ' + COUNCIL[currentProf].name + ' advises.');
+}
 
-    function toggleBible() { 
-        const b = document.getElementById('bibleOverlay'); 
-        b.style.display = (b.style.display === 'grid') ? 'none' : 'grid'; 
-    }
-    function jump(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
+// ============================================================
+// POKEAPI ENGINE
+// ============================================================
+async function lookupPokemon() {
+  const query = document.getElementById('poke-search').value.trim().toLowerCase().replace(/\s+/g,'-');
+  if (!query) return;
+  addLog('SCANNING: ' + query.toUpperCase());
 
-    function getDefensiveCoverage(types) {
-        const weaknesses = new Set(), resistances = new Set(), immunities = new Set();
-        types.forEach(t => {
-            const data = typeChart[t];
-            if(data) { data.weak.forEach(w => weaknesses.add(w)); data.resist.forEach(r => resistances.add(r)); data.immune.forEach(i => immunities.add(i)); }
-        });
-        const finalWeak = [...weaknesses].filter(w => !resistances.has(w) && !immunities.has(w));
-        const finalResist = [...resistances].filter(r => !weaknesses.has(r) && !immunities.has(r));
-        return { weaknesses: finalWeak, resistances: finalResist, immunities: [...immunities] };
-    }
+  const loading = (id) => document.getElementById(id).innerHTML = `<div class="loading"><div class="loader"></div>SEQUENCING...</div>`;
+  loading('poke-display'); loading('egg-moves-list'); loading('stat-bars'); loading('ability-registry'); loading('zero-iv-section');
 
-    // Get move classification with proper categories
-    function getMoveClassification(learnDetails, moveName, speciesName, eggGroups) {
-        let method = 'unknown';
-        let level = null;
-        let acquisitionText = '';
-        
-        for(let detail of learnDetails) {
-            const methodName = detail.move_learn_method.name;
-            if(methodName === 'egg') { method = 'egg'; break; }
-            if(methodName === 'machine') { method = 'tm'; break; }
-            if(methodName === 'tutor') { method = 'tutor'; break; }
-            if(methodName === 'level-up') { method = 'level-up'; level = detail.level_learned_at; }
+  try {
+    // Step 1: fetch pokemon data
+    const pokeRes = await fetch('https://pokeapi.co/api/v2/pokemon/' + query);
+    if (!pokeRes.ok) throw new Error('Specimen not found: ' + query);
+    const poke = await pokeRes.json();
+    addLog('POKEMON DATA OK — ID #' + poke.id);
+
+    // Step 2: fetch species using the URL embedded in the pokemon response
+    // This correctly resolves all forms (e.g. wormadam-plant → wormadam, garchomp → garchomp)
+    let species = null;
+    const speciesUrl = poke.species && poke.species.url;
+    if (speciesUrl) {
+      try {
+        const speciesRes = await fetch(speciesUrl);
+        if (speciesRes.ok) {
+          species = await speciesRes.json();
+          addLog('SPECIES OK: ' + species.name.toUpperCase());
+        } else {
+          addLog('SPECIES HTTP ' + speciesRes.status + ' — PARTIAL DATA');
         }
-        
-        switch(method) {
-            case 'egg':
-                acquisitionText = `🐣 EGG MOVE — Acquire via Mirror Herb: Give Mirror Herb to ${speciesName}, delete a move, picnic with a parent that knows ${moveName}. Chain breed through ${eggGroups} Egg Group.`;
-                break;
-            case 'tm':
-                acquisitionText = `📀 TM MOVE — Craft at TM Machine using LP and materials, or find in Paldea/Kitakami/Blueberry Academy. Check your TM collection.`;
-                break;
-            case 'tutor':
-                acquisitionText = `📚 TUTOR MOVE — Teach at Move Tutor NPC (Blueberry Academy or specific locations). Costs LP or BP.`;
-                break;
-            case 'level-up':
-                acquisitionText = `📈 LEVEL-UP MOVE — Learns naturally at Lv.${level}. Evolved forms may learn at different levels. Use Rare Candies or battle training.`;
-                break;
-            default:
-                acquisitionText = `❓ ACQUISITION UNCERTAIN — Check Pokémon summary or use Mirror Herb testing. May be event-only or transfer move.`;
-        }
-        return { method, level, acquisitionText };
+      } catch(se) {
+        addLog('SPECIES FETCH ERROR — CONTINUING WITH PARTIAL DATA');
+      }
     }
 
-    async function startAnalysis() {
-        let query = document.getElementById('pikaInput').value.trim().toLowerCase();
-        if(!query) return alert("ENTER A VALID SPECIES");
-        
-        // SECRET ARCEUS INTERACTION
-        if(query === 'arceus' || query === 'arceus\'s' || query === 'the original one') {
-            isArceusMode = true;
-            refreshProfs(true);
-            document.getElementById('bioData').innerHTML = `<div style="text-align:center; padding:20px; background:rgba(232,180,248,0.1); border-radius:20px; border:2px solid var(--divine);">
-                <span style="font-size:48px;">✨🙏✨</span><br>
-                <b style="color:var(--divine);">THE ORIGINAL ONE</b><br>
-                <span style="color:var(--gold);">"From the void, Arceus shaped all that exists. The Alpha Pokémon watches over this monolith."</span><br>
-                <span style="font-size:12px;">All professors bow in divine reverence...</span>
-            </div>`;
-            document.getElementById('evoTree').innerHTML = `<div class="evo-node" style="border-color:var(--divine);">✨ ARCEUS — THE ORIGINAL ONE ✨</div>`;
-            document.getElementById('statGrid').innerHTML = `<div style="text-align:center; padding:30px;">🌈 All 18 plates available. Type changes based on held plate. 🌈</div>`;
-            document.getElementById('stratOutput').innerHTML = `<b>DIVINE ARCHETYPE:</b> Omnipotent — Judgment changes type with plate.<br><b>IV TARGET:</b> 31 across all stats. 0 Atk not needed (Judgment is special).`;
-            document.getElementById('defensiveCoverage').innerHTML = `<div style="text-align:center;"><b>🛡️ DIVINE PROTECTION 🛡️</b><br>Type varies by plate — Multitype ability.<br>Base form: Normal type — weak to Fighting, immune to Ghost.</div>`;
-            document.getElementById('habitatLocation').innerHTML = `<div style="text-align:center;"><b>📍 HALL OF ORIGIN 📍</b><br>Mythical encounter — Sinnoh's peak.<br>Obtain Azure Flute to ascend.</div>`;
-            document.getElementById('moveGrid').innerHTML = `<div style="text-align:center; padding:30px;">✨ JUDGMENT — Signature move. Changes type with held plate.<br>Recover, Extreme Speed, Calm Mind, Refresh.<br>All TM/HM moves available. ✨</div>`;
-            return;
-        }
-        
-        isArceusMode = false;
-        refreshProfs(false);
-        
-        try {
-            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`).then(r => { if(!r.ok) throw new Error(); return r.json(); });
-            const speciesRes = await fetch(res.species.url).then(r => r.json());
-            const evoChainRes = await fetch(speciesRes.evolution_chain.url).then(r => r.json());
-            
-            const incenses = { snorlax:'FULL', roselia:'ROSE', marill:'SEA', wobbuffet:'LAX', 'mr-mime':'ODD', mantine:'WAVE', sudowoodo:'ROCK' };
-            document.getElementById('incenseAlert').innerHTML = incenses[res.name] ? `<div style="background:rgba(255,0,85,0.15); border:1px solid var(--warn); padding:12px; border-radius:12px; text-align:center;">⚠ INCENSE: ${incenses[res.name]} ⚠</div>` : "";
-            
-            const eggGroups = speciesRes.egg_groups.map(g=>g.name.toUpperCase()).join(' | ');
-            document.getElementById('bioData').innerHTML = `<b>🥚 EGG GROUPS:</b> ${eggGroups}<br><b>🔄 HATCH CYCLES:</b> ${speciesRes.hatch_counter} (${speciesRes.hatch_counter * 255} steps)<br><b>⚥ GENDER:</b> ${speciesRes.gender_rate === -1 ? 'GENDERLESS' : (speciesRes.gender_rate/8*100)+'% ♂ / '+(100-(speciesRes.gender_rate/8*100))+'% ♀'}`;
-            
-            let evoLine = [];
-            let curr = evoChainRes.chain;
-            while(curr) { evoLine.push(curr.species.name.toUpperCase()); curr = curr.evolves_to[0]; }
-            document.getElementById('evoTree').innerHTML = evoLine.map(n => `<div class="evo-node">${n}</div>`).join('<span style="color:var(--gold);font-size:20px;">⚡</span>');
-            
-            // Stats
-            document.getElementById('statGrid').innerHTML = res.stats.map(s => `<div class="stat-meta"><span>${s.stat.name.toUpperCase()}</span><span>${s.base_stat}</span></div><div class="bar-outer"><div class="bar-inner" style="width:${Math.min(100, (s.base_stat/255)*100)}%; background:${['hp','attack','defense','special-attack','special-defense','speed'][res.stats.indexOf(s)] === 'hp' ? '#4ade80' : '#facc15'}"></div></div>`).join('');
-            
-            const atkStat = res.stats.find(s=>s.stat.name==='attack').base_stat;
-            const spAtkStat = res.stats.find(s=>s.stat.name==='special-attack').base_stat;
-            const speedStat = res.stats.find(s=>s.stat.name==='speed').base_stat;
-            const isSpecial = spAtkStat > atkStat;
-            const isTrickRoom = speedStat < 60;
-            document.getElementById('stratOutput').innerHTML = `<b>🎯 ARCHETYPE:</b> ${isSpecial ? 'Special Attacker → Target 0 Atk IV' : 'Physical Attacker → Max Atk/Spe'}<br><b>🌿 OPTIMAL NATURE:</b> ${isSpecial ? (speedStat>80?'Timid (+Spe -Atk)':'Modest (+SpA -Atk)') : (speedStat>80?'Jolly (+Spe -SpA)':'Adamant (+Atk -SpA)')}<br><b>⏱️ TRICK ROOM:</b> ${isTrickRoom ? '✅ BREED 0 SPEED IV ✅' : '❌ No'}`;
-            
-            // Defensive coverage
-            const pokemonTypes = res.types.map(t => t.type.name);
-            const coverage = getDefensiveCoverage(pokemonTypes);
-            document.getElementById('defensiveCoverage').innerHTML = `
-                <b>🛡️ DEFENSIVE COVERAGE</b><br>
-                <b>Type:</b> ${pokemonTypes.map(t => `<span class="type-badge" style="background:var(--type-${t})">${t}</span>`).join('')}<br>
-                <b>⚠️ Weak to:</b> ${coverage.weaknesses.map(w => `<span class="type-badge" style="background:var(--type-${w})">${w}</span>`).join('') || 'None'}<br>
-                <b>✅ Resists:</b> ${coverage.resistances.slice(0,5).map(r => `<span class="type-badge" style="background:var(--type-${r})">${r}</span>`).join('') || 'None'}<br>
-                <b>🛡️ Immune:</b> ${coverage.immunities.map(i => `<span class="type-badge" style="background:var(--type-${i})">${i}</span>`).join('') || 'None'}
-            `;
-            
-            // HABITAT LOCATION (NEW)
-            let habitatText = '📍 Habitat data: ';
-            if(speciesRes.habitat) {
-                habitatText = `<b>📍 HABITAT:</b> ${speciesRes.habitat.name.toUpperCase()}<br><b>🌎 LOCATION EXAMPLES:</b> `;
-                const locationExamples = ['Paldea Region', 'Kitakami', 'Blueberry Academy', 'Area Zero', 'Wild Area'];
-                habitatText += locationExamples.slice(0,3).join(', ');
-            } else {
-                habitatText = `<b>📍 LOCATION:</b> Found across various regions. Check Pokémon HOME or in-game Pokédex for specific spawns.<br><b>🎣 BEST METHOD:</b> Mass Outbreaks, Sandwich Hunting, or Breeding from caught parent.`;
-            }
-            habitatText += `<br><b>🔍 CATCH TIP:</b> Use appropriate encounter power sandwiches. For rare spawns, breed from a caught parent.`;
-            document.getElementById('habitatLocation').innerHTML = habitatText;
-            
-            // MOVES with full classification (Egg/TM/Tutor/Level-up)
-            const moveList = res.moves.slice(0, 42);
-            const eggGroupStr = speciesRes.egg_groups.map(g=>g.name.toUpperCase()).join('/');
-            const speciesCapital = res.name.toUpperCase();
-            
-            const moveHTML = moveList.map(m => {
-                const classification = getMoveClassification(m.version_group_details, m.move.name, speciesCapital, eggGroupStr);
-                let methodClass = '';
-                let methodLabel = '';
-                switch(classification.method) {
-                    case 'egg': methodClass = 'method-egg'; methodLabel = '🐣 EGG'; break;
-                    case 'tm': methodClass = 'method-tm'; methodLabel = '📀 TM'; break;
-                    case 'tutor': methodClass = 'method-tutor'; methodLabel = '📚 TUTOR'; break;
-                    case 'level-up': methodClass = 'method-level'; methodLabel = `📈 LV${classification.level}`; break;
-                    default: methodClass = 'method-unknown'; methodLabel = '❓ UNKNOWN';
-                }
-                return `<div class="move-item">
-                    <div class="move-header">
-                        <span class="move-name">${m.move.name.toUpperCase().replace(/-/g,' ')}</span>
-                        <span class="method-pill ${methodClass}">${methodLabel}</span>
-                    </div>
-                    <div class="acquisition-info">${classification.acquisitionText}</div>
-                </div>`;
-            }).join('');
-            
-            document.getElementById('moveGrid').innerHTML = moveHTML || '<div style="text-align:center; padding:20px;">No moves found — check back later.</div>';
-            
-        } catch(e) { 
-            alert(`ERROR: "${query}" not found in Pokédex. Check spelling.`); 
-            console.error(e);
-        }
-    }
+    renderPokemon(poke, species);
+    renderIVAudit(poke);
+    renderStats(poke.stats);
+    renderEggMoves(poke);
+    renderAbilities(poke.abilities);
+    render0IVMeta(poke);
+    addLog('SEQUENCE COMPLETE: ' + poke.name.toUpperCase() + ' (#' + poke.id + ')');
+  } catch(e) {
+    document.getElementById('poke-display').innerHTML = `<div class="error-msg">&gt; ERROR: ${e.message}</div>`;
+    addLog('ERROR: ' + e.message.toUpperCase());
+  }
+}
+
+function renderPokemon(poke, species) {
+  const name = poke.name.replace(/-/g,' ').toUpperCase();
+  const types = poke.types.map(t => t.type.name);
+  const sprite = poke.sprites?.front_default || '';
+  const eggGroups = species ? species.egg_groups.map(e => e.name.toUpperCase()).join(' / ') : '--';
+  const gr = species ? species.gender_rate : -1;
+  const gender = gr === -1 ? 'GENDERLESS' : `♂ ${Math.round((1-gr/8)*100)}% / ♀ ${Math.round(gr/8*100)}%`;
+  const captureRate = species ? species.capture_rate : '--';
+  document.getElementById('poke-display').innerHTML = `
+    <div>
+      <div class="poke-name">${name}</div>
+      <div class="poke-id">#${String(poke.id).padStart(3,'0')} // EGG GROUP: ${eggGroups}</div>
+      <div class="types">${types.map(t=>`<span class="type-badge type-${t}">${t.toUpperCase()}</span>`).join('')}</div>
+      ${sprite?`<img class="poke-sprite" src="${sprite}" width="64" height="64" alt="${name}">`:''}
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px">GENDER: <span style="color:var(--text2)">${gender}</span></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">HEIGHT: <span style="color:var(--text2)">${(poke.height/10).toFixed(1)}m</span> &nbsp; WEIGHT: <span style="color:var(--text2)">${(poke.weight/10).toFixed(1)}kg</span></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">CATCH RATE: <span style="color:var(--text2)">${captureRate}</span></div>
+    </div>`;
+}
+
+function renderIVAudit(poke) {
+  const SM = {hp:'HP',attack:'ATK',defense:'DEF','special-attack':'SP.A','special-defense':'SP.D',speed:'SPE'};
+  const keys = ['hp','attack','defense','special-attack','special-defense','speed'];
+  const stats = {};
+  poke.stats.forEach(s => stats[s.stat.name] = s.base_stat);
+  document.getElementById('iv-grid').innerHTML = keys.map(k => {
+    const b = stats[k]||0;
+    const pct = Math.round((b/255)*100);
+    const cls = pct>=80?'iv-31':pct>=50?'iv-hi':pct>=30?'iv-mid':'iv-lo';
+    return `<div class="iv-cell"><span class="iv-label">${SM[k]}</span><span class="iv-val ${cls}">${b}</span></div>`;
+  }).join('');
+}
+
+function renderStats(stats) {
+  const SM = {hp:'HP',attack:'ATK',defense:'DEF','special-attack':'SPA','special-defense':'SPD',speed:'SPE'};
+  document.getElementById('stat-bars').innerHTML = stats.map(s => {
+    const pct = Math.round((s.base_stat/255)*100);
+    const col = pct>=70?'var(--green)':pct>=45?'var(--cyan)':pct>=25?'var(--amber)':'var(--red)';
+    return `<div class="stat-row">
+      <div class="stat-name">${SM[s.stat.name]||s.stat.name.substring(0,3).toUpperCase()}</div>
+      <div class="stat-bar"><div class="stat-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="stat-num">${s.base_stat}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderEggMoves(poke) {
+  const ems = poke.moves.filter(m => m.version_group_details.some(d => d.move_learn_method.name === 'egg'));
+  if (!ems.length) {
+    document.getElementById('egg-moves-list').innerHTML = '<li style="border-left-color:var(--text3);color:var(--text3)"><span>NO EGG MOVES IN DATABASE</span><span style="font-size:8px">--</span></li>';
+    return;
+  }
+  document.getElementById('egg-moves-list').innerHTML = ems.slice(0,16).map(m => {
+    const mn = m.move.name.replace(/-/g,' ').toUpperCase();
+    return `<li><span>${mn}</span><span style="font-size:8px;padding:1px 5px;background:rgba(0,200,212,0.1);border:1px solid var(--cyan3);color:var(--cyan2);letter-spacing:1px">EGG</span></li>`;
+  }).join('');
+}
+
+function renderAbilities(abilities) {
+  document.getElementById('ability-registry').innerHTML = abilities.map(a => {
+    const n = a.ability.name.replace(/-/g,' ').toUpperCase();
+    const cls = a.is_hidden ? 'ability-tag hidden' : 'ability-tag';
+    return `<span class="${cls}">${n}${a.is_hidden?' [HA]':''}</span>`;
+  }).join('');
+}
+
+function render0IVMeta(poke) {
+  const stats = {};
+  poke.stats.forEach(s => stats[s.stat.name] = s.base_stat);
+  const isPhysical = stats['attack'] > stats['special-attack'];
+  const speedStat = stats['speed'];
+
+  const rows = [
+    {stat:'SPEED', reason: speedStat <= 70 ? 'LOW SPE — TRICK ROOM VIABLE' : 'HIGH SPE — TR OPTION EXISTS',
+     badge: speedStat <= 70 ? 'badge-req' : 'badge-opt', label: speedStat <= 70 ? 'REQUIRED' : 'SITUATIONAL'},
+    {stat:'SP.ATK', reason: isPhysical ? 'PHYSICAL ATTACKER — FOUL PLAY / CONFUSION' : 'SPECIAL/MIXED ATTACKER',
+     badge: isPhysical ? 'badge-req' : 'badge-no', label: isPhysical ? 'REQUIRED' : 'NOT NEEDED'},
+    {stat:'ATTACK', reason:'FOUL PLAY INTERACTION TARGET',
+     badge:'badge-opt', label:'SITUATIONAL'},
+    {stat:'HP', reason:'DAMAGE CALC ROUNDING (AVOID)',
+     badge:'badge-no', label:'AVOID'},
+  ];
+
+  document.getElementById('zero-iv-section').innerHTML = `
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:2px;margin-bottom:6px">&gt; 0-IV VIABILITY MATRIX</div>
+    ${rows.map(r=>`<div class="zero-row">
+      <div><div class="zero-stat">${r.stat}</div><div class="zero-reason">${r.reason}</div></div>
+      <span class="zero-badge ${r.badge}">${r.label}</span>
+    </div>`).join('')}`;
+}
+
+// ============================================================
+// BREEDING PROTOCOLS
+// ============================================================
+const PROTOCOLS = {
+  perfect:{badge:'badge-perfect',label:'5IV PERFECT PROTOCOL',title:'§ PROTOCOL: 5IV/6IV ATTAINMENT',
+    text:'Phase 1: Acquire a 5IV parent in the target species or Ditto pool. Equip Destiny Knot on the higher-IV parent. Equip Everstone on the nature-locked parent. Phase 2: Breed until a 5IV offspring with correct nature is produced (~25–40 eggs). Phase 3: Use this 5IV offspring as the new parent. Repeat until target IV spread confirmed. Log every deviation from expected yield.',
+    code:'P(5IV | 5IV_parent + KNOT) ≈ 1/32 per egg\nP(correct_nature | EVERSTONE) = 1.0\nEXPECTED_EGGS_TO_TARGET: 25–40'},
+  meta:{badge:'badge-meta',label:'5IV + 0-IV TRICK ROOM PROTOCOL',title:'§ PROTOCOL: 0-IV META BREEDING',
+    text:'Target spread for Trick Room physical attacker: 31/31/31/0/31/0. CRITICAL: Speed IV must not exceed 0 for TR setters—this is architectural malpractice. Special Attack 0-IV is mandatory for all physical attackers post-Gen 4 split. Consult the 0-IV Meta Matrix in the left panel for contextual analysis of the scanned specimen.',
+    code:'TRICK_ROOM_PHYSICAL: 31/31/31/0/31/0\nFOUL_PLAY_AWARE:     31/0/31/X/31/0\nCONFUSION_IMMUNE:    31/31/31/0/31/0'},
+  masuda:{badge:'badge-viable',label:'MASUDA METHOD SHINY PROTOCOL',title:'§ PROTOCOL: MASUDA SHINY CHAIN',
+    text:'PHASE 1 (mandatory): Breed the perfect IV specimen with correct nature and moves. This is the shiny hunting parent—do not skip this phase. PHASE 2: Introduce foreign-language Ditto or foreign parent. Use the Masuda Calculator (right panel) to track cumulative probability. Expected eggs: 341 with Shiny Charm, 683 without. Never hunt a shiny without a perfect parent in stock.',
+    code:'BASE_SHINY_RATE: 1/4096\nMASUDA_MODIFIER: ×6 → 1/682.7\nWITH_CHARM: ×3 base → 1/341 Masuda+Charm'},
+  egg:{badge:'badge-viable',label:'EGG MOVE CHAIN PROTOCOL',title:'§ PROTOCOL: EGG MOVE INHERITANCE',
+    text:'Step 1: Identify all target egg moves via the scan engine. Step 2: Identify male donor species for each move. Step 3: Audit egg group compatibility—all donors must share a group with the target. Step 4: Chain-breed all moves onto a single male carrier if multiple moves are required. Step 5: Breed carrier with target female. ABORT and replan if compatibility audit fails at any step.',
+    code:'donors.forEach(d => assert(d.eggGroup ∩ target.eggGroup !== ∅))\nIF audit_fails: ABORT_AND_REPLAN\nELSE: begin_chain(carrier → target_female)'}
+};
+
+function setBreedTarget(key) {
+  const p = PROTOCOLS[key];
+  document.getElementById('breed-target-display').innerHTML = `
+    <span class="breed-target-badge ${p.badge}">${p.label}</span>
+    <div class="bible-entry">
+      <div class="bible-header">${p.title}</div>
+      <div class="bible-text">${p.text}</div>
+      <div class="bible-code">${p.code.split('\n').map(l=>'&gt; '+l).join('<br>')}</div>
+    </div>`;
+  addLog('PROTOCOL LOADED: ' + p.label);
+}
+
+// ============================================================
+// CALCULATORS
+// ============================================================
+function calcMasuda() {
+  const charm = document.getElementById('charm-check').checked;
+  const eggs = parseInt(document.getElementById('egg-count').value)||0;
+  const rate = charm ? 1/341 : 1/682.7;
+  const prob = (1 - Math.pow(1-rate, eggs))*100;
+  const exp = Math.round(1/rate);
+  document.getElementById('masuda-prob').textContent = prob.toFixed(2) + '%';
+  document.getElementById('masuda-expected').textContent = '~' + exp + ' eggs';
+}
+
+function calcIVchain() {
+  const target = Math.min(6, Math.max(1, parseInt(document.getElementById('target-ivs').value)||5));
+  const parent = Math.min(6, Math.max(0, parseInt(document.getElementById('parent-ivs').value)||5));
+  // Simplified expected eggs: base 32 per IV slot, adjusted by parent quality
+  const missingIVs = Math.max(0, target - parent);
+  const baseEggs = target <= 5 ? 32 : 1024;
+  const adj = missingIVs > 0 ? baseEggs * Math.pow(1.5, missingIVs) : baseEggs;
+  document.getElementById('iv-expected').textContent = '~' + Math.round(adj) + ' eggs';
+}
+
+// ============================================================
+// TERMINAL LOG
+// ============================================================
+function addLog(msg) {
+  const log = document.getElementById('terminal-log');
+  const el = document.createElement('div');
+  el.className = 'terminal-line';
+  el.innerHTML = '<span>&gt;</span> ' + msg;
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ============================================================
+// CLOCK + ENTER KEY
+// ============================================================
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour12:false});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+document.getElementById('poke-search').addEventListener('keydown', e => {
+  if (e.key === 'Enter') lookupPokemon();
+});
+
+// INIT
+calcMasuda();
+calcIVchain();
 </script>
 </body>
 </html>
