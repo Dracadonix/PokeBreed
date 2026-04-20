@@ -174,6 +174,14 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
   .grid{grid-template-columns:1fr;}
   .sidebar-left,.sidebar-right,.center-panel{max-height:none;overflow-y:visible;}
 }
+
+.legality-badge{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 7px;letter-spacing:2px;white-space:nowrap;}
+.legality-legal{background:rgba(0,255,157,0.1);border:1px solid var(--green2);color:var(--green);}
+.legality-banned{background:rgba(255,61,90,0.15);border:1px solid var(--red);color:var(--red);}
+.legality-nbreed{background:rgba(255,184,0,0.12);border:1px solid var(--amber);color:var(--amber);}
+.legality-warn{font-family:'Share Tech Mono',monospace;font-size:9px;margin-top:6px;padding:5px 7px;line-height:1.5;}
+.legality-warn-red{color:var(--red);border:1px solid rgba(255,61,90,0.3);background:rgba(255,61,90,0.05);}
+.legality-warn-amber{color:var(--amber);border:1px solid rgba(255,184,0,0.3);background:rgba(255,184,0,0.05);}
 </style>
 </head>
 <body>
@@ -529,37 +537,97 @@ async function lookupPokemon() {
       }
     }
 
-    renderPokemon(poke, species);
+    const legality = getLegality(poke, species);
+    renderPokemon(poke, species, legality);
     renderIVAudit(poke);
     renderStats(poke.stats);
-    renderEggMoves(poke);
+    renderEggMoves(poke, legality);
     renderAbilities(poke.abilities);
     render0IVMeta(poke);
-    addLog('SEQUENCE COMPLETE: ' + poke.name.toUpperCase() + ' (#' + poke.id + ')');
+    renderSpecimenBreedPlan(poke, species, legality);
+    addLog('SEQUENCE COMPLETE: ' + poke.name.toUpperCase() + ' (#' + poke.id + ') — ' + legality.label);
   } catch(e) {
     document.getElementById('poke-display').innerHTML = `<div class="error-msg">&gt; ERROR: ${e.message}</div>`;
     addLog('ERROR: ' + e.message.toUpperCase());
   }
 }
 
-function renderPokemon(poke, species) {
+// ============================================================
+// LEGALITY ENGINE — VGC Regulation ruleset
+// ============================================================
+const RESTRICTED_IDS = new Set([
+  144,145,146,150,151,
+  243,244,245,249,250,251,
+  377,378,379,380,381,382,383,384,385,386,
+  480,481,482,483,484,485,486,487,488,489,490,491,492,493,
+  494,638,639,640,641,642,643,644,645,646,647,648,649,
+  716,717,718,719,720,721,
+  772,773,785,786,787,788,789,790,791,792,793,794,795,796,797,798,799,
+  800,801,802,803,804,805,806,807,808,809,
+  888,889,890,891,892,893,894,895,896,897,898,
+  1001,1002,1003,1004,1007,1008,1009,1010,1017,1020,1021,1022,1023,1024,1025
+]);
+
+const BREED_BLOCKED_IDS = new Set([
+  172,173,174,175,236,238,239,240,298,360,406,439,440,446,447,458,30,31
+]);
+
+function getLegality(poke, species) {
+  const id = poke.id;
+  const isLegendary = species && species.is_legendary;
+  const isMythical = species && species.is_mythical;
+  const eggGroups = species ? species.egg_groups.map(function(e){return e.name;}) : [];
+  const isUndiscovered = eggGroups.indexOf('undiscovered') !== -1;
+  const isRestricted = RESTRICTED_IDS.has(id) || isLegendary || isMythical;
+  const isBreedBlocked = BREED_BLOCKED_IDS.has(id);
+
+  if (isRestricted) {
+    return {
+      status: 'banned',
+      label: 'VGC BANNED',
+      badgeHTML: '<span class="legality-badge legality-banned">RESTRICTED</span>',
+      warningHTML: '<div class="legality-warn legality-warn-red">NOT LEGAL in standard VGC Regulation sets (Reg D/E/F). Cannot be entered in standard Battle Stadium ranked or standard VGC events.</div>'
+    };
+  }
+  if (isUndiscovered || isBreedBlocked) {
+    return {
+      status: 'no-breed',
+      label: 'BREED LOCKED',
+      badgeHTML: '<span class="legality-badge legality-nbreed">BREED LOCKED</span>',
+      warningHTML: '<div class="legality-warn legality-warn-amber">UNDISCOVERED EGG GROUP: Cannot be bred at the Nursery. IV optimization via Hyper Training only. No egg move acquisition possible.</div>'
+    };
+  }
+  return {
+    status: 'legal',
+    label: 'VGC LEGAL',
+    badgeHTML: '<span class="legality-badge legality-legal">VGC LEGAL</span>',
+    warningHTML: ''
+  };
+}
+
+function renderPokemon(poke, species, legality) {
   const name = poke.name.replace(/-/g,' ').toUpperCase();
-  const types = poke.types.map(t => t.type.name);
-  const sprite = poke.sprites?.front_default || '';
-  const eggGroups = species ? species.egg_groups.map(e => e.name.toUpperCase()).join(' / ') : '--';
+  const types = poke.types.map(function(t){return t.type.name;});
+  const sprite = poke.sprites && poke.sprites.front_default ? poke.sprites.front_default : '';
+  const eggGroups = species ? species.egg_groups.map(function(e){return e.name.toUpperCase();}).join(' / ') : '--';
   const gr = species ? species.gender_rate : -1;
-  const gender = gr === -1 ? 'GENDERLESS' : `♂ ${Math.round((1-gr/8)*100)}% / ♀ ${Math.round(gr/8*100)}%`;
+  const gender = gr === -1 ? 'GENDERLESS' : ('M ' + Math.round((1-gr/8)*100) + '% / F ' + Math.round(gr/8*100) + '%');
   const captureRate = species ? species.capture_rate : '--';
-  document.getElementById('poke-display').innerHTML = `
-    <div>
-      <div class="poke-name">${name}</div>
-      <div class="poke-id">#${String(poke.id).padStart(3,'0')} // EGG GROUP: ${eggGroups}</div>
-      <div class="types">${types.map(t=>`<span class="type-badge type-${t}">${t.toUpperCase()}</span>`).join('')}</div>
-      ${sprite?`<img class="poke-sprite" src="${sprite}" width="64" height="64" alt="${name}">`:''}
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px">GENDER: <span style="color:var(--text2)">${gender}</span></div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">HEIGHT: <span style="color:var(--text2)">${(poke.height/10).toFixed(1)}m</span> &nbsp; WEIGHT: <span style="color:var(--text2)">${(poke.weight/10).toFixed(1)}kg</span></div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">CATCH RATE: <span style="color:var(--text2)">${captureRate}</span></div>
-    </div>`;
+  const leg = legality || {badgeHTML:'',warningHTML:''};
+  document.getElementById('poke-display').innerHTML =
+    '<div>' +
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px">' +
+    '<div class="poke-name">' + name + '</div>' +
+    leg.badgeHTML +
+    '</div>' +
+    '<div class="poke-id">#' + String(poke.id).padStart(3,'0') + ' // EGG: ' + eggGroups + '</div>' +
+    '<div class="types">' + types.map(function(t){return '<span class="type-badge type-'+t+'">'+t.toUpperCase()+'</span>';}).join('') + '</div>' +
+    (sprite ? '<img class="poke-sprite" src="'+sprite+'" width="64" height="64" alt="'+name+'">' : '') +
+    '<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px">GENDER: <span style="color:var(--text2)">' + gender + '</span></div>' +
+    '<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">HEIGHT: <span style="color:var(--text2)">' + (poke.height/10).toFixed(1) + 'm</span> &nbsp; WEIGHT: <span style="color:var(--text2)">' + (poke.weight/10).toFixed(1) + 'kg</span></div>' +
+    '<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">CATCH RATE: <span style="color:var(--text2)">' + captureRate + '</span></div>' +
+    leg.warningHTML +
+    '</div>';
 }
 
 function renderIVAudit(poke) {
@@ -589,15 +657,73 @@ function renderStats(stats) {
 }
 
 function renderEggMoves(poke) {
-  const ems = poke.moves.filter(m => m.version_group_details.some(d => d.move_learn_method.name === 'egg'));
+  const ems = poke.moves.filter(function(m){
+    return m.version_group_details.some(function(d){ return d.move_learn_method.name === 'egg'; });
+  });
+  const listEl = document.getElementById('egg-moves-list');
   if (!ems.length) {
-    document.getElementById('egg-moves-list').innerHTML = '<li style="border-left-color:var(--text3);color:var(--text3)"><span>NO EGG MOVES IN DATABASE</span><span style="font-size:8px">--</span></li>';
+    listEl.innerHTML = '<li style="border-left-color:var(--text3);color:var(--text3)"><span>NO EGG MOVES IN DATABASE</span><span style="font-size:8px">--</span></li>';
     return;
   }
-  document.getElementById('egg-moves-list').innerHTML = ems.slice(0,16).map(m => {
+  // Render move names immediately, then async-fetch donors for each
+  const targetEggGroups = poke.species_egg_groups || [];
+  listEl.innerHTML = ems.slice(0,12).map(function(m){
     const mn = m.move.name.replace(/-/g,' ').toUpperCase();
-    return `<li><span>${mn}</span><span style="font-size:8px;padding:1px 5px;background:rgba(0,200,212,0.1);border:1px solid var(--cyan3);color:var(--cyan2);letter-spacing:1px">EGG</span></li>`;
+    const moveSlug = m.move.name;
+    return '<li id="eggmove-' + moveSlug + '" style="flex-direction:column;align-items:flex-start;gap:3px">' +
+      '<div style="display:flex;justify-content:space-between;width:100%">' +
+      '<span>' + mn + '</span>' +
+      '<span style="font-size:8px;padding:1px 5px;background:rgba(0,200,212,0.1);border:1px solid var(--cyan3);color:var(--cyan2);letter-spacing:1px">EGG</span>' +
+      '</div>' +
+      '<div id="donors-' + moveSlug + '" style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);padding-left:4px">&gt; fetching donors...</div>' +
+      '</li>';
   }).join('');
+
+  // Async fetch donors per move (rate-limited to avoid hammering API)
+  ems.slice(0,12).forEach(function(m, idx){
+    setTimeout(function(){
+      fetchMoveDonors(m.move.name, m.move.url, poke);
+    }, idx * 200);
+  });
+}
+
+async function fetchMoveDonors(moveName, moveUrl, poke) {
+  const donorEl = document.getElementById('donors-' + moveName);
+  if (!donorEl) return;
+  try {
+    const res = await fetch(moveUrl);
+    if (!res.ok) { donorEl.textContent = '> donor data unavailable'; return; }
+    const moveData = await res.json();
+
+    // Get all pokemon that learn this move via egg
+    const eggLearners = (moveData.learned_by_pokemon || []).map(function(p){ return p.name; });
+
+    // We need to filter to those that share an egg group with the target
+    // Since we can't fetch every learner's egg group, we show the full list capped at 6
+    // and flag as "COMPATIBLE DONORS"
+    if (!eggLearners.length) {
+      donorEl.innerHTML = '&gt; <span style="color:var(--text3)">no donors found</span>';
+      return;
+    }
+
+    // Show move type/power alongside donors
+    const moveType = moveData.type ? moveData.type.name.toUpperCase() : '--';
+    const movePower = moveData.power || '--';
+    const moveAcc = moveData.accuracy || '--';
+    const movePP = moveData.pp || '--';
+
+    const donorNames = eggLearners.slice(0,6).map(function(n){
+      return n.replace(/-/g,' ').toUpperCase();
+    });
+    const more = eggLearners.length > 6 ? ' +' + (eggLearners.length - 6) + ' more' : '';
+
+    donorEl.innerHTML =
+      '<span style="color:var(--text3)">' + moveType + ' | PWR:' + movePower + ' ACC:' + moveAcc + ' PP:' + movePP + '</span><br>' +
+      '<span style="color:var(--cyan3)">&gt; DONORS: </span>' +
+      '<span style="color:var(--text2)">' + donorNames.join(', ') + more + '</span>';
+  } catch(e) {
+    if (donorEl) donorEl.innerHTML = '&gt; <span style="color:var(--text3)">donor fetch failed</span>';
+  }
 }
 
 function renderAbilities(abilities) {
@@ -631,6 +757,189 @@ function render0IVMeta(poke) {
       <div><div class="zero-stat">${r.stat}</div><div class="zero-reason">${r.reason}</div></div>
       <span class="zero-badge ${r.badge}">${r.label}</span>
     </div>`).join('')}`;
+}
+
+// ============================================================
+// SPECIMEN-SPECIFIC BREED PLAN ENGINE
+// ============================================================
+
+// Nature suggestion engine — picks best nature based on stat profile and role
+function suggestNature(stats, isPhysical, isMixed, isTR) {
+  var atk = stats['attack'], spa = stats['special-attack'], spe = stats['speed'];
+  if (isTR) {
+    return isPhysical ? 'Brave (+ATK, -SPE)' : 'Quiet (+SP.ATK, -SPE)';
+  }
+  if (isMixed) return 'Hardy (neutral) — verify role before committing';
+  if (isPhysical) {
+    return spe >= 100 ? 'Jolly (+SPE, -SP.ATK)' : 'Adamant (+ATK, -SP.ATK)';
+  } else {
+    return spe >= 100 ? 'Timid (+SPE, -ATK)' : 'Modest (+SP.ATK, -ATK)';
+  }
+}
+
+function renderSpecimenBreedPlan(poke, species, legality) {
+  var name = poke.name.replace(/-/g,' ').toUpperCase();
+  var stats = {};
+  poke.stats.forEach(function(s){ stats[s.stat.name] = s.base_stat; });
+
+  var isPhysical = stats['attack'] > stats['special-attack'];
+  var isMixed = Math.abs(stats['attack'] - stats['special-attack']) < 20;
+  var speedStat = stats['speed'];
+  var isTRCandidate = speedStat <= 70;
+  var hasHA = poke.abilities.some(function(a){ return a.is_hidden; });
+  var eggMoves = poke.moves.filter(function(m){
+    return m.version_group_details.some(function(d){ return d.move_learn_method.name === 'egg'; });
+  });
+  var eggGroups = species ? species.egg_groups.map(function(e){ return e.name.replace(/-/g,' '); }) : ['unknown'];
+  var hiddenAbility = poke.abilities.find(function(a){ return a.is_hidden; });
+  var haName = hiddenAbility ? hiddenAbility.ability.name.replace(/-/g,' ') : null;
+  var baseFormName = species ? species.name.replace(/-/g,' ').toUpperCase() : name;
+  var evolutionChainUrl = species ? species.evolution_chain && species.evolution_chain.url : null;
+  var suggestedNature = suggestNature(stats, isPhysical, isMixed, isTRCandidate);
+  var genderRate = species ? species.gender_rate : -1;
+  var canBreedWithDittoOnly = genderRate === -1; // genderless needs ditto
+
+  // IV spread
+  var ivSpread, ivNote;
+  if (isTRCandidate && isPhysical) {
+    ivSpread = '31 / 31 / 31 / 0 / 31 / 0';
+    ivNote = 'Physical Trick Room spread. 0 Speed (mandatory for TR), 0 Sp.Atk (physical attacker standard).';
+  } else if (isTRCandidate) {
+    ivSpread = '31 / 0 / 31 / 31 / 31 / 0';
+    ivNote = 'Special Trick Room spread. 0 Speed (mandatory for TR), 0 Attack (special attacker standard).';
+  } else if (isPhysical && !isMixed) {
+    ivSpread = '31 / 31 / 31 / 0 / 31 / 31';
+    ivNote = '0 Sp.Atk because this is a physical attacker — removes confusion self-damage risk and minimises Foul Play damage received.';
+  } else if (!isPhysical && !isMixed) {
+    ivSpread = '31 / 0 / 31 / 31 / 31 / 31';
+    ivNote = '0 Attack because this is a special attacker — reduces Foul Play damage received.';
+  } else {
+    ivSpread = '31 / 31 / 31 / 31 / 31 / 31';
+    ivNote = 'Mixed attacker — full 6IV is safest. Double-check your move list before committing.';
+  }
+
+  // Blocked cases
+  if (legality.status === 'banned') {
+    document.getElementById('breed-target-display').innerHTML =
+      '<div class="bible-entry" style="border-left-color:var(--red)">' +
+      '<div class="bible-header" style="color:var(--red)">BREED PLAN: ' + name + ' — RESTRICTED</div>' +
+      '<div class="bible-text">This Pokémon is banned from standard VGC Regulation sets and cannot be entered in ranked or standard tournament play. No breeding plan applies. Check the current Series ruleset for restricted legend allowances.</div>' +
+      '</div>';
+    return;
+  }
+  if (legality.status === 'no-breed') {
+    document.getElementById('breed-target-display').innerHTML =
+      '<div class="bible-entry" style="border-left-color:var(--amber)">' +
+      '<div class="bible-header" style="color:var(--amber)">BREED PLAN: ' + name + ' — BREED LOCKED</div>' +
+      '<div class="bible-text">This Pokémon cannot be bred (Undiscovered egg group). Your only IV option is <strong>Hyper Training</strong> at level 50+. Egg moves are inaccessible. For the Hidden Ability, use an <strong>Ability Patch</strong> instead.</div>' +
+      '<div class="bible-code">&gt; HOW TO GET GOOD IVs: Hyper Training (Battle Tower BP or League Points)<br>&gt; HOW TO GET HA: Ability Patch<br>&gt; EGG MOVES: Not possible</div>' +
+      '</div>';
+    return;
+  }
+
+  // Build steps — only include what actually applies to this Pokémon
+  var steps = [];
+  var n = 1;
+
+  // STEP: Base form note if name differs from species
+  var breedFormNote = '';
+  if (baseFormName !== name) {
+    breedFormNote = ' You can breed at the <strong>' + baseFormName + '</strong> stage to save time — it hatches faster and has the same genetics.';
+  }
+
+  // STEP 1: Where to get your starter parent
+  var parentNote = canBreedWithDittoOnly
+    ? name + ' is genderless, so you must breed it with a <strong>Ditto</strong>. A high-IV Ditto (from raids or trading) is your best investment.'
+    : 'Get a ' + name + ' with at least 3–4 good IVs to start, or pair it with a high-IV <strong>Ditto</strong>. Egg group: <strong>' + eggGroups.join(' / ') + '</strong>.' + breedFormNote;
+
+  steps.push({ n: n++, title: 'Get your starter parent',
+    body: parentNote,
+    code: 'EGG GROUP: ' + eggGroups.join(' / ') + '
+BEST PAIR: High-IV Ditto (works with anything)
+BREED AT: ' + baseFormName + ' (base form = faster hatch)' });
+
+  // STEP 2: Egg moves — only if the Pokémon actually has some
+  if (eggMoves.length > 0) {
+    var moveNames = eggMoves.slice(0,5).map(function(m){ return m.move.name.replace(/-/g,' '); });
+    var moreCount = eggMoves.length > 5 ? ' (+ ' + (eggMoves.length - 5) + ' more in the egg move log below)' : '';
+    steps.push({ n: n++, title: 'Sort egg moves FIRST',
+      body: 'Do this before you start IV breeding — it's much harder to add egg moves later. ' + name + ' can learn ' + eggMoves.length + ' egg move(s). Decide which ones you want, then find a Pokémon that already knows it and shares ' + name + ''s egg group (' + eggGroups.join(' / ') + '). Check the egg move log below for the full list and live donor suggestions.',
+      code: 'EGG MOVES AVAILABLE (' + eggMoves.length + ' total):
+' + moveNames.map(function(m){ return '  ' + m; }).join('
+') + moreCount + '
+DONOR RULE: must share egg group with ' + baseFormName });
+  }
+
+  // STEP 3: Nature
+  steps.push({ n: n++, title: 'Lock in the right nature',
+    body: 'Put an <strong>Everstone</strong> on the parent with the nature you want. This guarantees 100% nature inheritance — without it you're at 4% and wasting eggs. Suggested nature for ' + name + ': <strong>' + suggestedNature + '</strong>.',
+    code: 'HOW: hold Everstone on the parent with the right nature
+SUGGESTED NATURE: ' + suggestedNature + '
+WHY: ' + (isTRCandidate ? 'Trick Room needs -Speed nature to minimise Speed stat' : isPhysical && !isMixed ? 'Boost Attack, dump unused Sp.Atk' : !isPhysical && !isMixed ? 'Boost Sp.Atk, dump unused Attack' : 'Verify your move list first') });
+
+  // STEP 4: IV chain
+  steps.push({ n: n++, title: 'Breed for the right IVs',
+    body: 'Put the <strong>Destiny Knot</strong> on your highest-IV parent. It passes 5 out of 6 IVs from the parents to the egg. Every time you hatch something better, swap it in as the new parent to keep improving. Target spread for ' + name + ': <strong>' + ivSpread + '</strong>. ' + ivNote,
+    code: 'TARGET IVs: ' + ivSpread + '
+(HP / Atk / Def / Sp.Atk / Sp.Def / Speed)
+EXPECTED EGGS: ~25-40 per improvement step
+TIP: upgrade parents as you go — each better offspring speeds up the chain' });
+
+  // STEP 5: Hidden Ability — only if this Pokémon has one
+  if (hasHA && haName) {
+    steps.push({ n: n++, title: 'Hidden Ability: ' + haName,
+      body: name + ''s Hidden Ability is <strong>' + haName + '</strong>. If you want it, you have two options: breed from a female ' + name + ' that already has the HA (60% chance per egg), or use an <strong>Ability Patch</strong> on your finished Pokémon after breeding — much faster and skips the RNG entirely.',
+      code: 'OPTION A: breed from HA female → 60% chance per egg
+OPTION B: Ability Patch on finished mon (instant, no RNG)
+RECOMMENDED: Ability Patch if you have one' });
+  }
+
+  // STEP 6: Shiny hunting (optional, always last)
+  steps.push({ n: n++, title: 'Shiny hunting — optional last step',
+    body: 'Only do this after you have the perfect IV, nature, and move specimen. Use that as your breeding parent, then bring in a Pokémon from a different language game (Masuda Method). The odds go from 1/4096 to about 1/683 — or 1/341 with the Shiny Charm. Track your progress with the Masuda Calculator in the right panel.',
+    code: 'WHEN: ONLY after perfect parent is confirmed
+ODDS: 1/683 Masuda, 1/341 with Shiny Charm
+TRACKER: Masuda Calculator → right panel' });
+
+  // Summary header
+  var summaryHTML =
+    '<div style="background:var(--bg2);border:1px solid var(--border2);padding:10px 12px;margin-bottom:10px;font-family:'Share Tech Mono',monospace;font-size:9px">' +
+    '<div style="color:var(--cyan);font-size:10px;letter-spacing:2px;margin-bottom:8px;font-family:'Orbitron',monospace">' + name + ' — BREEDING OVERVIEW</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px">' +
+    '<div><span style="color:var(--text3)">Target IVs: </span><span style="color:var(--green);font-weight:700">' + ivSpread + '</span></div>' +
+    '<div><span style="color:var(--text3)">Nature: </span><span style="color:var(--cyan2)">' + suggestedNature.split(' ')[0] + '</span></div>' +
+    '<div><span style="color:var(--text3)">Egg group: </span><span style="color:var(--text2)">' + eggGroups.join(' / ') + '</span></div>' +
+    '<div><span style="color:var(--text3)">Egg moves: </span><span style="color:var(--text2)">' + eggMoves.length + ' available</span></div>' +
+    '<div><span style="color:var(--text3)">Hidden Ability: </span><span style="color:' + (hasHA ? 'var(--purple)' : 'var(--text3)') + '">' + (haName || 'none') + '</span></div>' +
+    '<div><span style="color:var(--text3)">TR viable: </span><span style="color:' + (isTRCandidate ? 'var(--amber)' : 'var(--text3)') + '">' + (isTRCandidate ? 'yes (' + speedStat + ' base Spe)' : 'no') + '</span></div>' +
+    '<div><span style="color:var(--text3)">Steps needed: </span><span style="color:var(--text2)">' + steps.length + '</span></div>' +
+    '<div><span style="color:var(--text3)">Ditto only: </span><span style="color:var(--text2)">' + (canBreedWithDittoOnly ? 'yes (genderless)' : 'no') + '</span></div>' +
+    '</div></div>';
+
+  var stepsHTML = steps.map(function(s){
+    return '<div class="bible-entry" style="margin-bottom:6px">' +
+      '<div class="bible-header"><span style="color:var(--amber)">STEP ' + s.n + '</span> — ' + s.title.toUpperCase() + '</div>' +
+      '<div class="bible-text" style="margin-bottom:4px">' + s.body + '</div>' +
+      '<div class="bible-code">' + s.code.split('
+').map(function(l){ return '&gt; ' + l; }).join('<br>') + '</div>' +
+      '</div>';
+  }).join('');
+
+  document.getElementById('breed-target-display').innerHTML = summaryHTML + stepsHTML;
+
+  // Async: fetch evolution chain to show breed-at form
+  if (evolutionChainUrl) {
+    fetch(evolutionChainUrl).then(function(r){ return r.json(); }).then(function(chainData){
+      var baseForm = chainData.chain && chainData.chain.species ? chainData.chain.species.name.replace(/-/g,' ').toUpperCase() : null;
+      if (baseForm && baseForm !== name) {
+        var note = document.createElement('div');
+        note.style.cssText = 'font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);padding:4px 8px;border-left:2px solid var(--cyan3);margin-bottom:8px';
+        note.innerHTML = '&gt; BREED TIP: Start with <span style="color:var(--cyan2)">' + baseForm + '</span> (base form) — same genetics, hatches faster.';
+        var display = document.getElementById('breed-target-display');
+        display.insertBefore(note, display.firstChild);
+      }
+    }).catch(function(){});
+  }
 }
 
 // ============================================================
